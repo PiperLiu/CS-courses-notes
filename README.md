@@ -2,8 +2,8 @@
 
 This is a bilingual readme-file, English version is in the second half of this article.
 
-**目录Catalogue：**
-[中文版本](#cVersion)
+**目录 Catalogue：** 
+[中文版本](#cVersion) or 
 [English Version](#eVersion)
 
 # Hello, 欢迎阅读、修改、批评我的CS笔记!
@@ -44,9 +44,11 @@ This is a bilingual readme-file, English version is in the second half of this a
 
 ## 笔记阅读前言
 
-在学习之前笔者已经查阅过一些资料，比如[./doc/中国科学技术大小计算机培养计划](./doc/计算机科学与技术专业-培养方案-中国科学技术大学.doc)等。
+在学习之前笔者已经查阅过一些资料，比如[./doc/中国科学技术大学计算机培养计划](./doc/计算机科学与技术专业-培养方案-中国科学技术大学.doc)等。
 
 我辈追赶，还需时日，且不可操之过急。
+
+****
 
 # Hello, your reading,  issues & opinions is an honour for me!
 <span id="eVersion"></span>
@@ -69,7 +71,7 @@ I've been a senior since July 2018. I've got much time spare, which I value a lo
 - Numerical Computation, coming soon
 - Digital Logic Circuit, coming soon
 
-I would strongly advise people who want to be a Full Stack Developer or an Algorithm Engineer to learn those courses. How much you know those bottom principles iw the upper bound of your career.
+I would strongly advise people who want to be a Full Stack Developer or an Algorithm Engineer to learn those courses. How much you know those bottom principles is the upper bound of your career.
 
 ## Why would I learn those Computer Science courses, and git to github
 
@@ -79,12 +81,13 @@ Some problems ensued and then I realized two reasons why I was running into bott
 - There's not enough projects for me to have familiarity with those popular frames or libs;
 - It's difficult for me to learn new skills just because I didn't running mechanism.
 
-Then I decided to spend my senior time to learn CS. I watch videos on website bilibili.com commonly, and taking notes on CSDN with markdown editor simultaneously. Click the url below to visit my blogs of notes:[CSDN-Don'tSuePeoplePiper_BlogPage](https://blog.csdn.net/weixin_42815609)
+Then I decided to spend my senior time to learn CS. I watch videos on website bilibili.com commonly, taking notes on CSDN with markdown editor simultaneously. Click the url below to visit my blogs of notes:
+[CSDN-Don'tSuePeoplePiper_BlogPage](https://blog.csdn.net/weixin_42815609)
 
-The knowledge was not solid for me, as I've just learned if once. Therefore, I prepared to learn it again to consolidate it, through the method that reading-notes being primary and searching imformation being auxiliary. I shall git new notes improved to github.
+The knowledge was not solid for me, as I've just learned it once. Therefore, I prepared to learn it again to consolidate it, through the method that reading-notes being primary and searching imformation being auxiliary. I shall git new notes improved to github.
 
 ## Preface
 
-Before Learning them, I've retrieved some info, like(./doc/CS-coursework-University-of-Science-and-Technology-of-China).
+Before Learning them, I've retrieved some info, like [./doc/CS-coursework-from-University-of-Science-and-Technology-of-China](./doc/计算机科学与技术专业-培养方案-中国科学技术大学.doc).
 
 Knowledge is gained by accumulation.
