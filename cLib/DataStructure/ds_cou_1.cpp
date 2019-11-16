@@ -40,5 +40,8 @@ int main()
     }
 }
 
-// use "gcc filename.cpp"
+// develop with vscode
+// use "Ctrl + `" to switch terminal
+// use "g++ filename.cpp"
 // use "./name.exe" to run it
+
