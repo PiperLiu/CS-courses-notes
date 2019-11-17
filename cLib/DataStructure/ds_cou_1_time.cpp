@@ -2,15 +2,17 @@
 #include <time.h>
 #include <math.h>
 
-#define MAXK 1e1
+#define MAXK 1e5
 
 clock_t start, stop;
 
 double duration;
 
 double f1(int n, double a[], double x);
+// 多项式算法
 
 double f2(int n, double a[], double x);
+// 秦九韶算法
 
 int main()
 {
@@ -19,7 +21,7 @@ int main()
     start = clock();
     for (int i = 0; i < MAXK; i++)
     {
-        double tmp = f1(10, a, 1.1);
+        f1(10, a, 1.1);
     }
     stop = clock();
     duration = ((double)(stop - start) / CLK_TCK / MAXK);
@@ -29,7 +31,7 @@ int main()
     start = clock();
     for (int i = 0; i < MAXK; i++)
     {
-        double tmp = f2(10, a, 1.1);
+        f2(10, a, 1.1);
     }
     stop = clock();
     duration = ((double)(stop - start) / CLK_TCK / MAXK);
@@ -54,7 +56,7 @@ double f2(int n, double a[], double x)
 {
     int i;
     double p = a[n];
-    for (i = n; i <= n; i--)
+    for (i = n; i > 0; i--)
     {
         p = a[i - 1] + x * p;
     }
