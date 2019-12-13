@@ -1,6 +1,5 @@
 #include <time.h>
 #include <stdio.h>
-#include <string.h>
 
 #define MAXK 1e5
 

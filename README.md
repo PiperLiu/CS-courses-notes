@@ -1,21 +1,30 @@
 *Notes on Computer Science*
 
+<p align="center">
+  <a href="./cLib/"><img src="https://img.shields.io/badge/代码-file-blue.svg" alt="阅读"></a>
+  <a href="https://blog.csdn.net/weixin_42815609"><img src="https://img.shields.io/badge/csdn-博客-red.svg"></a>
+  <a href="./doc/matrix.md"><img src="https://img.shields.io/badge/Weixin-公众号-brightgreen.svg"></a>
+</p>
+
 This is a bilingual readme-file, English version is in the second half of this article.
 
 **目录 Catalogue：** 
 [中文版本](#cVersion) or 
 [English Version](#eVersion)
 
-# Hello, 欢迎阅读、修改、批评我的CS笔记!
 <span id="cVersion"></span>
+> **含有大量公式，若在线浏览.md文件，请在浏览器中安装Mathjax Plugin以获得最佳阅读体验。**
+
+# Hello, 欢迎阅读、修改、批评我的CS笔记!
 
 ## 本仓库包含笔记内容
 
 2019年7月份开始，我进入大学四年级，个人时间变得充裕，我很珍惜。在这期间，我自学以下课程：
 
 **计算机科学类：**
-- 数据结构（Data Structure, 陈越&何钦铭, 浙江大学）
+- 数据结构(Data Structure, 陈越&何钦铭, 浙江大学)
 - 操作系统(Operating Systems, 陈渝, 清华大学)
+- 汇编语言与计算机系统结构(Assembly Language and Computer Architecture, 张悠慧, 清华大学)
 - 编译原理(Compilers, 陈鄞, 哈尔滨工业大学)
 - 计算机组成原理(Computer Organization, 刘卫东, 清华大学)
 - 数据库系统(Database System, coming soon)
@@ -50,8 +59,10 @@ This is a bilingual readme-file, English version is in the second half of this a
 
 ****
 
-# Hello, your reading,  issues & opinions is an honour for me!
 <span id="eVersion"></span>
+> **Contains a lot of formulas. If browse .md files online, install mathjax plugin in your browser for the best reading experience.**
+
+# Hello, your reading,  issues & opinions is an honour for me!
 
 ## What this repository contains
 
@@ -60,6 +71,7 @@ I've been a senior since July 2018. I've got much time spare, which I value a lo
 **Computer Science:**
 - Data Structure, Yue Chen & Qinming He, Zhejiang University
 - Operating Systems, Yu Chen, Tsinghua University
+- Assembly Language and Computer Architecture, Youhui Zhang, Tsinghua University
 - Compilers, Yin Chen, Harbin Institude of Technology
 - Computer Organization, Weidong Liu, Tsinghua University
 - Database System, coming soon
@@ -91,3 +103,5 @@ The knowledge was not solid for me, as I've just learned it once. Therefore, I p
 Before Learning them, I've retrieved some info, like [./doc/CS-coursework-from-University-of-Science-and-Technology-of-China](./doc/计算机科学与技术专业-培养方案-中国科学技术大学.doc).
 
 Knowledge is gained by accumulation.
+
+****
