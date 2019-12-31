@@ -1,9 +1,9 @@
 *Notes on Computer Science*
 
 <p align="center">
-  <a href="./cLib/"><img src="https://img.shields.io/badge/代码-file-blue.svg" alt="阅读"></a>
-  <a href="https://blog.csdn.net/weixin_42815609"><img src="https://img.shields.io/badge/csdn-博客-red.svg"></a>
-  <a href="./doc/matrix.md"><img src="https://img.shields.io/badge/Weixin-公众号-brightgreen.svg"></a>
+  <a href="./cLib/"><img src="https://img.shields.io/badge/代码-file-blue.svg" alt="代码"></a>
+  <a href="https://blog.csdn.net/weixin_42815609"><img src="https://img.shields.io/badge/csdn-博客-red.svg" alt="博客"></a>
+  <a href="./doc/matrix.md"><img src="https://img.shields.io/badge/Weixin-公众号-brightgreen.svg" alt="公众号"></a>
 </p>
 
 This is a bilingual readme-file, English version is in the second half of this article.
