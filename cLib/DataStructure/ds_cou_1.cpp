@@ -3,10 +3,9 @@
 // 方法1：循环实现
 void PrintN_1(int N)
 {
-    if(N)
+    for (int i=0; i<=N; i++)
     {
-        PrintN_1(N-1);
-        printf("%d\n", N);
+        printf("%d\n", i);
     }
     return;
 }
