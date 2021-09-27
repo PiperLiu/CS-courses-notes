@@ -14,7 +14,7 @@
 
 ### 数据结构
 
-[浙江大学 MOOC](./data_structure/README.md)
+[浙江大学 MOOC 笔记](./data_structure/README.md)
 
 说实在的，我都研二了，要是数据结构还不过关，就别混了。主要是准备12月份再考一次 PAT （第一次84分🤬），因此把 MOOC 刷一次，搞个 50 块钱代金券。
 
