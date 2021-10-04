@@ -15,8 +15,8 @@
 
 <p align="center">
   <a href="https://blog.csdn.net/weixin_42815609"><img src="https://img.shields.io/badge/博客-CSDN-red.svg" alt="https://www.csdn.net/"></a>
-  <a href="./doc/images/扫码_搜索联合传播样式-微信标准绿版.png"><img src="https://img.shields.io/badge/微信公众号-github-verdigris.svg" alt="weixin"></a>
-  <a href="https://www.zhihu.com/people/zai-deng-yici-ji-hui"><img src="https://img.shields.io/badge/知乎-github-blue.svg" alt="https://www.zhihu.com/"></a>
+  <a href="./doc/images/扫码_搜索联合传播样式-微信标准绿版.png"><img src="https://img.shields.io/badge/微信公众号-WeiXin-verdigris.svg" alt="weixin"></a>
+  <a href="https://www.zhihu.com/people/zai-deng-yici-ji-hui"><img src="https://img.shields.io/badge/知乎-ZhiHu-blue.svg" alt="https://www.zhihu.com/"></a>
 </p>
 
 **目录 Catalogue：** 
