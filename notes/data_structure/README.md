@@ -40,3 +40,4 @@
 - [树与树的表示](../../DataStructure_数据结构/course_3/1_树与树的表示.md)
 
 现在的笔记：
+- [平衡二叉树拾遗](../../DataStructure_数据结构/course_3/5_平衡二叉树拾遗.md)
