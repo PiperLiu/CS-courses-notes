@@ -23,6 +23,9 @@
 - [什么是算法](../../DataStructure_数据结构/course_1/2_什么是算法.md)
 - [算法实例：最大子列和](../../DataStructure_数据结构/course_1/3_算法实例：最大子列和.md)
 
+习题与作业：
+- [./homeworks/ds.1.chap.md](./homeworks/ds.1.chap.md)
+
 ### 第二讲 线性结构
 
 我以前的笔记记得就不错，见：
