@@ -70,7 +70,7 @@ int main()
 
 ![](./images/2021100902.png)
 
-```cpp
+```c
 #include <iostream>
 using namespace std;
 
