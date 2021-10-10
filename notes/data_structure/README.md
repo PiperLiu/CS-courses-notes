@@ -58,13 +58,17 @@
 以前的笔记：
 - [树与树的表示](../../DataStructure_数据结构/course_3/1_树与树的表示.md)
 
-现在的笔记：
-- [平衡二叉树拾遗](../../DataStructure_数据结构/course_3/5_平衡二叉树拾遗.md)
+代码：
+- [二叉树的链表结构.c](./codes/3.1.二叉树的链表结构.c)
+- [二叉树的四种遍历.c](./codes/3.3.二叉树的四种遍历.c)
 
 习题与作业：
 - [./homeworks/ds.3.chap.md](./homeworks/ds.3.chap.md)
 
 ### 第四讲 树（中）
+
+现在的笔记：
+- [平衡二叉树拾遗](../../DataStructure_数据结构/course_3/5_平衡二叉树拾遗.md)
 
 习题与作业：
 - [./homeworks/ds.4.chap.md](./homeworks/ds.4.chap.md)
