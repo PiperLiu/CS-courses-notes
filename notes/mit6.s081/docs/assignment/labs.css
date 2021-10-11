@@ -1,0 +1,59 @@
+.easy { color: #00cc00; }
+.moderate { color: #0066ff; }
+.hard { color: #ff3300; }
+
+div.required, div.challenge, div.question, div.warning, div.prereq {
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1em;
+    margin-top: 1em;
+    width: 80%;
+    background-color: #e0e0ff;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+div.required .header {
+    font-weight: bold;
+}
+
+div.challenge .header {
+    font-style: italic;
+}
+
+div.question .header {
+    font-weight: bold;
+}
+
+div.required {
+    background-color: #e0e0ff;
+    border: 1px solid #c0c0ff;
+}
+
+div.challenge {
+    background-color: #ffe0e0;
+    border: 1px solid #ffc0c0;
+}
+
+div.question {
+    background-color: #e0e0ff;
+    border: 1px solid #c0c0ff;
+}
+
+div.warning {
+    background-color: #ffe0e0;
+    border: 1px solid #ffc0c0;
+}
+
+div.prereq {
+    background-color: #FFEFD5;
+    border: 1px solid #ffc0c0;
+}
+
+kbd {
+   color: #007700;
+   font-family: monospace;
+   font-weight: bold;
+}
+
+

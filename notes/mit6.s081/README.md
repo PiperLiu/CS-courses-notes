@@ -6,6 +6,9 @@
 <!-- code_chunk_output -->
 
 - [🥂课程资料](#课程资料)
+- [🥞本仓库资源](#本仓库资源)
+- [课程索引](#课程索引)
+  - [LEC 1 (rtm): Introduction and examples](#lec-1-rtm-introduction-and-examples)
 
 <!-- /code_chunk_output -->
 
@@ -23,4 +26,20 @@ B 站视频：
 参考：
 - [如何学好操作系统原理这门课？ - 菜饼不菜的回答 - 知乎](https://www.zhihu.com/question/22874344/answer/2091285378)
 - [MIT6.S081（2020）翻译简介 - 肖宏辉的文章 - 知乎](https://zhuanlan.zhihu.com/p/261362497)
+
+### 🥞本仓库资源
+
+- 教材（主要用作预习）：[xv6: a simple, Unix-like teaching operating system](./docs/lec/book-riscv-rev1.pdf)
+- 其他的资源比如课堂资料、作业要求在[docs/assignment/](./docs/assignment/)和[docs/lec/](./docs/lec/)中
+
+### 课程索引
+
+#### LEC 1 (rtm): Introduction and examples
+
+sep 2
+
+- LEC 1 (rtm): [Introduction](./docs/lec/lec1.l-overview.txt) and [examples](https://pdos.csail.mit.edu/6.S081/2020/lec/l-overview/) (handouts: xv6 book) [video](https://youtu.be/L6YqHxYHa7A)
+- Preparation: Read [chapter 1](./docs/lec/book-riscv-rev1.pdf) (for your amusement: [Unix](https://www.youtube.com/watch?v=tc4ROCJYbm0))
+- Homework 1 due: Question
+- Assignment: <a href="./docs/assignment/Lab_ Xv6 and Unix utilities.html">Lab util: Unix utilities</a>
 
