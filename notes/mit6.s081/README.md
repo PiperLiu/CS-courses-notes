@@ -23,6 +23,12 @@
 B 站视频：
 - [MIT 操作系统 6.S081（中英文字幕）](https://www.bilibili.com/video/BV1QA411F7ij)
 
+实验：
+- 本课程用到 `xv6` 系统，我从 `GitHub` 上 `fork` 了一个：https://github.com/PiperLiu/xv6-riscv
+- 本课程进行实验的作业系统： `git clone git://g.csail.mit.edu/xv6-labs-2020`
+  - 我也放到 `GitHub` 上了：https://github.com/PiperLiu/xv6-labs-2020
+  - 大佬已经写完了作业，我可以参考答案：https://github.com/silvermagic/xv6-labs-2020
+
 参考：
 - [如何学好操作系统原理这门课？ - 菜饼不菜的回答 - 知乎](https://www.zhihu.com/question/22874344/answer/2091285378)
 - [MIT6.S081（2020）翻译简介 - 肖宏辉的文章 - 知乎](https://zhuanlan.zhihu.com/p/261362497)
@@ -31,6 +37,7 @@ B 站视频：
 
 - 教材（主要用作预习）：[xv6: a simple, Unix-like teaching operating system](./docs/lec/book-riscv-rev1.pdf)
 - 其他的资源比如课堂资料、作业要求在[docs/assignment/](./docs/assignment/)和[docs/lec/](./docs/lec/)中
+- 实验说明：<a href="./docs/6.S081 _ Fall 2020.html">6.S081 _ Fall 2020.html</a>
 
 ### 课程索引
 

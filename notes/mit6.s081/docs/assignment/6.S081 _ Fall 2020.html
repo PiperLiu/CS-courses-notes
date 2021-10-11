@@ -1,0 +1,294 @@
+
+<!-- saved from url=(0049)https://pdos.csail.mit.edu/6.S081/2020/tools.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>
+6.S081 / Fall 2020
+</title>
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="./6.S081 _ Fall 2020_files/bootstrap.min.css" rel="stylesheet" media="screen">
+<link rel="stylesheet" type="text/css" href="./6.S081 _ Fall 2020_files/style.css">
+<link rel="stylesheet" href="./6.S081 _ Fall 2020_files/labs.css" type="text/css">
+
+</head>
+
+<body bgcolor="#ffffff" text="#000000" style="">
+
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="https://pdos.csail.mit.edu/6.S081/2020/index.html">6.S081: Operating System Engineering</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+	    <li><a href="https://pdos.csail.mit.edu/6.S081/2020/schedule.html">Schedule</a></li>
+	    <li class="dropdown">
+              <a href="https://pdos.csail.mit.edu/6.S081/2020/tools.html#" class="dropdown-toggle" data-toggle="dropdown">Class<span class="caret"></span></a>
+	      <ul class="dropdown-menu" role="menu">
+                <li><a href="https://pdos.csail.mit.edu/6.S081/2020/overview.html">Overview</a></li>
+                <li><a href="https://pdos.csail.mit.edu/6.S081/2020/general.html">Administrivia</a></li>
+		<li><a href="https://6828.scripts.mit.edu/2020/handin.py/">Handin website</a>
+		</li><li><a href="http://pdos.csail.mit.edu/6.828/2019">6.S081 2019</a></li>
+	      </ul>
+	    </li>
+            <li class="dropdown">
+              <a href="https://pdos.csail.mit.edu/6.S081/2020/tools.html#" class="dropdown-toggle" data-toggle="dropdown">Labs<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+		<li><a href="https://pdos.csail.mit.edu/6.S081/2020/tools.html">Tools</a></li>
+		<li><a href="https://pdos.csail.mit.edu/6.S081/2020/labs/guidance.html">Guidance</a></li>
+                <li><a href="https://pdos.csail.mit.edu/6.S081/2020/labs/util.html">Lab Utilities</a></li>
+		<li><a href="https://pdos.csail.mit.edu/6.S081/2020/labs/syscall.html">Lab System calls</a></li>
+		<li><a href="https://pdos.csail.mit.edu/6.S081/2020/labs/pgtbl.html">Lab Page tables</a></li>
+		<li><a href="https://pdos.csail.mit.edu/6.S081/2020/labs/traps.html">Lab Traps</a></li>
+                <li><a href="https://pdos.csail.mit.edu/6.S081/2020/labs/lazy.html">Lab Lazy allocation</a></li>
+		<li><a href="https://pdos.csail.mit.edu/6.S081/2020/labs/cow.html">Lab Copy on-write</a></li>
+		<li><a href="https://pdos.csail.mit.edu/6.S081/2020/labs/thread.html">Lab Multithreading</a></li>
+		<li><a href="https://pdos.csail.mit.edu/6.S081/2020/labs/lock.html">Lab Lock</a></li>
+		<li><a href="https://pdos.csail.mit.edu/6.S081/2020/labs/fs.html">Lab File system</a></li>
+		<li><a href="https://pdos.csail.mit.edu/6.S081/2020/labs/mmap.html">Lab mmap</a></li>
+		<li><a href="https://pdos.csail.mit.edu/6.S081/2020/labs/net.html">Lab network driver</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="https://pdos.csail.mit.edu/6.S081/2020/tools.html#" class="dropdown-toggle" data-toggle="dropdown">xv6<span class="caret"></span></a>
+	      <ul class="dropdown-menu" role="menu">
+		<li><a href="https://pdos.csail.mit.edu/6.S081/2020/xv6.html">xv6</a></li>
+		<li><a href="https://pdos.csail.mit.edu/6.S081/2020/xv6/book-riscv-rev1.pdf">xv6 book</a></li>
+	      </ul>
+	    </li>
+	    <li><a href="https://pdos.csail.mit.edu/6.S081/2020/reference.html">References</a></li>  
+	    <li><a href="https://piazza.com/class/kdejeo2qbpo7g1">Piazza</a></li>
+          </ul>
+	  <ul class="nav navbar-nav navbar-right">
+	    <p class="navbar-text">2020</p>
+	  </ul>
+        </div>
+      </div>
+    </div>
+
+
+<div class="container">
+
+
+
+
+
+<style type="text/css">
+.l {
+	margin-left: 4em;
+}
+</style>
+
+<script type="text/javascript">
+function unfoldinstrux(unfold) {
+  var e = document.getElementById("installinstrux");
+  e.className = unfold ? "foldo" : "foldc";
+}
+</script>
+
+<h1>
+Tools Used in 6.S081
+</h1>
+
+<p>For this class you'll need the RISC-V versions of a couple different tools:
+QEMU 5.1, GDB 8.3, GCC, and Binutils.</p>
+
+<p>We highly recommend using a Debathena machine, such as athena.dialup.mit.edu, to
+work on the labs.  If you use the MIT Athena machines that run Linux, then all
+of these tools are located in the 6.828 locker: just type '<samp>add -f
+6.828</samp>' to get access to them. If you don't have access to a Debathena
+machine, you can install the tools directly or use virtual machine with Linux
+via the instructions below.</p>
+
+<p>If you are having trouble getting things set up, please come by to office
+hours or post on Piazza. We're happy to help!</p>
+
+<h3>Using Athena</h3>
+
+<p>ssh into one of the Athena dialup machines and add the tools:
+
+</p><pre>$ ssh {your kerberos}@athena.dialup.mit.edu
+$ add -f 6.828
+</pre>
+
+
+<h3>Installing on macOS</h3>
+
+<p>First, install developer tools:
+
+</p><pre>$ xcode-select --install
+</pre>
+
+<p>Next, install <a href="https://brew.sh/">Homebrew</a>, a package manager for macOS:
+
+</p><pre>$ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+</pre>
+
+<p>Next, install the <a href="https://github.com/riscv/homebrew-riscv">RISC-V compiler toolchain</a>:
+
+</p><pre>$ brew tap riscv/riscv
+$ brew install riscv-tools
+</pre>
+
+<p>The brew formula may not link into <tt>/usr/local</tt>. You will need to
+update your shell's rc file (e.g. <a href="https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html">~/.bashrc</a>)
+to add the appropriate directory to <a href="http://www.linfo.org/path_env_var.html">$PATH</a>.
+
+</p><pre>PATH=$PATH:/usr/local/opt/riscv-gnu-toolchain/bin
+</pre>
+
+<p>Finally, install QEMU:
+
+</p><pre>brew install qemu
+</pre>
+
+<h3>Installing via APT (Debian/Ubuntu)</h3>
+<p>Make sure you are running either "bullseye" or "sid" for your debian version (on ubuntu this can be checked by running <tt>cat /etc/debian_version</tt>), then run:</p>
+<pre>sudo apt-get install git build-essential gdb-multiarch qemu-system-misc gcc-riscv64-linux-gnu binutils-riscv64-linux-gnu </pre>
+
+<p>(The version of QEMU on "buster" is too old, so you'd have to get that separately.)</p>
+
+<h4>qemu-system-misc fix</h4>
+At this moment in time, it seems that the package <tt>qemu-system-misc</tt> has received an update that breaks its compatibility with our kernel. If you run <tt>make qemu</tt> and the script appears to hang after<br><tt>qemu-system-riscv64 -machine virt -bios none -kernel kernel/kernel -m 128M -smp 3 -nographic -drive file=fs.img,if=none,format=raw,id=x0 -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0</tt><br> you'll need to uninstall that package and install an older version:
+<pre>  $ sudo apt-get remove qemu-system-misc
+  $ sudo apt-get install qemu-system-misc=1:4.2-3ubuntu6
+</pre>
+
+<h3>Installing on Arch</h3>
+<pre>sudo pacman -S riscv64-linux-gnu-binutils riscv64-linux-gnu-gcc riscv64-linux-gnu-gdb qemu-arch-extra</pre>
+
+<h3>Other Linux distributions (i.e. compiling your own toolchain)</h3>
+<p>We assume that you are installing the toolchain into
+<tt>/usr/local</tt> on a modern Ubuntu installation.  You will need a fair amount of disk space to compile
+the tools (around 9GiB).  If you don't have that much space, consider using an MIT Athena machine.</p>
+
+<p>First, clone the repository for the RISC-V GNU Compiler Toolchain:
+
+</p><pre>$ git clone --recursive https://github.com/riscv/riscv-gnu-toolchain
+</pre>
+
+<p>Next, make sure you have the packages needed to compile the toolchain:
+
+</p><pre>$ sudo apt-get install autoconf automake autotools-dev curl libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev
+</pre>
+
+<p> Configure and build the toolchain:
+
+</p><pre>$ cd riscv-gnu-toolchain
+$ ./configure --prefix=/usr/local
+$ sudo make
+$ cd ..
+</pre>
+
+
+<p> Next, retrieve and extract the source for QEMU 5.1.0:
+</p><pre>$ wget https://download.qemu.org/qemu-5.1.0.tar.xz
+$ tar xf qemu-5.1.0.tar.xz
+</pre>
+
+<p> Build QEMU for riscv64-softmmu:
+
+</p><pre>$ cd qemu-5.1.0
+$ ./configure --disable-kvm --disable-werror --prefix=/usr/local --target-list="riscv64-softmmu"
+$ make
+$ sudo make install
+$ cd ..
+</pre>
+
+<h3>Windows (i.e. running a Linux VM)</h3>
+<p>We haven't tested it, but it might be possible to get everything you need via
+  the Windows Subsystem for Linux or otherwise compiling the tools yourself.</p>
+
+<p>However, an easier option would probably be to run a virtual machine with one
+  of the other operating systems listed above. With platform virtualization,
+  Linux can cohabitate with your normal computing environment.  Installing a
+  Linux virtual machine is a two step process.  First, you download the
+  virtualization platform.</p>
+
+  <ul><li><a href="https://www.virtualbox.org/"><strong>VirtualBox</strong></a>
+  (free for Mac, Linux, Windows) — <a href="https://www.virtualbox.org/wiki/Downloads">Download
+  page</a></li>
+  <li><a href="http://www.vmware.com/products/player/">VMware
+  Player</a> (free for Linux and Windows, registration required)</li>
+  <li><a href="http://www.vmware.com/products/fusion/">VMware
+  Fusion</a> (Downloadable from IS&amp;T for free).
+  </li></ul>
+
+  <p>VirtualBox is a little slower and less flexible, but free!</p>
+
+  <p>Once the virtualization platform is installed, download a boot
+  disk image for the Linux distribution of your choice.</p>
+
+  <ul><li><a href="http://www.ubuntu.com/download/desktop">Ubuntu
+  Desktop</a> is one option.</li>
+  </ul>
+
+  <p>This will download a file named something like
+  <tt>ubuntu-18.04.3-desktop-amd64.iso</tt>.  Start up your
+  virtualization platform and create a new (64-bit) virtual machine.
+  Use the downloaded Ubuntu image as a boot disk; the
+  procedure differs among VMs but is pretty simple.
+</p>
+
+<h2> Testing your Installation </h2>
+<p>To test your installation, you should be able to check the following:
+
+</p><pre>$ riscv64-unknown-elf-gcc --version
+riscv64-unknown-elf-gcc (GCC) 10.1.0
+...
+
+$ qemu-system-riscv64 --version
+QEMU emulator version 5.1.0
+</pre>
+
+You should also be able to compile and run xv6:
+
+<pre># in the xv6 directory
+$ make qemu
+# ... lots of output ...
+init: starting sh
+$
+</pre>
+
+To quit qemu type: Ctrl-a x.
+
+<!-- End Page Content -->
+
+<hr>
+
+<font style="font-size: 12px;">
+<p>Questions or comments regarding S6.081?  Send e-mail to the course staff at
+<a href="mailto:6s081@lists.csail.mit.edu"><i>6S081@lists.csail.mit.edu</i></a>.
+
+</p></font><p><font style="font-size: 12px;"><a rel="license" href="https://creativecommons.org/licenses/by/3.0/us/"><img alt="Creative Commons License" style="border-width:0" src="./6.S081 _ Fall 2020_files/88x31.png"></a> <b><a href="https://pdos.csail.mit.edu/6.S081/2020/tools.html#top">Top</a></b> //
+<b><a href="https://pdos.csail.mit.edu/6.S081/2020/index.html">S6.081 home</a></b> // 
+<i>Last updated Wednesday, 22-Sep-2021 12:14:49 EDT</i>
+</font>
+
+</p></div>
+
+<script src="./6.S081 _ Fall 2020_files/jquery-1.10.2.min.js.&#19979;&#36733;"></script>
+<script src="./6.S081 _ Fall 2020_files/bootstrap.min.js.&#19979;&#36733;"></script>
+
+
+
+
+
+<!--  LocalWords:  Cygwin cygwin Toolchain Linuxes BSDs toolchain gcc ld jos cd
+ -->
+<!--  LocalWords:  objdump conf GCCPREFIX linux binutils libstdc GNUmakefile sh
+ -->
+<!--  LocalWords:  Bochs athena scp username bochs prebuilt wget xzvf
+ -->
+<!--  LocalWords:  disasm
+ -->
+</body></html>

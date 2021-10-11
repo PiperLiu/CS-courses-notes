@@ -7,6 +7,7 @@
 <!-- code_chunk_output -->
 
 - [课前预习：阅读教材第一章](#课前预习阅读教材第一章)
+- [作业](#作业)
 
 <!-- /code_chunk_output -->
 
@@ -23,6 +24,7 @@
       - [system call: fork](#system-call-fork)
       - [system call: exec](#system-call-exec)
       - [main structure of shell](#main-structure-of-shell)
+- [作业](#作业)
 
 <!-- /code_chunk_output -->
 
@@ -123,3 +125,40 @@ printf("exec error\n");
 ##### main structure of shell
 
 `shell` 的 `main` 是一个 `loop` ，用 `getcmd` 读输入，然后调用 `fork` （ `creates a copy of the shell process` ）。
+
+参考：[https://github.com/mit-pdos/xv6-riscv/blob/riscv//user/sh.c#L145](https://github.com/mit-pdos/xv6-riscv/blob/riscv//user/sh.c#L145)
+
+```c
+main(void)
+{
+  static char buf[100];
+  int fd;
+
+  // Ensure that three file descriptors are open.
+  while((fd = open("console", O_RDWR)) >= 0){
+    if(fd >= 3){
+      close(fd);
+      break;
+    }
+  }
+
+  // Read and run input commands.
+  while(getcmd(buf, sizeof(buf)) >= 0){
+    if(buf[0] == 'c' && buf[1] == 'd' && buf[2] == ' '){
+      // Chdir must be called by the parent, not the child.
+      buf[strlen(buf)-1] = 0;  // chop \n
+      if(chdir(buf+3) < 0)
+        fprintf(2, "cannot cd %s\n", buf+3);
+      continue;
+    }
+    if(fork1() == 0)
+      runcmd(parsecmd(buf));
+    wait(0);
+  }
+  exit(0);
+}
+```
+
+原来 `cd` 指令不是个进程，牛逼。
+
+## 作业

@@ -1,0 +1,68 @@
+body { 
+  min-height: 2000px;
+  padding-top: 70px;
+  background-color: #ffffff;
+  font-family: verdana, arial, helvetica, sans-serif;
+}
+
+.navbar-default {
+  background-color: #8a0a0a;
+}
+
+.navbar-brand {
+ background-color: black;
+}
+
+.navbar-default .navbar-brand {
+ color:white;
+}
+
+.navbar-default .navbar-nav>li>a {
+  color: white;
+  font-weight: 900;
+  font-size: 14px;
+}
+
+.navbar-default .navbar-text {
+ background-color: black;
+ color: white;
+ font-weight: 900;
+ font-size: 14px;
+}
+
+yp { font-size: 13px; }
+ol { font-size: 13px; }
+ul { font-size: 13px; }
+pre { font-family: "courier new", courier, mono; color: #ca0a0a; font-size: 13px; }
+
+.toc {
+    background-color: #e0e0ff;
+    border: 1px solid #c0c0ff;
+    margin: 1em auto;
+    padding: 0px 1em;
+    width: 50%;
+}
+.toc th {
+    text-align: left;
+}
+.toc a {
+    padding-right: 0.5em;
+    color: blue;
+}
+dt {
+    -webkit-transition: background 0.5s linear;
+    -moz-transition: background 0.5s linear;
+    -o-transition: background 0.5s linear;
+    transition: background 0.5s linear;
+}
+dt:target {
+    background-color: #ccf;
+}
+
+h2 {
+    border-bottom: 1px solid #000;
+}
+
+.foldc .fx, .foldo .fn {
+  display: none;
+}
