@@ -43,3 +43,4 @@ sep 2
 - Homework 1 due: Question
 - Assignment: <a href="./docs/assignment/Lab_ Xv6 and Unix utilities.html">Lab util: Unix utilities</a>
 
+笔记：[./docs/drafts/lec.01.md](./docs/drafts/lec.01.md)
