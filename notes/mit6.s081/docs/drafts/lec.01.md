@@ -24,6 +24,11 @@
       - [system call: fork](#system-call-fork)
       - [system call: exec](#system-call-exec)
       - [main structure of shell](#main-structure-of-shell)
+    - [1.2 I/O and File descriptors](#12-io-and-file-descriptors)
+    - [1.3 Pipes](#13-pipes)
+    - [1.4 File system](#14-file-system)
+    - [1.5 Real world](#15-real-world)
+    - [1.6 Exercises](#16-exercises)
 - [作业](#作业)
 
 <!-- /code_chunk_output -->
@@ -153,12 +158,27 @@ main(void)
     }
     if(fork1() == 0)
       runcmd(parsecmd(buf));
-    wait(0);
+    wait(0);  // runcmd 执行完毕则 return from wait
   }
   exit(0);
 }
 ```
 
-原来 `cd` 指令不是个进程，牛逼。
+原来只有 `cd` 指令不是个进程，牛逼。
+
+Xv6 隐式地分配大部分用户态内存：
+- `fork` 为子进程分配父进程的内存拷贝
+- `exec` 为可执行文件分配足够内存
+- 诸如 `malloc` 这种在运行时需要更多内存的进程，可以调用 `sbrk(n)` 来增加数据内存， `n` 表示 `n` 字节， `sbrk` 返回新内存的位置
+
+#### 1.2 I/O and File descriptors
+
+#### 1.3 Pipes
+
+#### 1.4 File system
+
+#### 1.5 Real world
+
+#### 1.6 Exercises
 
 ## 作业
