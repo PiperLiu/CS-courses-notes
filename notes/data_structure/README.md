@@ -68,7 +68,12 @@
 ### 第四讲 树（中）
 
 现在的笔记：
-- [平衡二叉树拾遗](../../DataStructure_数据结构/course_3/5_平衡二叉树拾遗.md)
+- [二叉搜索树拾遗](../../DataStructure_数据结构/course_4/1_二叉搜索树拾遗.md)
+- [平衡二叉树拾遗](../../DataStructure_数据结构/course_4/2_平衡二叉树拾遗.md)
+
+代码：
+- [二叉搜索树的插入与删除](./codes/4.1.二叉搜索树的插入与删除)
+- [AVL树的旋转与插入.c](./codes/4.2.AVL树的旋转与插入.c)
 
 习题与作业：
 - [./homeworks/ds.4.chap.md](./homeworks/ds.4.chap.md)
