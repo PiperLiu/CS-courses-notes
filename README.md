@@ -29,9 +29,9 @@
 
 ## 目前已学习内容📕
 
-🍔 跟着 **视频课程过了一遍** 的课程有：🍳数据结构（[52篇CSDN笔记](https://blog.csdn.net/weixin_42815609/category_9239803.html)）；🥙操作系统（[24篇CSDN笔记](https://blog.csdn.net/weixin_42815609/category_9238763.html)）；🍜计算机组成原理（[29篇CSDN笔记](https://blog.csdn.net/weixin_42815609/category_9471944.html)）；🍩编译原理（[20篇CSDN笔记](https://blog.csdn.net/weixin_42815609/category_9461302.html)）；🥩汇编（[22篇CSDN笔记](https://blog.csdn.net/weixin_42815609/category_9523771.html)）；
+🍔 跟着 **视频课程过了一遍** 的课程有：🍳数据结构（[52篇CSDN笔记](https://blog.csdn.net/weixin_42815609/category_9239803.html)）；🥙操作系统（[24篇CSDN笔记](https://blog.csdn.net/weixin_42815609/category_9238763.html)）；🍜计算机组成原理（[29篇CSDN笔记](https://blog.csdn.net/weixin_42815609/category_9471944.html)）；🍩编译原理（[20篇CSDN笔记](https://blog.csdn.net/weixin_42815609/category_9461302.html)）；🥩汇编（[22篇CSDN笔记](https://blog.csdn.net/weixin_42815609/category_9523771.html)）；🍰台大李宏毅机器学习（[64篇CSDN笔记](https://blog.csdn.net/weixin_42815609/category_10214178.html)）
 
-🚒 本仓库中 **基础课** 笔记有：🚗数据结构（[本仓库二刷笔记](./notes/data_structure/README.md)）；🚜MIT6.S081: Operating System Engineering（[笔记](./notes/mit6.s081/README.md)）
+🚒 本仓库中 **好好做作业的（含课程资源）** 笔记有：🚗数据结构（[本仓库二刷笔记](./notes/data_structure/README.md)）；🚜MIT6.S081: Operating System Engineering（[笔记](./notes/mit6.s081/README.md)）
 
 👨‍🦳 本仓库中 **读书** 笔记有：
 

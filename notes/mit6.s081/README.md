@@ -26,7 +26,7 @@ B 站视频：
 实验：
 - 本课程用到 `xv6` 系统，我从 `GitHub` 上 `fork` 了一个：https://github.com/PiperLiu/xv6-riscv
 - 本课程进行实验的作业系统： `git clone git://g.csail.mit.edu/xv6-labs-2020`
-  - 我也放到 `GitHub` 上了：https://github.com/PiperLiu/xv6-labs-2020
+  - 我也放到 `GitHub` 上了（❗❗这个仓库很重要❗❗）：https://github.com/PiperLiu/xv6-labs-2020
   - 大佬已经写完了作业，我可以参考答案：https://github.com/silvermagic/xv6-labs-2020
 
 参考：
