@@ -81,6 +81,12 @@
 
 ### 第五讲 树（下）
 
+本节讲堆，可以参考我算法基础课的笔记：https://github.com/PiperLiu/ACMOI_Journey/blob/master/notes/acwings/算法基础课/ybase05.md#堆
+
+补充笔记：
+- [哈夫曼树与哈夫曼编码](../../DataStructure_数据结构/course_5/1_哈夫曼树与哈夫曼编码.md)
+- [集合（并查集）](../../DataStructure_数据结构/course_5/2_集合（并查集）.md)
+
 代码：
 - [堆的定义与操作](./codes/5.1.堆的定义与操作.c)
 - [集合的定义与并查操作](./codes/5.3.集合的定义与并查操作.c)
