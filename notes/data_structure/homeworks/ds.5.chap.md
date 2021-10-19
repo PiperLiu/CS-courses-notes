@@ -254,13 +254,15 @@ int main()
 // - 有没有度为1的节点
 // - 有没有是编码终点但是不是叶节点的
 #include <iostream>
-#incldue <cstring>
+#include <cstring>
 #include <queue>
 using namespace std;
 
-const int N = 130;  // n 个字符，合并 n - 1 次，新增 n - 1 个节点
+const int N = 130, M = 65;  // n 个字符，合并 n - 1 次，新增 n - 1 个节点
 
-int n, l[N], r[N], idx;
+char g[M][M];
+int n, l[N], r[N], idx, st[N];
+int w[M];
 
 int char2int(char c)
 {
@@ -269,8 +271,6 @@ int char2int(char c)
     if (c >= 'A' && c <= 'Z') return c - 'A' + 'z' - 'a' + 1;
     return '9' - '0' + 1 + 'z' - 'a' + 1 + 'Z' - 'A' + 1;
 }
-
-
 
 int main()
 {
@@ -284,9 +284,10 @@ int main()
         int a, b;
         cin >> c >> b;
         a = char2int(c);
+        w[a] = b;
         q.push(-b);
     }
-    // 建一下树
+    // 建一下树求 wpl
     int best_wpl = 0;
     while (q.size())
     {
@@ -301,7 +302,88 @@ int main()
             q.push(- new_node);
         }
     }
-}
+    
+    int m;
+    cin >> m;
+    while (m --)
+    {
+        int wpl = 0;
+        idx = 0;
+        memset(l, -1, sizeof l);
+        memset(r, -1, sizeof r);
+        memset(st, 0, sizeof st);
+        for (int i = 0; i < n; ++ i)
+        {
+            char c;
+            cin >> c >> g[i];
+            wpl += w[char2int(c)] * strlen(g[i]);
+            // 建树
+            int root = 0, j = 0;
+            while (g[i][j])
+            {
+                if (g[i][j] == '0')
+                {
+                    if (l[root] == -1)
+                    {
+                        l[root] = ++ idx;
+                        root = idx;
+                    }
+                    else root = l[root];
+                }
+                else
+                {
+                    if (r[root] == -1)
+                    {
+                        r[root] = ++ idx;
+                        root = idx;
+                    }
+                    else root = r[root];
+                }
+                
+                j ++ ;
+            }
+            st[root] = true;  // 标记一下这个是编码终点
+        }
 
-... 没写完
+        // 检查 wpl
+        if (wpl != best_wpl)
+        {
+            cout << "No\n";
+            continue;
+        }
+
+        // 遍历检查树
+        bool flag = true;
+        queue<int> nodes;
+        nodes.push(0);
+        while (nodes.size())
+        {
+            int t = nodes.front();
+            nodes.pop();
+            if (l[t] == -1 && r[t] != -1 || l[t] != -1 && r[t] == -1)
+            {
+                flag = false;
+                break;
+            }
+            if (l[t] != -1 && r[t] != -1)
+            {
+                if (st[t])
+                {
+                    flag = false;
+                    break;
+                }
+                nodes.push(l[t]);
+                nodes.push(r[t]);
+            }
+            else if (l[t] != -1 || r[t] != -1)
+            {
+                flag = false;
+                break;
+            }
+        }
+        
+        if (flag) cout << "Yes\n";
+        else cout << "No\n";
+    }
+}
 ```
