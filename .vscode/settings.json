@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "*.m": "matlab",
+        "stdio.h": "c",
+        "stdlib.h": "c",
+        "types.h": "c",
+        "unistd.h": "c"
+    }
+}

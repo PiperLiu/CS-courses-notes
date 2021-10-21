@@ -14,6 +14,8 @@
 
 ### 🥂课程资料
 
+实际上，这门课就是大名鼎鼎的 MIT 6.828 ，只不过2020年课号改成了 6.S081 。
+
 官方课程安排与资源索引：
 - [https://pdos.csail.mit.edu/6.S081/2020/schedule.html](https://pdos.csail.mit.edu/6.S081/2020/schedule.html)
 
@@ -50,4 +52,6 @@ sep 2
 - Homework 1 due: Question
 - Assignment: <a href="./docs/assignment/Lab_ Xv6 and Unix utilities.html">Lab util: Unix utilities</a>
 
-笔记：[./docs/drafts/lec.01.md](./docs/drafts/lec.01.md)
+我认真读了书（第一张，一些 Unix 6 接口简单原理与使用），记了笔记：[./docs/drafts/lec.01.md](./docs/drafts/lec.01.md)。
+
+然后听课，课堂笔记：[./docs/drafts/lec.01c.md](./docs/drafts/lec.01c.md) 。
