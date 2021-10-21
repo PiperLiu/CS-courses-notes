@@ -1,13 +1,16 @@
 # LEC 1 (rtm): Introduction and examples
 
+笔记大量参考了[肖宏辉](https://www.zhihu.com/people/xiao-hong-hui-15)大佬的翻译：
+- https://www.zhihu.com/column/c_1294282919087964160
+
 目录：
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=2 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [课前预习：阅读教材第一章](#课前预习阅读教材第一章)
-- [补充知识点](#补充知识点)
+- [课程简介：操作系统做哪些事](#课程简介操作系统做哪些事)
+- [计算机系统](#计算机系统)
 
 <!-- /code_chunk_output -->
 
@@ -17,599 +20,72 @@
 
 <!-- code_chunk_output -->
 
-- [课前预习：阅读教材第一章](#课前预习阅读教材第一章)
-  - [Foreword and acknowledgments](#foreword-and-acknowledgments)
-  - [Chapter 1 Operating system interfaces](#chapter-1-operating-system-interfaces)
-    - [1.1 Processes and memory](#11-processes-and-memory)
-      - [system call: fork](#system-call-fork)
-      - [system call: exec](#system-call-exec)
-      - [main structure of shell](#main-structure-of-shell)
-    - [1.2 I/O and File descriptors](#12-io-and-file-descriptors)
-      - [文件描述符 file descriptor](#文件描述符-file-descriptor)
-      - [文件描述符补充知识](#文件描述符补充知识)
-      - [open和write](#open和write)
-      - [close和文件重定向](#close和文件重定向)
-      - [dup和文件重定向](#dup和文件重定向)
-    - [1.3 Pipes](#13-pipes)
-    - [1.4 File system](#14-file-system)
-      - [数据结构inode](#数据结构inode)
-      - [文件封装命令以及cd](#文件封装命令以及cd)
-    - [1.5 Real world](#15-real-world)
-    - [1.6 Exercises](#16-exercises)
-- [补充知识点](#补充知识点)
-  - [子进程中使用两次fork](#子进程中使用两次fork)
+- [课程简介：操作系统做哪些事](#课程简介操作系统做哪些事)
+- [计算机系统](#计算机系统)
+  - [Kernel在干什么](#kernel在干什么)
+  - [系统调用以及例子](#系统调用以及例子)
+  - [为什么操作系统的设计是困难且有趣的？](#为什么操作系统的设计是困难且有趣的)
 
 <!-- /code_chunk_output -->
 
-## 课前预习：阅读教材第一章
+## 课程简介：操作系统做哪些事
 
-教材：[../lec/book-riscv-rev1.pdf](../lec/book-riscv-rev1.pdf)
+对于操作系统的目标，我也列出了几个点。你知道的，市面上有大量不同的操作系统，通常来说，他们都有一些共同的目标。
+- 第一个就是抽象硬件。通常来说，你会买一个计算机，里面包含了CPU，内存，但是这是一种非常低层级的资源。幸好我们有一些应用程序实现了高层级的接口和抽象，例如进程，文件系统。这些高层级的接口和抽象（`Abstraction`）方便了应用的开发，也提供了更好的移植性。
+- 操作系统的另一个重要的任务是：在多个应用程序之间共用硬件资源。你可以在一个操作系统同时运行文本编辑器，程序编译器，多个数据库等等。操作系统能非常神奇的在不相互干扰的前提下，同时运行这些程序。这里通常被称为`multiplex`。
+- 因为在操作系统中可能同时运行很多程序，即使程序出现了故障，多个程序之间互不干扰就变得非常重要。所以这里需要隔离性（`Isolation`），不同的活动之间不能相互干扰。
+- 但是另一方便，不同的活动之间有时又想要相互影响，比如说数据交互，协同完成任务等。举个例子，我通过文本编辑器创建了一个文件，并且我希望我的编译器能读取文件，我绝对想要数据能共享。所以，我们希望能在需要的时候实现共享（`Sharing`）。
+- 但是在很多场景下，用户并不想要共享，比如你登录到了一个公共的计算机，例如`Athena`，你不会想要其他人来读取你的文件。所以在共享的同时，我们也希望在没有必要的时候不共享。这里我们称为`Security`或者`Permission System`或者是`Access Control System`。
+- 另一个人们认为操作系统应该具有的价值是：如果你在硬件上花费了大量的金钱，你会期望你的应用程序拥有硬件应该提供的完整性能，但是很多时候你只负责应用程序编程，你会期望操作系统也必须保证自身提供的服务不会阻止应用程序获得高性能。所以操作系统需要至少不阻止应用程序获得高性能，甚至需要帮助应用程序获得高性能（`Performance`）。
+- 最后，对于大部分操作系统，必须要支持大量不同类型的应用程序，或许这是一个笔记本，正在运行文本编辑器，正在运行游戏，或许你的操作系统需要支持数据库服务器和云计算。通常来说，设计并构造一个操作系统代价是非常大的，所以人们总是希望在相同的操作系统上，例如`Linux`，运行大量的任务。我认为大部分人都已经跑过`Linux`，并使用了我刚刚描述的所有的场景。所以，同一个操作系统需要能够支持大量不同的用户场景。
 
-### Foreword and acknowledgments
+## 计算机系统
 
-xv6 基于 Unix 之父的 Unix Version 6 （最经典的操作系统），并且，是基于 `ANSI C for a multi-core RISC-V` 实现的。
+### Kernel在干什么
 
-### Chapter 1 Operating system interfaces
+![](./images/2021102103.png)
 
-什么是操作系统？
+区别于用户空间程序，有一个特殊的程序总是会在运行，它称为`Kernel`。`Kernel`是计算机资源的守护者。当你打开计算机时，`Kernel`总是第一个被启动。`Kernel`程序只有一个，它维护数据来管理每一个用户空间进程。`Kernel`同时还维护了大量的数据结构来帮助它管理各种各样的硬件资源，以供用户空间的程序使用。`Kernel`同时还有大量内置的服务，例如，`Kernel`通常会有文件系统实现类似文件名，文件内容，目录的东西，并理解如何将文件存储在磁盘中。所以用户空间的程序会与`Kernel`中的文件系统交互，文件系统再与磁盘交互。
 
-The job of an operating system is to share a computer among multiple programs and to provide a more useful set of services than the hardware alone supports. An operating system manages and abstracts the low-level hardware, so that, for example, a word processor need not concern itself with which type of disk hardware is being used. An operating system shares the hardware among multiple programs so that they run (or appear to run) at the same time. Finally, operating systems provide controlled ways for programs to interact, so that they can share data or work together.
+在这门课程中，我们主要关注点在`Kernel`、连接`Kernal`和用户空间程序的接口、`Kernel`内软件的架构。所以，我们会关心`Kernel`中的服务，其中一个服务是文件系统，另一个就是进程管理系统。每一个用户空间程序都被称为一个进程，它们有自己的内存和共享的CPU时间。同时，`Kernel`会管理内存的分配。不同的进程需要不同数量的内存，`Kernel`会复用内存、划分内存，并为所有的进程分配内存。
 
-我概括一下：
-- 封装硬件，给应用程序提供运行环境
-- 调配应用程序间资源
+文件系统通常有一些逻辑分区。目前而言，我们可以认为文件系统的作用是管理文件内容并找出文件具体在磁盘中的哪个位置。文件系统还维护了一个独立的命名空间，其中每个文件都有文件名，并且命名空间中有一个层级的目录，每个目录包含了一些文件。所有这些都被文件系统所管理。
 
-接着这里阐明了为什么用 xv6 系统。系统精简巧妙，其基于的 Unix v6 是最经典的操作系统，是现代操作系统的鼻祖：
-- 接口单一，但是泛化性很强（功能强）
-- 设计思维影响了几乎所有现代操作系统
+这里还有一些安全的考虑，我们可以称之为`Access Control`。当一个进程想要使用某些资源时，比如读取磁盘中的数据，使用某些内存，`Kernel`中的`Access Control`机制会决定是否允许这样的操作。对于一个分时共享的计算机，例如`Athena`系统，这里可能会变得很复杂。因为在`Athena`系统中，每一个进程可能属于不同的用户，因此会有不同`Access`规则来约定哪些资源可以被访问。
 
-![](./images/2021101101.png)
+在一个真实的完备的操作系统中，会有很多很多其他的服务，比如在不同进程之间通信的进程间通信服务，比如一大票与网络关联的软件（`TCP/IP`协议栈），比如支持声卡的软件，比如支持数百种不同磁盘，不同网卡的驱动。所以在一个完备的系统中，`Kernel`会包含大量的内容，数百万行代码。
 
-如上，按我的理解， `cat` 应该也和 `shell` 一样，也是一个 `process` 。上图中， `shell` 发起了一个系统调用 `system call` 。
+### 系统调用以及例子
 
-![](./images/2021101102.png)
-
-Xv6 实现了 Unix v6 的系统调用的子集。
-
-#### 1.1 Processes and memory
-
-进程 process 由以下部分组成：
-- 用户态内存 user-space memory ： instructions, data, stack
-- 在内核状态 per-process state private to the kernel
-
-Xv6 管理进程：在后台给进程切换可用 CPU ，进程挂起（保存 its CPU registers, restoring them when it next runs the process），分配 PID 等。
-
-##### system call: fork
-
-一个进程创建新的 process ，可以用系统调用 `fork` 。
-
-`fork` 父子进程的内存相同，父进程返回子进程 PID ，子进程返回 0 。
+我们同时也对应用程序是如何与`Kernel`交互，它们之间的接口长什么样感兴趣。这里通常成为`Kernel`的`API`，它决定了应用程序如何访问`Kernel`。通常来说，这里是通过所谓的系统调用（`System Call`）来完成。
 
 ```c
-int pid = fork();
-if (pid > 0) {
-    printf("parent: child=%d\n", pid);
-    pid = wait((int *) 0);
-    printf("child %d is done\n", pid);
-} else if (pid == 0) {
-    printf("child: exiting\n");
-    exit(0);
-} else {
-    printf("fork error\n");
-}
+fd = open("out", 1);
+write(fd, "hello\n", 6);
+pid = fork();
 ```
 
-如上程序，可能输出：
-```
-parent: child=1234
-child: exiting
-parent: child 1234 is done
-```
+第一个例子是，如果应用程序需要打开一个文件，它会调用名为`open`的系统调用，并且把文件名作为参数传给`open`。假设现在要打开一个名为“`out`”的文件，那么会将文件名“`out`”作为参数传入。同时我们还希望写入数据，那么还会有一个额外的参数，在这里这个参数的值是`1`，表明我想要写文件。
 
-解释一下重点：
-- `wait` 返回当前进程子进程的 `PID` ，并且传入一个指针，这个指针将被修改为指向 `child exit status`
-- 父进程 `wait` 后，开始等待子进程结束，而子进程复制了父进程的内容，因此会把程序再执行一遍，只不过因为其子进程身份，`fork()` 返回的是 `0`
-- 所以，如果我们不在乎 `child exit status` 可以传入一个无所谓的 0 指针（`(int *) 0`）
-- 初始化时，父子进程的 `memory` 与 `registers` 相同，但之后改变其中一个的变量并不影响另一个的变量
+这里看起来像是个函数调用，但是`open`是一个系统调用，它会跳到`Kernel`，`Kernel`可以获取到`open`的参数，执行一些实现了`open`的`Kernel`代码，或许会与磁盘有一些交互，最后返回一个文件描述符对象。上图中的`fd`全称就是`file descriptor`。之后，应用程序可以使用这个文件描述符作为`handle`，来表示相应打开的文件。
 
-##### system call: exec
+如果你想要向文件写入数据，相应的系统调用是`write`。你需要向`write`传递一个由`open`返回的文件描述符作为参数。你还需要向`write`传递一个指向要写入数据的指针（数据通常是`char`型序列），在C语言中，可以简单传递一个双引号表示的字符串（`\n`表示是换行）。第三个参数是你想要写入字符的数量。
 
-`exec` 系统调用会把 calling process 的内存用新内存快照替换掉，这个内存快照会遵守特定的格式：
-- ELF 格式（第三章将会详细讨论）
-- 包括数据区、指令从哪里开始
+第二个参数的指针，实际上是内存中的地址。所以这里实际上告诉内核，将内存中这个地址起始的`6`个字节数据写入到`fd`对应的文件中。
 
-`exec` 成功执行后，并不返回调用它的程序（ calling process ），而是到 ELF header 那里。
+另一个你可能会用到的，更有意思的系统调用是`fork`。`fork`是一个这样的系统调用，它创建了一个与调用进程一模一样的新的进程，并返回新进程的`process ID/pid`。这里实际上会复杂的多，我们后面会有更多的介绍。
 
-`exec` 有两个参数：
-- 可执行文件名
-- 参数（`an array of string`）
+> 学生提问：系统调用跳到内核与标准的函数调用跳到另一个函数相比，区别是什么？
 
-```c
-char *argv[3];
+> `Robert`教授：`Kernel`的代码总是有特殊的权限。当机器启动`Kernel`时，`Kernel`会有特殊的权限能直接访问各种各样的硬件，例如磁盘。而普通的用户程序是没有办法直接访问这些硬件的。所以，当你执行一个普通的函数调用时，你所调用的函数并没有对于硬件的特殊权限。然而，如果你触发系统调用到内核中，内核中的具体实现会具有这些特殊的权限，这样就能修改敏感的和被保护的硬件资源，比如访问硬件磁盘。我们之后会介绍更多有关的细节。
 
-argv[0] = "echo";
-argv[1] = "hello";
-argv[2] = 0;
-exec("/bin/echo", argv);
-printf("exec error\n");
-```
+### 为什么操作系统的设计是困难且有趣的？
 
-我们的程序在、是 `/bin/echo` 文件；大部分程序会无视参数数组的第一个，因为那个往往是程序名称。
+- 高效又易用：高效通常意味着操作系统需要在离硬件近的low-level进行操作，而易用则要求操作系统为应用程序提供抽象的high-level可移植接口
+- 强大的操作系统服务：我们不想程序员看到数量巨多，复杂且难以理解的的内核接口。因为，如果他们不理解这些接口，他们就会很难使用这些接口。所以，我们也想要简单的API。所以，这里要提供一个简单的接口，同时又包含了强大的功能。
+- 自由又安全：你希望给与应用程序尽可能多的灵活性，你不会想要限制应用程序，所以你需要内核具备灵活的接口。但是另一方面，你的确需要在某种程度上限制应用程序，因为你会想要安全性。我们希望给程序员完全的自由，但是实际上又不能是真正的完全自由，因为我们不想要程序员能直接访问到硬件，干扰到其他的应用程序，或者干扰操作系统的行为。
 
-##### main structure of shell
-
-`shell` 的 `main` 是一个 `loop` ，用 `getcmd` 读输入，然后调用 `fork` （ `creates a copy of the shell process` ）。
-
-参考：[https://github.com/mit-pdos/xv6-riscv/blob/riscv//user/sh.c#L145](https://github.com/mit-pdos/xv6-riscv/blob/riscv//user/sh.c#L145)
-
-```c
-main(void)
-{
-  static char buf[100];
-  int fd;
-
-  // Ensure that three file descriptors are open.
-  while((fd = open("console", O_RDWR)) >= 0){
-    if(fd >= 3){
-      close(fd);
-      break;
-    }
-  }
-
-  // Read and run input commands.
-  while(getcmd(buf, sizeof(buf)) >= 0){
-    if(buf[0] == 'c' && buf[1] == 'd' && buf[2] == ' '){
-      // Chdir must be called by the parent, not the child.
-      buf[strlen(buf)-1] = 0;  // chop \n
-      if(chdir(buf+3) < 0)
-        fprintf(2, "cannot cd %s\n", buf+3);
-      continue;
-    }
-    if(fork1() == 0)
-      runcmd(parsecmd(buf));
-    wait(0);  // runcmd 执行完毕则 return from wait
-  }
-  exit(0);
-}
-```
-
-原来只有 `cd` 指令不是个进程，牛逼。
-
-Xv6 隐式地分配大部分用户态内存：
-- `fork` 为子进程分配父进程的内存拷贝
-- `exec` 为可执行文件分配足够内存
-- 诸如 `malloc` 这种在运行时需要更多内存的进程，可以调用 `sbrk(n)` 来增加数据内存， `n` 表示 `n` 字节， `sbrk` 返回新内存的位置
-
-#### 1.2 I/O and File descriptors
-
-##### 文件描述符 file descriptor
-
-文件描述符是一个小的整数（`small integer`），代表一个内核对象（`kernel-managed object`）。进程会去读或写这个内核对象。
-
-为了方便有简称：
-- `file` 就代表 `file descriptor`
-- `input and output` 用 `I/O` 表示
-
-文件描述符提供了抽象的接口，使得 `files` 、 `pipes` 、 `devices` 都看起来一样，成了字节流（`streams of bytes`）。
-
-##### 文件描述符补充知识
-
-这里参考了：[百度百科](https://baike.baidu.com/item/%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6)、[文件描述符（0、1、2）的用法](https://blog.csdn.net/baozhourui/article/details/88265557)、[文件描述符与socket连接](https://www.cnblogs.com/DengGao/p/file_symbol.html)。
-
-每一个文件描述符会与一个打开文件相对应，同时，不同的文件描述符也会指向同一个文件。相同的文件可以被不同的进程打开也可以在同一个进程中被多次打开。系统为每一个进程维护了一个文件描述符表，该表的值都是从0开始的，所以在不同的进程中你会看到相同的文件描述符，这种情况下相同文件描述符有可能指向同一个文件，也有可能指向不同的文件。
-
-![](./images/2021102001.png)
-
-在进程A中，文件描述符`1`和`30`都指向了同一个打开的文件句柄（标号`23`）。这可能是通过调用`dup()`、`dup2()`、`fcntl()`或者对同一个文件多次调用了`open()`函数而形成的。
-
-进程A的文件描述符`2`和进程B的文件描述符`2`都指向了同一个打开的文件句柄（标号73）。这种情形可能是在调用`fork()`后出现的（即，进程`A`、`B`是父子进程关系），或者当某进程通过`UNIX`域套接字将一个打开的文件描述符传递给另一个进程时，也会发生。再者是不同的进程独自去调用`open`函数打开了同一个文件，此时进程内部的描述符正好分配到与其他进程打开该文件的描述符一样。
-
-此外，进程`A`的描述符`0`和进程`B`的描述符`3`分别指向不同的打开文件句柄，但这些句柄均指向`i-node`表的相同条目（`1976`），换言之，指向同一个文件。发生这种情况是因为每个进程各自对同一个文件发起了`open()`调用。同一个进程两次打开同一个文件，也会发生类似情况。
-
-上图对于 `fd 0` 的例子可能并不标准，因为 **还有3个特殊的文件描述符。**
-- `0` 代表标准输入 `standard input`
-- `1` 代表标准输出 `standard output`
-- `2` 代表标准错误 `standard error`
-
-比如， `0<`  表示标准输入， `1>` 就会输出标准输出，而 `2>` 就会输出表征错误，我们随便操作一下 Linux 系统就会看出：
-
-![](./images/2021102002.png)
-
-在 `shell` 的 `main` 里，也会有保证这三个文件描述符被打开了（[user/sh.c:151](https://github.com/mit-pdos/xv6-riscv/blob/riscv//user/sh.c#L151)）：
-
-```c
-int
-main(void)
-{
-  static char buf[100];
-  int fd;
-
-  // Ensure that three file descriptors are open.
-  while((fd = open("console", O_RDWR)) >= 0){
-    if(fd >= 3){
-      close(fd);
-      break;
-    }
-  }
-  ...
-}
-```
-
-##### open和write
-
-涉及到一些系统调用：
-- `open(fd, buf, n)` ，把 `n` 个字节的内容复制到 `buf` ，并且返回其读的字节数
-  - 如果没有可读的，就返回 `0`
-  - 每个 `fd` 都有一个偏移量， `read` 会在偏移量基础上读
-- `write(fd, buf, n)` ， 从 `buf` 复制 `n` 个字节到 `fd` ，也根据并控制偏移量
-
-看一个例子，即简易版 `cat` 命令：
-
-```c
-char buf[512];
-int n;
-
-for (;;)
-{
-  n = read(0, buf, sizeof buf);  // 读标准输入
-  if (n == 0)
-    break;
-  if (n < 0)
-  {
-    fprintf(2, "read error\n");
-    exit(1);
-  }
-  if (write(1, buf, n) != n)  // 写给标准输出
-  {
-    fprintf(2, "write error\n");
-    exit(1);
-  }
-}
-```
-
-**使用标准输入和标准输出，`cat` 就用不着区分它是从文件、控制台还是管道来读的程序了。**
-
-##### close和文件重定向
-
-`close` 则释放一个 `fd` ，这个 `fd` 则可以被以后的 `open` 重新使用。注意 `open` **总是会打开最小的没被占用的** `fd` ，应用这点我们来看 `cat < input.txt` ：
-
-```c
-char *argv[2];
-
-argv[0] = "cat";
-argv[1] = 0;
-if (fork() == 0)
-{
-  close(0);
-  open("input.txt", O_RDONLY);
-  exec("cat", argv);
-}
-```
-
-这里子进程 `close` 把标准输入关了，又因为此时空闲的最小的文件描述符一定是 `0` 了，则 `open` 必会把 `"input.txt` 作为标准输入。此外，父进程的文件描述符不会受影响，甚妙！
-
-##### dup和文件重定向
-
-但是，如果：
-
-```c
-if (fork() == 0)
-{
-  write(1, "hello ", 6);
-  exit(0);
-} else {
-  wait(0);
-  write(1, "world\n", 6);
-}
-```
-
-则输出 `hello world` ，对于 `write` 其改动的 `fd` 的偏移量对于父进程是全局的，无论是否在子进程中调用。
-
-此外，也可以使用 `dup` 一个打开的文件号（`fd`），使两个文件号都指向同一个文件。**且其文件偏移量是共享的。**
-
-因此下面这段程序输出的也是 `hello world` ：
-```c
-fd = dup(1);
-write(1, "hello ", 6);
-write(fd, "world\n", 6);
-```
-
-`dup` 有什么用？请见这条 `sh` ：
-```sh
-ls existing-file non-existing-file > tmp1 2>&1
-```
-
-`&1` 就是 `tmp1` ，如此，我们在内核中实现时就做了一次 `dup(tmp1)` ，而 `existing-file` 的名字和 `non-existing-file` 的错误信息都将出现在 `tmp1` 文件中。
-
-最后，书中再次强调了：文件描述符这种抽象的牛逼之处，万物皆文件得到很好的体现。
-
-> File descriptors are a powerful abstraction, because they hide the details of what they are connected to: a process writing to file descriptor 1 may be writing to a file, to a device like the console, or to a pipe.
-
-#### 1.3 Pipes
-
-管道 `pipe` 作为一个内核缓存区，是一对文件描述符 `file descriptor` ，一个用于读入，一个用于写出。
-
-举个例子：
-```sh
-# 有管道
-echo hello world | wc
-# 没有管道
-echo hello world >/tmp/xyz; wc </tmp/xyz
-```
-
-以 `wc` 为例，其中标准输入被连接到一个管道的输出：
-
-```c
-int p[2];
-char *argv[2];
-
-argv[0] = "wc";
-argv[1] = 0；
-
-pipe(p);
-if (fork() == 0) {  // 在子进程中
-  close(0);
-  dup(p[0]);  // 因为关了 0 ，因此分配 0 与 p[0] 同
-              // 所以子进程标准输入就成了文件 p[0]
-  close(p[0]);
-  close(p[1]);
-  exec("/bin/wc", argv);
-} else {  // 父进程中
-  close(p[0]);
-  write(p[1], "hello world\n", 12);
-  close(p[1]);
-}
-```
-
-这里再举个源码例子[user/sh.c#L100](https://github.com/mit-pdos/xv6-riscv/blob/riscv//user/sh.c#L100)：
-
-```c
-struct cmd {
-  int type;
-};
-
-struct pipecmd {
-  int type;
-  struct cmd *left;
-  struct cmd *right;
-};
-
-...
-
-int fork1(void);  // Fork but panics on failure.
-void panic(char*);
-struct cmd *parsecmd(char*);
-
-...
-
-// Execute cmd.  Never returns.
-void
-runcmd(struct cmd *cmd)
-{
-  int p[2];
-  ...
-  struct pipecmd *pcmd;
-  ...
-
-  if(cmd == 0)
-    exit(1);
-
-  switch(cmd->type){
-  default:
-    panic("runcmd");
-
-  ...
-
-  case PIPE:
-    pcmd = (struct pipecmd*)cmd;
-    if(pipe(p) < 0)
-      panic("pipe");
-    if(fork1() == 0){
-      close(1);
-      dup(p[1]);
-      close(p[0]);
-      close(p[1]);
-      runcmd(pcmd->left);
-    }
-    if(fork1() == 0){  // 上面 fork1() 的子进程不会到这里，因为 runcmd 会 exit()
-    // 这里只会是主进程创建的第二个子进程
-    // 在 runcmd 里可能也会有管道，因此最终可能会成为一棵进程树
-      close(0);
-      dup(p[0]);
-      close(p[0]);
-      close(p[1]);
-      runcmd(pcmd->right);
-    }
-    close(p[0]);
-    close(p[1]);
-    wait(0);
-    wait(0);
-    break;
-
-    ...
-  }
-  ...
-}
-
-...
-
-void
-panic(char *s)
-{
-  fprintf(2, "%s\n", s);
-  exit(1);
-}
-
-int
-fork1(void)
-{
-  int pid;
-
-  pid = fork();
-  if(pid == -1)
-    panic("fork");
-  return pid;
-}
-
-...
-```
-
-找到两张图，觉得值得参考：
-- [进程间的通信方式——pipe（管道）](https://blog.csdn.net/skyroben/article/details/71513385)
-- [MIT6.828学习之homework2：shell](https://blog.csdn.net/a747979985/article/details/95094094)
-
-![](./images/2021102101.png)
-
-![](./images/2021102102.png)
-
-书中最后总结了管道跟临时文件相比，至少有4点优势（翻译取自[橡树人](https://www.jianshu.com/p/6d782bb606d5)）：
-- 管道会自动的清理数据。使用了文件重定向，`shell`要仔细地移除`/tmp/xyz`；
-- 管道可传递任意长度的数据流，而文件重定向要求磁盘上有足够的空闲空间来存储所有的数据；
-- 管道允许并行流水线的状态并行执行，但是文件重定向要求：在第二个程序完成前，第一个程序必须完成；
-- 如果正在实现进程间通信，则管道的阻塞读和阻塞写回被文件的非阻塞语义更有效。
-
-#### 1.4 File system
-
-在 C 语言中，系统调用包括：
-- `chdir()` 改变当前的工作目录
-
-```c
-chdir("/a");
-chdir("b");
-open("c", O_RDONLY);
-
-// 等价于
-open("/a/b/c", O_RDONLY);
-```
-
-- `mkdir("/new_dir")` 创建一个新目录
-- `open` 加上参数 `O_CREATE` 创建新文件 `fd = open("/dir/file", O_CREATE|O_WRONLY);`
-- `mknod` 创建指向硬件的特殊文件 `mknod("/console", 1, 1);`
-
-##### 数据结构inode
-
-`inode` 是一种数据结构，用于描述文件，一个文件可以有多个名字（`links`）。
-
-`fstat` 用于从 `inode` 中通过文件描述符提取文件信息，哪些信息呢？见 kernel/stat.h ：
-```c
-#define T_DIR      1  // Directory
-#define T_FILE     2  // File
-#define T_DEVICE   3  // Device
-
-struct stat {
-  int dev;      // File system's disk device
-  uint ino;     // Inode number
-  short type;   // Type of file
-  short nlink;  // Number of links to file
-  uint64 size;  // Size of file in bytes
-}
-```
-
-`link` 系统调用可以增加文件名称，如下：
-```c
-open("a", O_CREATE|O_WRONLY);
-link("a", "b");
-```
-
-此时 `a` 与 `b` 完全等价。`nlink` 就是 2 了。
-
-`unlink` 系统调用可以释放名称。如下。
-
-```c
-unlink("a");
-```
-
-当一个 `inode` 的 `link` 都没了，并且没有文件描述符指向它了，这个 `inode` 就会被释放。如下。
-
-```c
-fd = open("/tmp/xyz", O_CREATE|O_RDWR);
-unlink("/tmp/xyz");
-```
-
-上面是一种常用的创建临时 `inode` 的方法，当进程结束或者 `fd` 被关闭时，这个 `inode` 也被释放。
-
-##### 文件封装命令以及cd
-
-`Unix` 提供了文件工具比如 `mkdir` 、 `ln` 、 `rm` 在用户层（`shell`）使用。在当时，这种设计其实很有开创新，因为很多同时期的其它系统，其类似的命令是与 `shell` 强集成的，而 `shell` 又是直接在内核建立起来的。
-
-只有一个特例，`cd`不是文件，而是在 `shell` 里被特殊判断的字符。因为其要改变主进程（`shell`）的工作路径，而非子进程的。
-
-#### 1.5 Real world
-
-记录一下 `xv6` 并不是完备的 POSIX （`Portable Operating System Interface`）。
-
-#### 1.6 Exercises
-
-在 Linux 里跑就行，反正都是 POSIX ，用 `#include <unistd.h>` 调 `fork()` 。
-
-参考[6.828/2019 Exercise 1.6.1: pingpong](https://ypl.coffee/xv6-exercise-pingpong/)。
-
-见 [../exercises/1.6.ping_pong.c](../exercises/1.6.ping_pong.c) 。
-
-```bash
-gcc -o 1.6.ping_pong 1.6.ping_pong.c
-./1.6.ping_pong
-```
-
-输出：
-```
-parent p2[0] 5
-child p2[0] 5
-parent p2[1] 6
-child p2[1] 6
-parent p1[0] 3
-child p1[0] 3
-parent p1[1] 4
-child p1[1] 4
-average RTT: 0.037730 ms
-exchanges per second: 26503 times
-```
-
-- 可以看出父子进程轮流运行
-- 我的 wsl2 以及电脑本身真的挺慢的...
-
-## 补充知识点
-
-### 子进程中使用两次fork
-
-运行以下 `c` 程序：
-```c
-#include <stdio.h>
-#include <unistd.h>
-
-int main()
-{
-    int pid1, pid2;
-
-    printf("before fork\n");
-    pid1 = fork();
-    printf("%d: 1 %d\n", pid1, pid1);
-    printf("%d: after fork1\n", pid1);
-    pid2 = fork();
-    printf("%d: 2 %d\n", pid1, pid2);
-    printf("%d: after fork2\n", pid1);
-
-    return 0;
-}
-```
-
-输出：
-```
-before fork
-970: 1 970       // 主进程创造了子进程 970 在主进程中打印此句
-970: after fork1 // 主进程
-0: 1 0           // 970 进程调用 fork 返回 0 （ 970 是主进程的子进程）
-970: 2 971       // 主进程再次 fork 创造了子进程 971
-0: after fork1   // 970
-970: after fork2 // 主进程
-970: 2 0         // 971 进程 fork 得到的是 0 （ 971 是主进程的子进程）
-970: after fork2 // 971
-0: 2 972         // 970 进程再次 fork 则作为父进程创建 972
-0: after fork2   // 970
-0: 2 0           // 972 进程 fork 得到 0 （ 972 是 970 子进程）
-0: after fork2   // 972 进程
-```
-
-可以看到：
-- 只有一个 `before fork` ，说明 `fork()` 后，子进程从这句 `fork()` 开始运行
-- 最后有四个 `after fork2` 因为这里一共创建了四个进程，具体看我上面分析
+- 问：对于应用程序开发人员来说，他们会基于一些操作系统做开发，真正的深入理解这些操作系统有多重要？他们需要成为操作系统的专家吗？
+  - 答：你不必成为一个专家。但是如果你花费大量时间来开发，维护并调试应用程序，你最终还是会知道大量操作系统的知识。不论你是否是有意要掌握这些知识，它们就是出现了，而你不得不去理解它们。
+- 问：对于一些例如Python的高阶编程语言（高阶是指离自然语言更接近，低阶是指离机器语言更接近如C，汇编），它们是直接执行系统调用呢，还是内部对系统调用进行了封装呢？
+  - 许多高阶的编程语言都离系统调用较远，这是一个事实。部分原因是很多编程语言想要提供可以在多个操作系统上运行的可移植的环境，所以它们不能依赖特定的系统调用。所以，对于这个问题的答案我认为是，如果你使用了Python，你在某种程度上就与系统调用接口隔离了。当然，在Python内部，最终还是要执行系统调用来完成相应的工作。当然，Python和许多其他的编程语言通常都有方法能直接访问系统调用。
