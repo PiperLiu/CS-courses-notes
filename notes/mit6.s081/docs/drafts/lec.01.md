@@ -324,6 +324,161 @@ ls existing-file non-existing-file > tmp1 2>&1
 
 #### 1.3 Pipes
 
+管道 `pipe` 作为一个内核缓存区，是一对文件描述符 `file descriptor` ，一个用于读入，一个用于写出。
+
+举个例子：
+```sh
+# 有管道
+echo hello world | wc
+# 没有管道
+echo hello world >/tmp/xyz; wc </tmp/xyz
+```
+
+以 `wc` 为例，其中标准输入被连接到一个管道的输出：
+
+```c
+int p[2];
+char *argv[2];
+
+argv[0] = "wc";
+argv[1] = 0；
+
+// 感觉子进程调用 pipe
+// 其中子进程读端 p[0] 就是父进程写端 p[1]
+pipe(p);
+if (fork() == 0) {  // 在子进程中
+  close(0);
+  // dup重复管道标准输入的文件描述符
+  // dup(p[0]) 是 0 （因为前面把 0 关了）
+  // 即子进程标准输入 0 和子进程 p[0] 描述同一文件
+  dup(p[0]);
+  close(p[0]);
+  // 这里一定要关闭写端 p[1]
+  // 否则 read 会阻塞，一直在等 p[1] == EOF
+  close(p[1]);
+  // 文件描述符 0 和 p[0] 都关了
+  // wc 会开一个最小的未占用描述符作为标准输入，也就是 0
+  // wc 会 open 一个 fd 作为标准输出，自然就会是 1 即标准输出
+  exec("/bin/wc", argv);
+} else {  // 父进程中
+  // 关闭父进程标准输入
+  close(p[0]);
+  // p[1] 就是给父进程管道标准输出写入
+  write(p[1], "hello world\n", 12);
+  // 关闭
+  close(p[1]);
+}
+```
+
+思考了半天上面的代码，得出结论（虽然书中没有写）：
+- 如果调用两次 `pipe(p1), pipe(p2)`
+- 则 `p1[1]` 前一个管道写端就是 `p2[0]` 后一个管道读端
+
+这里再举个源码例子[user/sh.c#L100](https://github.com/mit-pdos/xv6-riscv/blob/riscv//user/sh.c#L100)：
+
+```c
+struct cmd {
+  int type;
+};
+
+struct pipecmd {
+  int type;
+  struct cmd *left;
+  struct cmd *right;
+};
+
+...
+
+int fork1(void);  // Fork but panics on failure.
+void panic(char*);
+struct cmd *parsecmd(char*);
+
+...
+
+// Execute cmd.  Never returns.
+void
+runcmd(struct cmd *cmd)
+{
+  int p[2];
+  ...
+  struct pipecmd *pcmd;
+  ...
+
+  if(cmd == 0)
+    exit(1);
+
+  switch(cmd->type){
+  default:
+    panic("runcmd");
+
+  ...
+
+  case PIPE:
+    pcmd = (struct pipecmd*)cmd;
+    if(pipe(p) < 0)
+      panic("pipe");
+    if(fork1() == 0){
+      close(1);
+      dup(p[1]);
+      close(p[0]);
+      close(p[1]);
+      runcmd(pcmd->left);
+    }
+    if(fork1() == 0){
+      close(0);
+      dup(p[0]);
+      close(p[0]);
+      close(p[1]);
+      runcmd(pcmd->right);
+    }
+    close(p[0]);
+    close(p[1]);
+    wait(0);
+    wait(0);
+    break;
+
+    ...
+  }
+  ...
+}
+
+...
+
+void
+panic(char *s)
+{
+  fprintf(2, "%s\n", s);
+  exit(1);
+}
+
+int
+fork1(void)
+{
+  int pid;
+
+  pid = fork();
+  if(pid == -1)
+    panic("fork");
+  return pid;
+}
+
+...
+```
+
+找到两张图，觉得值得参考：
+- [进程间的通信方式——pipe（管道）](https://blog.csdn.net/skyroben/article/details/71513385)
+- [MIT6.828学习之homework2：shell](https://blog.csdn.net/a747979985/article/details/95094094)
+
+![](./images/2021102101.png)
+
+![](./images/2021102102.png)
+
+书中最后总结了管道跟临时文件相比，至少有4点优势（翻译取自[橡树人](https://www.jianshu.com/p/6d782bb606d5)）：
+- 管道会自动的清理数据。使用了文件重定向，`shell`要仔细地移除`/tmp/xyz`；
+- 管道可传递任意长度的数据流，而文件重定向要求磁盘上有足够的空闲空间来存储所有的数据；
+- 管道允许并行流水线的状态并行执行，但是文件重定向要求：在第二个程序完成前，第一个程序必须完成；
+- 如果正在实现进程间通信，则管道的阻塞读和阻塞写回被文件的非阻塞语义更有效。
+
 #### 1.4 File system
 
 #### 1.5 Real world
