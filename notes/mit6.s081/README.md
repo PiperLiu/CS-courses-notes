@@ -54,4 +54,11 @@ sep 2
 
 我认真读了书（第一张，一些 Unix 6 接口简单原理与使用），记了笔记：[./docs/drafts/lec.01.md](./docs/drafts/lec.01.md)。
 
-然后听课，课堂笔记：[./docs/drafts/lec.01c.md](./docs/drafts/lec.01c.md) 。
+然后听课，课堂笔记：[./docs/drafts/lec.01c.md](./docs/drafts/lec.01c.md) 
+
+- [课程简介：操作系统做哪些事](./docs/drafts/lec.01c.md#课程简介操作系统做哪些事)
+- [计算机系统](./docs/drafts/lec.01c.md#计算机系统)
+- [系统调用：read和write](./docs/drafts/lec.01c.md#系统调用read和write)
+- [shell](./docs/drafts/lec.01c.md#shell)
+- [进程相关系统调用：fork和exec以及wait](./docs/drafts/lec.01c.md#进程相关系统调用fork和exec以及wait)
+- [I/O重定向与课程总结](./docs/drafts/lec.01c.md#io重定向与课程总结)
