@@ -62,3 +62,5 @@ sep 2
 - [shell](./docs/drafts/lec.01c.md#shell)
 - [进程相关系统调用：fork和exec以及wait](./docs/drafts/lec.01c.md#进程相关系统调用fork和exec以及wait)
 - [I/O重定向与课程总结](./docs/drafts/lec.01c.md#io重定向与课程总结)
+
+本节作业笔记：[./docs/drafts/lec.01hw.md](./docs/drafts/lec.01hw.md)
