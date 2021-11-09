@@ -315,7 +315,7 @@ int main()
 #include <cstring>
 using namespace std;
 
-const int N = 1e3 + 10, M = 1010 * 33;
+const int N = 1e3 + 10, M = 1010 * 100;  // 这里 M 一定要开够
 int g[N][N], n, m, st[N];
 int h[N], e[M], ne[M], idx;
 
@@ -377,3 +377,7 @@ int main()
 ![](./images/2021101909.png)
 
 如上，很迷，我这个处理最大 N 和 M 没问题，怎么就会答案错了呢。
+
+2021年11月9日补充：
+- 将 `M` 从 `M = 1010 * 33;` 改成 `M = 1010 * 100;` 就过了
+- 经验：邻接表空间一定一定要开够
