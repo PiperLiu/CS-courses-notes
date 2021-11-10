@@ -216,8 +216,8 @@ int main()
         if (op == 'S') break;
         int a, b;
         scanf("%d %d", &a, &b);
-        if (op == 'I')
-            p[a] = find(b);
+        if (op == 'I')  // 注意这里写 p[a] = find(b) 会不过一个答案
+            p[find(a)] = find(b);
         else if (op == 'C')
         {
             int pa = find(a);
@@ -244,7 +244,8 @@ int main()
 }
 ```
 
-很迷，我压缩路径了啊...哪里错了...
+2021年11月10日补：
+- 注意在合并操作中，要写成 `p[find(a)] = find(b);` 而非 `p[a] = find(b);`
 
 ### 05-树9 Huffman Codes (30 分)
 
