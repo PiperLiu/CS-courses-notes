@@ -17,7 +17,8 @@
   - [快排问题](#快排问题)
   - [从1000个数字中找出最大的10个数字，最快的算法是——](#从1000个数字中找出最大的10个数字最快的算法是)
 - [编程题](#编程题)
-  - [](#)
+  - [10-排序4 统计工龄 (20 分)](#10-排序4-统计工龄-20-分)
+  - [10-排序5 PAT Judge (25 分)](#10-排序5-pat-judge-25-分)
 
 <!-- /code_chunk_output -->
 
@@ -118,4 +119,152 @@ D. 选择排序
 
 ## 编程题
 
-### 
+### 10-排序4 统计工龄 (20 分)
+
+给定公司 N 名员工的工龄，要求按工龄增序输出每个工龄段有多少员工。
+
+输入格式:
+- 输入首先给出正整 N（≤$10^5$），即员工总人数；随后给出 N 个整数，即每个员工的工龄，范围在 $[0, 50]$ 。
+
+输出格式:
+- 按工龄的递增顺序输出每个工龄的员工个数，格式为：“`工龄:人数`”。每项占一行。如果人数为 0 则不输出该项。
+
+输入样例:
+```
+8
+10 2 0 5 7 2 5 2
+```
+
+输出样例:
+```
+0:1
+2:3
+5:2
+7:1
+10:1
+```
+
+```cpp
+#include <iostream>
+#include <map>
+using namespace std;
+
+int main()
+{
+    map<int, int> hash;
+    int n;
+    cin >> n;
+    for (int i = 0; i < n; ++ i)
+    {
+        int a;
+        cin >> a;
+        hash[a] ++ ;
+    }
+    for (auto&& item: hash)
+        printf("%d:%d\n", item.first, item.second);
+}
+```
+
+### 10-排序5 PAT Judge (25 分)
+
+参考我的算法笔记：[https://github.com/PiperLiu/ACMOI_Journey](https://github.com/PiperLiu/ACMOI_Journey/blob/master/notes/acwings/PAT%E7%94%B2%E7%BA%A7%E8%BE%85%E5%AF%BC%E8%AF%BE/drafts/pat.4.1.md#pat-%E8%AF%84%E6%B5%8B-1075-pat-judge-25-points)
+
+```cpp
+#include <iostream>
+#include <algorithm>
+#include <unordered_map>
+#include <vector>
+
+using namespace std;
+
+const int K = 6;
+
+int n, k, m;
+int p_score[K];
+
+struct Student
+{
+    string id;
+    int grade[K];
+    int total, cnt;  // 总分 与 完美完成题目数量
+
+    Student(){}
+    Student(string _id) : id(_id)
+    {
+        // 初始化， -2 代表从来没有提交过
+        for (int i = 1; i <= k; i ++ ) grade[i] = -2;
+        total = cnt = 0;
+    }
+
+    void calc()
+    {
+        for (int i = 1; i <= k; i ++ )
+        {
+            total += max(0, grade[i]);
+            if (grade[i] == p_score[i]) cnt ++ ;
+        }
+    }
+
+    bool has_submit()
+    {
+        for (int i = 1; i <= k; i ++ )
+            if (grade[i] >= 0)
+                return true;
+        return false;
+    }
+
+    // 重载 < 为数值的 > 用于从大到小排
+    bool operator< (const Student& t) const
+    {
+        if (total != t.total) return total > t.total;
+        if (cnt != t.cnt) return cnt > t.cnt;
+        return id < t.id;  // 注意 id 是字典序升序
+    }
+};
+
+int main()
+{
+    unordered_map<string, Student> students;
+
+    scanf("%d%d%d", &n, &k, &m);
+    for (int i = 1; i <= k; i ++ ) scanf("%d", &p_score[i]);
+
+    while (m -- )
+    {
+        string u_id;
+        char u_id_s[6];
+        int p_id, grade;
+        scanf("%s%d%d", u_id_s, &p_id, &grade);
+        u_id = u_id_s;
+
+        if (students.count(u_id) == 0) students[u_id] = Student(u_id);
+        students[u_id].grade[p_id] = max(students[u_id].grade[p_id], grade);
+    }
+
+    vector<Student> res;
+    for (auto& item: students)
+    {
+        auto& s = item.second;
+        if (s.has_submit())
+        {
+            s.calc();
+            res.push_back(s);
+        }
+    }
+
+    sort(res.begin(), res.end());
+
+    // total 相同则 rank 相同
+    for (int i = 0, rank = 1; i < res.size(); i ++ )
+    {
+        if (i && res[i].total != res[i - 1].total) rank = i + 1;
+        printf("%d %s %d", rank, res[i].id.c_str(), res[i].total);
+        for (int j = 1; j <= k; j ++ )
+            if (res[i].grade[j] == -2) printf(" -");
+            else printf(" %d", max(0, res[i].grade[j]));
+        puts("");
+    }
+
+    return 0;
+}
+```
