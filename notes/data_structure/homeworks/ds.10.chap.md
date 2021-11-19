@@ -19,6 +19,7 @@
 - [编程题](#编程题)
   - [10-排序4 统计工龄 (20 分)](#10-排序4-统计工龄-20-分)
   - [10-排序5 PAT Judge (25 分)](#10-排序5-pat-judge-25-分)
+  - [10-排序6 Sort with Swap(0, i) (25 分)](#10-排序6-sort-with-swap0-i-25-分)
 
 <!-- /code_chunk_output -->
 
@@ -264,6 +265,46 @@ int main()
             else printf(" %d", max(0, res[i].grade[j]));
         puts("");
     }
+
+    return 0;
+}
+```
+
+### 10-排序6 Sort with Swap(0, i) (25 分)
+
+参考我的算法笔记：[https://github.com/PiperLiu/ACMOI_Journey](https://github.com/PiperLiu/ACMOI_Journey/blob/master/notes/acwings/PAT%E7%94%B2%E7%BA%A7%E8%BE%85%E5%AF%BC%E8%AF%BE/drafts/pat.12.1.md#%E7%94%A8-swap0-i-%E6%93%8D%E4%BD%9C%E8%BF%9B%E8%A1%8C%E6%8E%92%E5%BA%8F-1067-sort-with-swap0-i-25-points)
+
+```cpp
+// 转换为图论问题，如图， i 在 p[i] 位置上，则 i 指向 p[i]
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+const int N = 100010;
+
+int n;
+int p[N];
+
+int main()
+{
+    scanf("%d", &n);
+    for (int i = 0; i < n; i ++ )
+    {
+        int id;
+        scanf("%d", &id);
+        p[id] = i;
+    }
+
+    int res = 0;
+    for (int i = 1; i < n;)
+    {
+        while (p[0]) swap(p[0], p[p[0]]), res ++ ;  // p[0] 不指向 0 ，把环上点变为自环
+        while (i < n && p[i] == i) i ++ ;  // 找下一个不是自环的环
+        if (i < n) swap(p[0], p[i]), res ++ ;  // 让 0 进入该环
+    }
+
+    printf("%d\n", res);
 
     return 0;
 }
