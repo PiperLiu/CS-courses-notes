@@ -264,5 +264,80 @@ int main()
 ![](./images/2021112303.png)
 
 ```cpp
+#include <iostream>
+#include <cstring>
+#include <algorithm>
+#include <functional>
+using namespace std;
 
+int main()
+{
+    int n, m = 0;
+    cin >> n;
+    int table[n], values[n];
+    for (int i = 0; i < n; ++ i)
+    {
+        cin >> table[i];
+        values[i] = table[i];
+        if (table[i] < 0) ++ m;  // 空值数量
+    }
+    
+    // used[i] 是 i 这个位置是否有数
+    // st[i] 是 values 中第 i 个数被用过
+    int ans[n], st[n], used[n], cnt = 0;
+    memset(st, 0, sizeof st);
+    memset(used, 0, sizeof used);
+    
+    function<int(int u)> insert = [&](int u) -> int
+    {
+        int idx = u % n;
+        for (int i = 0; i < n; ++ i)
+        {
+            int pos = (idx + i) % n;
+            if (!used[pos])
+            {
+                // cout << pos << " " << u << endl;
+                if (table[pos] == u) return pos;
+                else return -1;
+            }
+        }
+        return -1;
+    };
+    
+    sort(values, values + n);  // 保证最小值最先被选
+    // for (int i = 0; i < n; ++ i) cout << values[i] << " ";
+    // cout << endl;
+    
+    function<bool(void)> dfs = [&]() -> bool
+    {
+        if (cnt == n - m) return true;
+        
+        for (int i = 0; i < n; ++ i)
+        {
+            if (values[i] < 0) continue;
+            if (st[i]) continue;
+            int pos = insert(values[i]);
+            if (pos != -1)
+            {
+                // cout << cnt << " " << values[i] << " " << pos << endl;
+                st[i] = 1;
+                used[pos] = 1;
+                ans[cnt] = values[i];
+                cnt ++ ;
+                if (dfs()) return true;
+                cnt -- ;
+                st[i] = 0;
+                used[pos] = 0;
+            }
+        }
+        
+        return false;
+    };
+    
+    if (dfs()) for (int i = 0; i < n - m; ++ i)
+    {
+        if (i > 0) cout << " ";
+        cout << ans[i];
+    }
+}
 ```
