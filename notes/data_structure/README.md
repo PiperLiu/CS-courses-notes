@@ -18,6 +18,8 @@
   - [第九讲 排序（上）](#第九讲-排序上)
   - [第十讲 排序（下）](#第十讲-排序下)
   - [第十一讲 散列查找](#第十一讲-散列查找)
+  - [第十二讲 习题选讲](#第十二讲-习题选讲)
+  - [期末考试](#期末考试)
 
 <!-- /code_chunk_output -->
 
@@ -200,3 +202,17 @@
 
 习题与作业：
 - [./homeworks/ds.11.chap.md](./homeworks/ds.11.chap.md)
+
+### 第十二讲 习题选讲
+
+讲了之前的三道例题以及 KMP 。
+
+代码：
+- [KMP 代码](./codes/12.4 KMP 代码.c)
+
+习题与作业：
+- [./homeworks/ds.12.chap.md](./homeworks/ds.12.chap.md)
+
+### 期末考试
+
+[./homeworks/ds.exam.2.md](./homeworks/ds.exam.2.md)
