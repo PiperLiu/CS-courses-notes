@@ -35,9 +35,9 @@
 - 🚗浙江大学数据结构（[期末考试98分](./notes/data_structure/homeworks/ds.exam.2.md)，[笔记/代码/心得/资源/作业在这里](./notes/data_structure/README.md)）
 - 🚜MIT6.S081: Operating System Engineering（[笔记](./notes/mit6.s081/README.md)）
 
-👨‍🦳 本仓库中 **读书** 笔记有：
-- [🤴《UNIX传奇：历史与回忆》 . Brian W. Kernighan . 韩磊译 . UNIX: A History and a Memoir]()
-- [👸《C程序设计语言》 . Brian W. Kernighan / Dennis M. Ritchie . 徐宝文 / 李志译 / 尤晋元审校 . The C Programming Language]()
+📚 本仓库中 **读书** 笔记有：
+- [🤴《UNIX传奇：历史与回忆》 . Brian W. Kernighan . 韩磊译 . UNIX: A History and a Memoir](./notes/books/README.md#unix传奇历史与回忆)
+- [👸《C程序设计语言》 . Brian W. Kernighan / Dennis M. Ritchie . 徐宝文 / 李志译 / 尤晋元审校 . The C Programming Language](./notes/books/README.md#c程序设计语言)
 
 ## 这份笔记怎么看🧐
 
