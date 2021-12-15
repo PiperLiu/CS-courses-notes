@@ -31,9 +31,13 @@
 
 🍔 跟着 **视频课程过了一遍** 的课程有：🍳数据结构（[52篇CSDN笔记](https://blog.csdn.net/weixin_42815609/category_9239803.html)）；🥙操作系统（[24篇CSDN笔记](https://blog.csdn.net/weixin_42815609/category_9238763.html)）；🍜计算机组成原理（[29篇CSDN笔记](https://blog.csdn.net/weixin_42815609/category_9471944.html)）；🍩编译原理（[20篇CSDN笔记](https://blog.csdn.net/weixin_42815609/category_9461302.html)）；🥩汇编（[22篇CSDN笔记](https://blog.csdn.net/weixin_42815609/category_9523771.html)）；🍰台大李宏毅机器学习（[64篇CSDN笔记](https://blog.csdn.net/weixin_42815609/category_10214178.html)）
 
-🚒 本仓库中 **好好做作业的（含课程资源）** 笔记有：🚗浙江大学数据结构（[期末考试98分](./notes/data_structure/homeworks/ds.exam.2.md)，[笔记/代码/心得/资源/作业在这里](./notes/data_structure/README.md)）；🚜MIT6.S081: Operating System Engineering（[笔记](./notes/mit6.s081/README.md)）
+🚒 本仓库中 **好好做作业的（含课程资源）** 笔记有：
+- 🚗浙江大学数据结构（[期末考试98分](./notes/data_structure/homeworks/ds.exam.2.md)，[笔记/代码/心得/资源/作业在这里](./notes/data_structure/README.md)）
+- 🚜MIT6.S081: Operating System Engineering（[笔记](./notes/mit6.s081/README.md)）
 
 👨‍🦳 本仓库中 **读书** 笔记有：
+- [🤴《UNIX传奇：历史与回忆》 . Brian W. Kernighan . 韩磊译 . UNIX: A History and a Memoir]()
+- [👸《C程序设计语言》 . Brian W. Kernighan / Dennis M. Ritchie . 徐宝文 / 李志译 / 尤晋元审校 . The C Programming Language]()
 
 ## 这份笔记怎么看🧐
 
