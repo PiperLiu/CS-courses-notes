@@ -14,6 +14,7 @@
 - [？函数名本身就是函数地址](#函数名本身就是函数地址)
 - [任何类型的指针都可以转换为 void *](#任何类型的指针都可以转换为-void)
 - [编译时（compile-time）运算符sizeof](#编译时compile-time运算符sizeof)
+- [union](#union)
 - [变长参数表与stdarg.h](#变长参数表与stdargh)
 - [标准库实现杂记](#标准库实现杂记)
   - [名字以下划线开始](#名字以下划线开始)
@@ -144,6 +145,49 @@ struct key {
 ```
 
 条件编译语句 `#if` 中不能使用 `sizeof` ，因为预处理器不对类型名进行分析。但预处理器并不计算 `#define` 语句中的表达式，因此，在 `#define` 中使用 `sizeof` 是合法的。
+
+### union
+
+```c
+union u_tag {
+    int ival;
+    float fval;
+    char *sval;
+} u;
+
+// 实例如下
+struct {
+    char *name;
+    int flags;
+    int utype;
+    union {
+        int ival;
+        float fval;
+        char *sval;
+    } u;
+} symtab[NSYM];
+
+symtab[i].u.ival
+*symtab[i].u.sval
+```
+
+联合 `union` 只能有一个成员有值，只能用其第一个成员类型的值初始化。
+
+此外，联合是一个结构，其所有成员相对于基地址的偏移量都是0，必须足够“宽”，因此一般强制一个变量在特定类型的存储边界上，以对其。如下为 `malloc` 链表块头部的例子：
+
+```c
+typedef long Align;  /* 让 union 安装 long 类型的边界对齐 */
+
+union header {
+    struct {
+        union header *ptr;
+        unsigned size;
+    } s;
+    Align x;  // 永远不会被使用，用于对其
+};
+
+typedef union header Header;
+```
 
 ### 变长参数表与stdarg.h
 
