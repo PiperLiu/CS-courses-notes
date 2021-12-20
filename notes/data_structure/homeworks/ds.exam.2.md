@@ -1,5 +1,7 @@
 # 中国大学MOOC-陈越、何钦铭-数据结构-2021年秋期末考试
 
+![](../浙江大学数据结构证书.png)
+
 98分，错了最简单的一道题...
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=3 depthTo=6 orderedList=false} -->
