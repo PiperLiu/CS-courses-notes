@@ -29,7 +29,7 @@ B 站视频：
 - 本课程用到 `xv6` 系统，我从 `GitHub` 上 `fork` 了一个：https://github.com/PiperLiu/xv6-riscv
 - 本课程进行实验的作业系统： `git clone git://g.csail.mit.edu/xv6-labs-2020`
   - 我也放到 `GitHub` 上了（❗❗这个仓库很重要❗❗）：https://github.com/PiperLiu/xv6-labs-2020
-  - 大佬已经写完了作业，我可以参考答案：https://github.com/silvermagic/xv6-labs-2020
+  - 网上有很多参考答案。实在没思路再去搜 GitHub xv6-labs 。作业很有趣。
 
 参考：
 - [如何学好操作系统原理这门课？ - 菜饼不菜的回答 - 知乎](https://www.zhihu.com/question/22874344/answer/2091285378)
