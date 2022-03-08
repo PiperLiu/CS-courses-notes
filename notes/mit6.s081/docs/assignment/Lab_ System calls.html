@@ -1,0 +1,297 @@
+<html>
+<head>
+<title>Lab: System calls</title>
+<link rel="stylesheet" href="labs.css" type="text/css" />
+<script src="js/jquery-1.10.2.min.js"></script> 
+<script src="guidance.js"></script>
+</head>
+<body>
+
+<h1>Lab: system calls</h1>
+
+<p>In the last lab you used systems calls to write a few utilities. In
+this lab you will add some new system calls to xv6, which will help
+you understand how they work and will expose you to some of the
+internals of the xv6 kernel.  You will add more system calls in later
+labs.
+
+<div class="prereq">
+<p>Before you start coding, read Chapter 2 of
+    the <a href="../xv6/book-riscv-rev1.pdf">xv6 book</a>, and
+    Sections 4.3 and 4.4 of Chapter 4, and
+  related source files:
+  
+  <ul>
+    
+    <li> The user-space code for systems calls is
+      in <tt>user/user.h</tt> and <tt>user/usys.pl</tt>.</li>
+    
+    <li> The kernel-space code
+    is <tt>kernel/syscall.h</tt>, </tt>kernel/syscall.c</tt>.
+
+    <li> The process-related code is <tt>kernel/proc.h</tt> and <tt>kernel/proc.c</tt>.
+  
+  </ul>
+</div>
+
+<p>To start the lab, switch to the syscall branch:
+  <pre>
+  $ <kbd>git fetch</kbd>
+  $ <kbd>git checkout syscall</kbd>
+  $ <kbd>make clean</kbd>
+  </pre>
+
+<p>If you run, make grade, you will see that the grading script cannot
+exec
+  <tt>trace</tt> and <tt>sysinfotest</tt>.  Your job is to add the
+  necessary system calls and stubs to make them work.
+  
+<h2>System call tracing <script>g("moderate")</script></h2>
+
+<p>
+<div class="required">
+  In this assignment you will add a system call tracing feature that
+  may help you when debugging later labs.  You'll create a
+  new <tt>trace</tt> system call that will control tracing. It should
+  take one argument, an integer "mask", whose bits specify which
+  system calls to trace.  For example, to trace the fork system call,
+  a program calls <tt>trace(1 << SYS_fork)</tt>, where <tt>SYS_fork</tt> is a
+  syscall number from <tt>kernel/syscall.h</tt>. You have to modify
+  the xv6 kernel to print out a line when each system call is about to
+  return, if the system call's number is set in the mask.
+  The line should contain the
+  process id, the name of the system call and the
+  return value; you don't need to print the system call
+  arguments. The <tt>trace</tt> system call should enable tracing 
+  for the process that calls it and any children that it subsequently forks,
+  but should not affect other processes.
+</div>
+
+<p>We provide a <tt>trace</tt> user-level program that runs another
+  program with tracing enabled (see <tt>user/trace.c</tt>). When you're
+  done, you should see output like this:
+
+<pre>
+$ trace 32 grep hello README
+3: syscall read -> 1023
+3: syscall read -> 966
+3: syscall read -> 70
+3: syscall read -> 0
+$
+$ trace 2147483647 grep hello README
+4: syscall trace -> 0
+4: syscall exec -> 3
+4: syscall open -> 3
+4: syscall read -> 1023
+4: syscall read -> 966
+4: syscall read -> 70
+4: syscall read -> 0
+4: syscall close -> 0
+$
+$ grep hello README
+$
+$ trace 2 usertests forkforkfork
+usertests starting
+test forkforkfork: 407: syscall fork -> 408
+408: syscall fork -> 409
+409: syscall fork -> 410
+410: syscall fork -> 411
+409: syscall fork -> 412
+410: syscall fork -> 413
+409: syscall fork -> 414
+411: syscall fork -> 415
+...
+$   
+</pre>
+
+<p>In the first example above, trace invokes grep tracing just the
+read system call. The 32 is <tt>1&lt;&lt;SYS_read</tt>. In the second
+example, trace runs grep while tracing all system calls; the
+2147583647 has all 31 low bits set. In the third example, the program
+isn't traced, so no trace output is printed. In the fourth example,
+the fork system calls of all the descendants of the <tt>forkforkfork</tt> test
+in <tt>usertests</tt> are being traced. Your solution is correct if your
+program behaves as shown above (though the process IDs may be
+different).
+
+<p>Some hints:
+  <ul>
+
+    <li><p>Add <tt>$U/_trace</tt> to UPROGS in Makefile
+
+    <li><p>Run <kbd>make qemu</kbd> and you will see that the
+	compiler cannot compile <tt>user/trace.c</tt>, because the
+	user-space stubs for the system call don't exist yet: add a
+	prototype for the system call to <tt>user/user.h</tt>, a stub
+	to <tt>user/usys.pl</tt>, and a syscall number
+	to <tt>kernel/syscall.h</tt>.  The Makefile invokes the perl
+	script <tt>user/usys.pl</tt>, which produces <tt>user/usys.S</tt>, 
+	the actual system call stubs, which use the
+	RISC-V <tt>ecall</tt> instruction to transition to the
+	kernel. Once you fix the compilation issues, 
+	run <kbd>trace 32 grep hello README</kbd>; it will fail
+	because you haven't implemented the system call in the kernel
+	yet.
+    
+    <li><p>Add a <tt>sys_trace()</tt> function
+	in <tt>kernel/sysproc.c</tt> that implements the new system
+	call by remembering its argument in a new variable in
+	the <tt>proc</tt> structure (see <tt>kernel/proc.h</tt>). The
+	functions to retrieve system call arguments from user space are
+	in <tt>kernel/syscall.c</tt>, and you can see examples
+        of their use in <tt>kernel/sysproc.c</tt>.
+   </li>
+
+    <li><p>Modify <tt>fork()</tt> (see <tt>kernel/proc.c</tt>) to copy
+    the trace mask from the parent to the child process. </li>
+
+    <li><p>Modify the <tt>syscall()</tt> function
+	in <tt>kernel/syscall.c</tt> to print the trace output. You will need to add an array of syscall names to index into.</li>
+
+  </ul>
+
+<h2>Sysinfo <script>g("moderate")</script></h2>
+
+<p>
+<div class="required">
+  In this assignment you will add a system call, <tt>sysinfo</tt>,
+  that collects information about the running system.  The system call
+  takes one argument: a pointer to a <tt>struct sysinfo</tt>
+  (see <tt>kernel/sysinfo.h</tt>). The kernel should fill out the
+  fields of this struct: the <tt>freemem</tt> field should be set
+  to the number of bytes of free memory, and the <tt>nproc</tt>
+  field should be set to the number of processes whose <tt>state</tt>
+  is not <tt>UNUSED</tt>.
+  We provide a test program <tt>sysinfotest</tt>; you pass this
+  assignment if it prints "sysinfotest: OK".
+</div>
+
+<p>Some hints:
+<ul>
+
+<li><p>Add <tt>$U/_sysinfotest</tt> to UPROGS in Makefile
+  
+<li><p>Run <kbd>make qemu</kbd>; <tt>user/sysinfotest.c</tt> will
+  fail to compile. Add the system call sysinfo, following the same
+  steps as in the previous assignment. To declare the prototype for
+  sysinfo() <tt>in user/user.h</tt> you need predeclare the existence
+  of <tt>struct sysinfo</tt>:
+  <pre>
+    struct sysinfo;
+    int sysinfo(struct sysinfo *);
+  </pre>
+Once you fix the compilation issues, run
+  <kbd>sysinfotest</kbd>; it will fail because you haven't
+  implemented the system call in the kernel yet.
+</li>
+
+<li><p>sysinfo needs to copy a <tt>struct sysinfo</tt> back to user
+  space; see <tt>sys_fstat()</tt> (<tt>kernel/sysfile.c</tt>)
+  and <tt>filestat()</tt> (<tt>kernel/file.c</tt>) for examples of how
+  to do that using <tt>copyout()</tt>.
+</li>
+
+<li><p>To collect the amount of free memory, add a
+  function to <tt>kernel/kalloc.c</tt>
+</li>
+
+<li><p>To collect the number of processes, add a
+  function to <tt>kernel/proc.c</tt>
+</li>
+
+</ul>
+
+<p><a name="submit"></>
+<h2>Submit the lab</h2>
+
+<p><b>This completes the lab.</b> Make sure you pass all of the make
+grade tests. If this lab had questions, don't forget to write up your
+answers to the questions in answers-<i>lab-name</i>.txt. Commit your changes
+(including adding answers-<i>lab-name</i>.txt) and type make handin in the lab
+  directory to hand in your lab.
+
+<h3>Time spent</h3>
+
+<p>Create a new file, <tt>time.txt</tt>, and put in it a single integer, the
+number of hours you spent on the lab. Don't forget to <tt>git add</tt> and
+<tt>git commit</tt> the file.
+
+<h3>Submit</h3>
+
+You will turn in your assignments using
+the <a href="https://6828.scripts.mit.edu/2020/handin.py/">submission
+website</a>.  You need to request once an API key from the submission
+website before you can turn in any assignments or labs.
+</p>
+
+<p>After committing your final changes to the lab, type <kbd>make
+handin</kbd> to submit your lab.
+<pre>
+$ <kbd>git commit -am "ready to submit my lab"</kbd>
+[util c2e3c8b] ready to submit my lab
+ 2 files changed, 18 insertions(+), 2 deletions(-)
+
+$ <kbd>make handin</kbd>
+tar: Removing leading `/' from member names
+Get an API key for yourself by visiting https://6828.scripts.mit.edu/2020/handin.py/
+Please enter your API key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 79258  100   239  100 79019    853   275k --:--:-- --:--:-- --:--:--  276k
+$
+</pre>
+<kbd>make handin</kbd> will store your API key in <i>myapi.key</i>. If you need
+to change your API key, just remove this file and let <kbd>make handin</kbd>
+generate it again (<i>myapi.key</i> must not include newline characters).
+</p>
+
+<p>
+If you run <kbd>make handin</kbd> and you have either uncomitted changes or
+untracked files, you will see output similar to the following:
+<pre>
+ M hello.c
+?? bar.c
+?? foo.pyc
+Untracked files will not be handed in.  Continue? [y/N]
+</pre>
+Inspect the above lines and make sure all files that your lab solution needs
+are tracked i.e. not listed in a line that begins with <kbd>??</kbd>.
+You can cause <tt>git</tt> to track a new file that you create using
+<tt>git add filename</tt>.
+</p>
+
+<p>
+If <kbd>make handin</kbd> does not work properly, 
+try fixing the problem with the curl or Git commands.
+Or you can run <kbd>make tarball</kbd>.
+This will make a tar file for you, which you can
+then upload via our 
+<a href="https://6828.scripts.mit.edu/2020/handin.py/">web interface</a>.
+</p>
+
+<p>
+<div class="warning">
+<ul>
+  <li>Please run `make grade` to ensure that your code passes all of the tests</li>
+  <li>Commit any modified source code before running `make handin`</li>
+  <li>You can inspect the status of your submission and download the submitted code at <a href="https://6828.scripts.mit.edu/2020/handin.py/">https://6828.scripts.mit.edu/2020/handin.py/</a> </li>
+</ul>
+</div>
+
+
+
+
+<h2>Optional challenge exercises</h2>
+
+<ul>
+
+  <li>Print the system call arguments for traced system
+  calls <script>g("easy")</script>.</li>
+
+  <li>Compute the load average and export it through
+  sysinfo<script>g("moderate")</script>.</li>
+
+</ul>
+
+</body>
+</html>

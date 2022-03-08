@@ -7,8 +7,9 @@
 
 - [🥂课程资料](#课程资料)
 - [🥞本仓库资源](#本仓库资源)
-- [课程索引](#课程索引)
+- [🍱课程索引](#课程索引)
   - [LEC 1 (rtm): Introduction and examples](#lec-1-rtm-introduction-and-examples)
+  - [LEC 2 (TAs/dm): C and gdb (pointers example)](#lec-2-tasdm-c-and-gdb-pointers-example)
 
 <!-- /code_chunk_output -->
 
@@ -41,7 +42,7 @@ B 站视频：
 - 其他的资源比如课堂资料、作业要求在[docs/assignment/](./docs/assignment/)和[docs/lec/](./docs/lec/)中
 - 实验说明：<a href="./docs/6.S081 _ Fall 2020.html">6.S081 _ Fall 2020.html</a>
 
-### 课程索引
+### 🍱课程索引
 
 #### LEC 1 (rtm): Introduction and examples
 
@@ -64,3 +65,12 @@ sep 2
 - [I/O重定向与课程总结](./docs/drafts/lec.01c.md#io重定向与课程总结)
 
 本节作业笔记：[./docs/drafts/lec.01hw.md](./docs/drafts/lec.01hw.md)
+
+#### LEC 2 (TAs/dm): C and gdb (pointers example)
+
+sep 9
+
+- LEC 2 (TAs/dm): [C](./docs/lec/l-c-slides.pdf) and [gdb](./docs/lec/gdb_slides.pdf) ([pointers example](./docs/lec/pointers.c))
+- Preparation: 2.9 (Bitwise operators) and 5.1 (Pointers and addresses) through 5.6 (Pointer arrays) and 6.4 (pointers to structures) by Kernighan and Ritchie (K&R)
+- Assignment: <a href="./docs/assignment/Lab_ System calls.html">Lab syscall: System calls</a>
+
