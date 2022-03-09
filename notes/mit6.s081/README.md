@@ -74,3 +74,4 @@ sep 9
 - Preparation: 2.9 (Bitwise operators) and 5.1 (Pointers and addresses) through 5.6 (Pointer arrays) and 6.4 (pointers to structures) by Kernighan and Ritchie (K&R)
 - Assignment: <a href="./docs/assignment/Lab_ System calls.html">Lab syscall: System calls</a>
 
+课前预习，读书：[./docs/drafts/lec.02.md](./docs/drafts/lec.02.md)
