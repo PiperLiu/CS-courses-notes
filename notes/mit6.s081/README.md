@@ -10,6 +10,7 @@
 - [🍱课程索引](#课程索引)
   - [LEC 1 (rtm): Introduction and examples](#lec-1-rtm-introduction-and-examples)
   - [LEC 2 (TAs/dm): C and gdb (pointers example)](#lec-2-tasdm-c-and-gdb-pointers-example)
+  - [LEC 3 (fk): OS organization and system calls](#lec-3-fk-os-organization-and-system-calls)
 
 <!-- /code_chunk_output -->
 
@@ -75,3 +76,37 @@ sep 9
 - Assignment: <a href="./docs/assignment/Lab_ System calls.html">Lab syscall: System calls</a>
 
 课前预习，读书：[./docs/drafts/lec.02.md](./docs/drafts/lec.02.md)
+
+- [C 的读书笔记](./docs/drafts/lec.02.md#c-的读书笔记)
+  - [C 中的内存：静态、堆、栈](./docs/drafts/lec.02.md#c-中的内存静态-堆-栈)
+  - [永远不要 include .c 文件](./docs/drafts/lec.02.md#永远不要-include-c-文件)
+- [Using the GNU Debugger](./docs/drafts/lec.02.md#using-the-gnu-debugger)
+- [读书： Chapter 2 Operating system organization](./docs/drafts/lec.02.md#读书-chapter-2-operating-system-organization)
+  - [2.1 Abstracting physical resources](./docs/drafts/lec.02.md#21-abstracting-physical-resources)
+  - [2.2 User mode, supervisor mode, and system calls （ ecall 是 RISC-V CPU 用于从用户态转为内核态的指令）](./docs/drafts/lec.02.md#22-user-mode-supervisor-mode-and-system-calls-ecall-是-risc-v-cpu-用于从用户态转为内核态的指令)
+  - [2.3 Kernel organization](./docs/drafts/lec.02.md#23-kernel-organization)
+  - [2.4 Code: xv6 organization](./docs/drafts/lec.02.md#24-code-xv6-organization)
+  - [2.5 Process overview 进程与页表](./docs/drafts/lec.02.md#25-process-overview-进程与页表)
+  - [2.6 Code: starting xv6 and the first process](./docs/drafts/lec.02.md#26-code-starting-xv6-and-the-first-process)
+  - [插曲：内联汇编的格式](./docs/drafts/lec.02.md#插曲内联汇编的格式)
+  - [仔细阅读 start 发现是把汇编操作封装](./docs/drafts/lec.02.md#仔细阅读-start-发现是把汇编操作封装)
+  - [2.7 Real world](./docs/drafts/lec.02.md#27-real-world)
+  - [插曲：安装 riscv64-unknown-elf-gdb](./docs/drafts/lec.02.md#插曲安装-riscv64-unknown-elf-gdb)
+  - [2.8 Exercises 尝试 gdb](./docs/drafts/lec.02.md#28-exercises-尝试-gdb)
+- [读书： Chapter 4 Traps and system calls](./docs/drafts/lec.02.md#读书-chapter-4-traps-and-system-calls)
+  - [4.3 Code: Calling system calls](./docs/drafts/lec.02.md#43-code-calling-system-calls)
+  - [4.4 Code: System call arguments 系统调用的参数](./docs/drafts/lec.02.md#44-code-system-call-arguments-系统调用的参数)
+- [阅读一些代码](./docs/drafts/lec.02.md#阅读一些代码)
+  - [用 perl 脚本生成 S 汇编代码](./docs/drafts/lec.02.md#用-perl-脚本生成-s-汇编代码)
+
+这节课就是读书课，留了个 lab ，下节课听完再做。
+
+#### LEC 3 (fk): OS organization and system calls
+
+- LEC 3 (fk): OS organization and system calls ([boards](./docs/lec/l-os-boards.pdf)) [video](https://youtu.be/o44d---Dk4o)
+- Preparation: Read chapter 2 and xv6 code: kernel/proc.h, kernel/defs.h, kernel/entry.S, kernel/main.c, user/initcode.S, user/init.c, and skim kernel/proc.c and kernel/exec.c
+
+这节课需要预习的东西和上节课一样。
+
+听课笔记在这里：
+- []()
