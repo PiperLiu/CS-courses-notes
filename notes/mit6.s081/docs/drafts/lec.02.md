@@ -436,6 +436,8 @@ start 如何切换到 supervisor mode 呢？仔细观察 start 前几行代码�
 
 ### 插曲：安装 riscv64-unknown-elf-gdb
 
+❗❗ 其实并不需要用到 riscv64-unknown-elf-gdb ❗❗ 正确的跟着教授调试的方式（使用 gdb-multiarch）见[./lec.03c.md](./lec.03c.md) 。
+
 安装 riscv64-unknown-elf-gdb 参考 https://www.cnblogs.com/dream397/p/15427944.html ：
 
 - python 并非必须
@@ -470,11 +472,11 @@ find /opt/riscv/bin riscv64-unknown-elf-gdb
 riscv64-unknown-elf-gdb
 ```
 
-
-
 ### 2.8 Exercises 尝试 gdb
 
 You can use gdb to observe the very first kernel-to-user transition. Run make qemu-gdb. In another window, in the same directory, run gdb. Type the gdb command break *0x3ffffff10e, which sets a breakpoint at the sret instruction in the kernel that jumps into user space. Type the continue gdb command. gdb should stop at the breakpoint, about to execute sret. Type stepi. gdb should now indicate that it is executing at address 0x0, which is in user space at the start of initcode.S.
+
+❗❗ 其实并不需要用到 riscv64-unknown-elf-gdb ❗❗ 正确的跟着教授调试的方式（使用 gdb-multiarch）见[./lec.03c.md](./lec.03c.md) 。
 
 ![](./images/20220310gdb01.png)
 
@@ -495,6 +497,10 @@ You can use gdb to observe the very first kernel-to-user transition. Run make qe
 ![](./images/gdb.break.at.0x3ffffff10e.gif)
 
 如上，在输出 `init: starting sh` 的每一个字母前，都会在 `0x3ffffff10e` 这里经过。
+
+> 注意，我的 gdb 有些问题，没有显示这个地址是在哪个代码段。如果找到更加可行的方案，我再回来记录。
+
+❗❗ 其实并不需要用到 riscv64-unknown-elf-gdb ❗❗ 正确的跟着教授调试的方式（使用 gdb-multiarch）见[./lec.03c.md](./lec.03c.md) 。
 
 ## 读书： Chapter 4 Traps and system calls
 

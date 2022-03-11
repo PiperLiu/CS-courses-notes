@@ -108,5 +108,19 @@ sep 9
 
 这节课需要预习的东西和上节课一样。
 
-听课笔记在这里：
-- []()
+听课笔记在这里：[./docs/drafts/lec.03c.md](./docs/drafts/lec.03c.md)
+
+- [Isolation / Kernel mode / User mode / System calls](./docs/drafts/lec.03c.md#isolation-kernel-mode-user-mode-system-calls)
+  - [exec 抽象了内存](./docs/drafts/lec.03c.md#exec-抽象了内存)
+  - [操作系统防御性（Defensive）](./docs/drafts/lec.03c.md#操作系统防御性defensive)
+- [硬件对于强隔离的支持](./docs/drafts/lec.03c.md#硬件对于强隔离的支持)
+  - [user/kernle mode](./docs/drafts/lec.03c.md#userkernle-mode)
+  - [page table 来制造应用间隔离](./docs/drafts/lec.03c.md#page-table-来制造应用间隔离)
+  - [Kernel Mode 和 User Mode 切换](./docs/drafts/lec.03c.md#kernel-mode-和-user-mode-切换)
+- [宏内核 vs 微内核 （Monolithic Kernel vs Micro Kernel）](./docs/drafts/lec.03c.md#宏内核-vs-微内核-monolithic-kernel-vs-micro-kernel)
+- [编译运行kernel](./docs/drafts/lec.03c.md#编译运行kernel)
+  - [插曲：正确使用 gdb](./docs/drafts/lec.03c.md#插曲正确使用-gdb)
+  - [代码结构](./docs/drafts/lec.03c.md#代码结构)
+  - [简单介绍内核如何编译的](./docs/drafts/lec.03c.md#简单介绍内核如何编译的)
+  - [QEMU](./docs/drafts/lec.03c.md#qemu)
+  - [XV6启动过程（配合 gdb 实践）](./docs/drafts/lec.03c.md#xv6启动过程配合-gdb-实践)
