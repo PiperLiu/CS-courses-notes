@@ -124,3 +124,5 @@ sep 9
   - [简单介绍内核如何编译的](./docs/drafts/lec.03c.md#简单介绍内核如何编译的)
   - [QEMU](./docs/drafts/lec.03c.md#qemu)
   - [XV6启动过程（配合 gdb 实践）](./docs/drafts/lec.03c.md#xv6启动过程配合-gdb-实践)
+
+然后把 lab 2 做了吧：[./docs/drafts/lec.03hw.md](./docs/drafts/lec.03hw.md)

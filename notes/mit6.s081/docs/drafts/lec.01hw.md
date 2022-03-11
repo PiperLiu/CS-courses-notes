@@ -1,4 +1,4 @@
-# LEC 1 (rtm): Introduction and examples
+# Lab util: Unix utilities
 
 本节作业：
 - https://github.com/PiperLiu/xv6-labs-2020/tree/util
