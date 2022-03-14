@@ -1,0 +1,375 @@
+<html>
+<head>
+<title>Lab: page tables</title>
+<link rel="stylesheet" href="labs.css" type="text/css" />
+<script src="guidance.js"></script>
+</head>
+<body>
+
+<h1>Lab: page tables</h1>
+
+<p> In this lab you will explore page tables and modify them to
+  simplify the functions that copy data from user space to kernel space.
+
+<div class="prereq">
+<p>Before you start coding, read Chapter 3 of
+  the <a href="../xv6/book-riscv-rev1.pdf">xv6 book</a>, and related files:
+
+  <ul>
+   <li> <tt>kern/memlayout.h</tt>, which captures the layout of memory.
+	  
+    <li> <tt>kern/vm.c</tt>, which contains most virtual memory (VM) code.
+
+    <li> <tt>kernel/kalloc.c</tt>, which contains code for allocating and
+    freeing physical memory.
+  
+  </ul>
+
+</div>
+
+<p>To start the lab, switch to the pgtbl branch:
+  <pre>
+  $ <kbd>git fetch</kbd>
+  $ <kbd>git checkout pgtbl</kbd>
+  $ <kbd>make clean</kbd>
+  </pre>
+ 
+<h2>Print a page table <script>g("easy")</script></h2>
+
+<p>
+To help you learn about RISC-V page tables, and perhaps
+to aid future debugging, your first task is to write a function
+that prints
+  the contents of a page table.
+
+<div class="required">
+Define a function called <tt>vmprint()</tt>.
+It should take
+a <tt>pagetable_t</tt> argument, and print that pagetable
+in the format described below.
+Insert <tt>if(p->pid==1) vmprint(p->pagetable)</tt> in
+  exec.c just before the <tt>return argc</tt>,
+to print the first process's page table.
+  You receive full credit for this
+  assignment if you pass the <tt>pte printout</tt> test of <tt>make grade</tt>.
+  
+</div>
+
+<p>
+Now when you start xv6 it should print output like this, describing
+the page table of the first process at the point when it has just
+finished <tt>exec()</tt>ing <tt>init</tt>:
+
+  <pre>
+page table 0x0000000087f6e000
+..0: pte 0x0000000021fda801 pa 0x0000000087f6a000
+.. ..0: pte 0x0000000021fda401 pa 0x0000000087f69000
+.. .. ..0: pte 0x0000000021fdac1f pa 0x0000000087f6b000
+.. .. ..1: pte 0x0000000021fda00f pa 0x0000000087f68000
+.. .. ..2: pte 0x0000000021fd9c1f pa 0x0000000087f67000
+..255: pte 0x0000000021fdb401 pa 0x0000000087f6d000
+.. ..511: pte 0x0000000021fdb001 pa 0x0000000087f6c000
+.. .. ..510: pte 0x0000000021fdd807 pa 0x0000000087f76000
+.. .. ..511: pte 0x0000000020001c0b pa 0x0000000080007000
+  </pre>
+
+The first line displays the argument to <tt>vmprint</tt>.
+After that there is a line for each PTE, including PTEs that
+refer to page-table pages deeper in the tree.
+Each PTE line is indented by a number of <tt>" .."</tt> that indicates its
+depth in the tree.
+Each PTE line shows the PTE index in its page-table page, the pte bits, and the
+physical address extracted from the PTE.
+Don't print PTEs that are not valid.  In the above example, the
+top-level page-table page has mappings for entries 0 and 255.  The next
+level down for entry 0 has only index 0 mapped, and the bottom-level
+for that index 0 has entries 0, 1, and 2 mapped.
+
+<p>
+Your code might emit different physical addresses than those shown above.
+The number of entries and the virtual addresses should be the same.
+</p>
+
+<p>Some hints:
+<ul>
+  <li>You can put <tt>vmprint()</tt> in <tt>kernel/vm.c</tt>.
+  <li>Use the macros at the end of the file kernel/riscv.h.
+  <li>The function <tt>freewalk</tt> may be inspirational.
+  <li>Define the prototype for <tt>vmprint</tt> in kernel/defs.h so
+    that you can call it from exec.c.
+  <li>Use <tt>%p</tt> in your printf calls to print out full 64-bit hex PTEs and addresses as shown in the example.</li>
+</ul>
+
+<div class="question">
+Explain the output of <tt>vmprint</tt> in terms of Fig 3-4 from the
+text.  What does page 0 contain? What is in page 2?
+When running in user mode, could the process read/write the memory
+mapped by page 1?
+</div>
+
+<h2>A kernel page table per process <script>g("hard")</script></h2>
+
+<p>
+Xv6 has a single kernel page table that's used whenever it executes
+in the kernel.
+The kernel page
+table is a direct mapping to physical addresses, so that kernel
+virtual address <i>x</i> maps to physical address <i>x</i>. 
+Xv6 also has a separate page table for each process's user
+address space, containing only mappings for that
+process's user memory, starting at virtual address zero.
+Because the kernel page table doesn't contain these
+mappings, user addresses are not valid in the kernel.
+Thus, when the kernel
+needs to use a user pointer passed in a system call (e.g., the buffer
+pointer passed to <tt>write()</tt>), the kernel must first translate
+the pointer to a physical address.
+The goal of this section and the next is to allow the kernel to
+directly dereference user pointers.
+
+  <div class="required">
+Your first job is to modify the kernel so that every process
+uses its own copy of the kernel page table when executing
+in the kernel.
+Modify <tt>struct proc</tt> to maintain
+a kernel page table for each process, and modify
+the scheduler to switch kernel page tables when switching
+processes. For this step, each per-process kernel page table
+should be identical to the existing global kernel page table.
+You pass this part of the lab if <tt>usertests</tt> runs correctly.
+</div>
+
+ <p>Read the book chapter and code mentioned at the start of this
+   assignment; it will be easier to modify the virtual memory
+   code correctly with an understanding of how it works.
+   Bugs in page table setup can cause traps
+   due to missing mappings, can
+   cause loads and stores to affect unexpected pages
+   of physical memory, and can cause execution of instructions from
+   incorrect pages of memory.
+
+<p>Some hints:
+  <ul>
+
+  <li>Add a field to <tt>struct proc</tt> for the process's kernel
+  page table.
+
+  <li>A reasonable way to produce a kernel page table for a new process
+  is to implement a modified version of <tt>kvminit</tt> that makes
+  a new page table instead of modifying <tt>kernel_pagetable</tt>.
+  You'll want to call this function from <tt>allocproc</tt>.
+
+  <li>Make sure that each process's kernel page table has a mapping
+  for that process's kernel stack. In unmodified xv6, all the
+  kernel stacks are set up in <tt>procinit</tt>. You will need to
+  move some or all of this functionality to <tt>allocproc</tt>.
+
+  <li>Modify <tt>scheduler()</tt> to load the process's kernel page table into
+  the core's <tt>satp</tt> register (see <tt>kvminithart</tt> for
+  inspiration). Don't forget to call <tt>sfence_vma()</tt>
+  after calling <tt>w_satp()</tt>.
+
+  <li><tt>scheduler()</tt> should use <tt>kernel_pagetable</tt> when
+  no process is running.
+
+  <li>Free a process's kernel page table in <tt>freeproc</tt>.
+
+  <li>You'll need a way to free a page table without also
+    freeing the leaf physical memory pages.
+
+  <li><tt>vmprint</tt> may come in handy to debug page tables.
+
+  <li>It's OK to modify xv6 functions or add new functions; you'll
+      probably need to do this in at least <tt>kernel/vm.c</tt>
+      and <tt>kernel/proc.c</tt>. (But, don't
+    modify <tt>kernel/vmcopyin.c</tt>, <tt>kernel/stats.c</tt>,
+    <tt>user/usertests.c</tt>, and <tt>user/stats.c</tt>.)
+
+  <li>A missing page table mapping will likely cause the kernel
+      to encounter a page fault. It will print
+      an error that includes <tt>sepc=0x00000000XXXXXXXX</tt>. You can find
+      out where the fault occurred by searching for <tt>XXXXXXXX</tt>
+      in <tt>kernel/kernel.asm</tt>.
+
+</ul>
+
+<h2>Simplify <tt>copyin/copyinstr</tt> <script>g("hard")</script></h2>
+
+The kernel's 
+<tt>copyin</tt> function reads memory pointed to by user
+pointers. It does this by translating them to physical addresses,
+which the kernel can directly dereference. It performs this
+translation by walking the process page-table in software. Your job in
+this part of the lab is to add user mappings to each process's
+kernel page table (created in the previous section) that allow
+<tt>copyin</tt> (and the related string function
+<tt>copyinstr</tt>) to directly dereference user pointers.
+
+  <div class="required">
+    Replace the body of <tt>copyin</tt> in <tt>kernel/vm.c</tt>
+      with a call to <tt>copyin_new</tt> (defined in
+      <tt>kernel/vmcopyin.c</tt>); do the same
+for <tt>copyinstr</tt> and <tt>copyinstr_new</tt>.
+    Add mappings for user addresses to
+each process's kernel page table so that 
+<tt>copyin_new</tt> and <tt>copyinstr_new</tt> work.
+ You pass this assignment if <tt>usertests</tt> runs correctly
+and all the <tt>make grade</tt> tests pass.
+</div>
+
+<p>
+This scheme relies on the user virtual address range not overlapping
+the range of virtual addresses that the kernel uses for its own instructions
+and data. Xv6 uses virtual addresses that start at zero for
+user address spaces, and luckily the kernel's memory starts at higher
+addresses.
+However, 
+this scheme does limit the maximum size of a user process to be less than
+the kernel's lowest virtual address.  After the kernel has
+booted, that address is <tt>0xC000000</tt> in xv6, the address of
+the PLIC registers;
+see <tt>kvminit()</tt> in <tt>kernel/vm.c</tt>,
+<tt>kernel/memlayout.h</tt>, and Figure 3-4 in the text. You'll need to modify xv6 to prevent user processes from
+growing larger than the PLIC address.
+
+<p>Some hints:
+  <ul>
+
+    <li>Replace <tt>copyin()</tt> 
+      with a call to <tt>copyin_new</tt> first,
+      and make it work, before moving on to <tt>copyinstr</tt>.
+
+    <li>At each point where the kernel changes a process's user
+    mappings, change the process's kernel page table in the same way.
+    Such points include <tt>fork()</tt>, <tt>exec()</tt>,
+      and <tt>sbrk()</tt>.
+
+    <li>Don't forget that to include the first process's user page
+      table in its kernel page table in <tt>userinit</tt>.
+      
+    <li>What permissions do the PTEs for user addresses need
+    in a process's kernel page table?  (A page
+    with <tt>PTE_U</tt> set cannot be accessed in kernel mode.)
+
+    <li>Don't forget about the above-mentioned PLIC limit.
+      
+</ul>
+
+
+<p>
+  Linux uses a technique similar to what you have implemented.
+  Until a few years ago many kernels used the same per-process
+  page table in both user and kernel space, with mappings for
+  both user and kernel addresses, to avoid having to switch
+  page tables when switching between user and kernel space.
+  However, that setup allowed
+  side-channel attacks such as Meltdown and Spectre.
+
+  <div class="question">
+    
+<p>Explain why the third test <tt>srcva + len < srcva</tt> is
+necessary in <tt>copyin_new()</tt>:
+give values for <tt>srcva</tt> and <tt>len</tt> for which 
+the first two test fail (i.e., they will not cause to return -1) but for which the third
+						one is true (resulting
+						in returning -1).
+</div>
+
+<p><a name="submit"></>
+<h2>Submit the lab</h2>
+
+<p><b>This completes the lab.</b> Make sure you pass all of the make
+grade tests. If this lab had questions, don't forget to write up your
+answers to the questions in answers-<i>lab-name</i>.txt. Commit your changes
+(including adding answers-<i>lab-name</i>.txt) and type make handin in the lab
+  directory to hand in your lab.
+
+<h3>Time spent</h3>
+
+<p>Create a new file, <tt>time.txt</tt>, and put in it a single integer, the
+number of hours you spent on the lab. Don't forget to <tt>git add</tt> and
+<tt>git commit</tt> the file.
+
+<h3>Submit</h3>
+
+You will turn in your assignments using
+the <a href="https://6828.scripts.mit.edu/2020/handin.py/">submission
+website</a>.  You need to request once an API key from the submission
+website before you can turn in any assignments or labs.
+</p>
+
+<p>After committing your final changes to the lab, type <kbd>make
+handin</kbd> to submit your lab.
+<pre>
+$ <kbd>git commit -am "ready to submit my lab"</kbd>
+[util c2e3c8b] ready to submit my lab
+ 2 files changed, 18 insertions(+), 2 deletions(-)
+
+$ <kbd>make handin</kbd>
+tar: Removing leading `/' from member names
+Get an API key for yourself by visiting https://6828.scripts.mit.edu/2020/handin.py/
+Please enter your API key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 79258  100   239  100 79019    853   275k --:--:-- --:--:-- --:--:--  276k
+$
+</pre>
+<kbd>make handin</kbd> will store your API key in <i>myapi.key</i>. If you need
+to change your API key, just remove this file and let <kbd>make handin</kbd>
+generate it again (<i>myapi.key</i> must not include newline characters).
+</p>
+
+<p>
+If you run <kbd>make handin</kbd> and you have either uncomitted changes or
+untracked files, you will see output similar to the following:
+<pre>
+ M hello.c
+?? bar.c
+?? foo.pyc
+Untracked files will not be handed in.  Continue? [y/N]
+</pre>
+Inspect the above lines and make sure all files that your lab solution needs
+are tracked i.e. not listed in a line that begins with <kbd>??</kbd>.
+You can cause <tt>git</tt> to track a new file that you create using
+<tt>git add filename</tt>.
+</p>
+
+<p>
+If <kbd>make handin</kbd> does not work properly, 
+try fixing the problem with the curl or Git commands.
+Or you can run <kbd>make tarball</kbd>.
+This will make a tar file for you, which you can
+then upload via our 
+<a href="https://6828.scripts.mit.edu/2020/handin.py/">web interface</a>.
+</p>
+
+<p>
+<div class="warning">
+<ul>
+  <li>Please run `make grade` to ensure that your code passes all of the tests</li>
+  <li>Commit any modified source code before running `make handin`</li>
+  <li>You can inspect the status of your submission and download the submitted code at <a href="https://6828.scripts.mit.edu/2020/handin.py/">https://6828.scripts.mit.edu/2020/handin.py/</a> </li>
+</ul>
+</div>
+
+
+
+
+<h2>Optional challenge exercises</h2>
+
+<ul>
+
+  <li>Use super-pages to reduce the number of PTEs in page tables.
+
+  <li>Extend your solution to support user programs that are as large
+  as possible; that is, eliminate the restriction that user
+  programs be smaller than PLIC.
+
+  <li>Unmap the first page of a user process so that dereferencing a
+  null pointer will result in a fault.  You will have to start the
+  user text segment at, for example, 4096, instead of 0.
+
+</ul>
+
+</body>
+</html>

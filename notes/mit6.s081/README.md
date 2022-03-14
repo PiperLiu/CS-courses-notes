@@ -11,6 +11,7 @@
   - [LEC 1 (rtm): Introduction and examples](#lec-1-rtm-introduction-and-examples)
   - [LEC 2 (TAs/dm): C and gdb (pointers example)](#lec-2-tasdm-c-and-gdb-pointers-example)
   - [LEC 3 (fk): OS organization and system calls](#lec-3-fk-os-organization-and-system-calls)
+  - [LEC 4 (fk): Page tables (boards)](#lec-4-fk-page-tables-boards)
 
 <!-- /code_chunk_output -->
 
@@ -126,3 +127,27 @@ sep 9
   - [XV6启动过程（配合 gdb 实践）](./docs/drafts/lec.03c.md#xv6启动过程配合-gdb-实践)
 
 然后把 lab 2 做了吧：[./docs/drafts/lec.03hw.md](./docs/drafts/lec.03hw.md)
+
+#### LEC 4 (fk): Page tables (boards)
+
+sep 16
+
+- LEC 4 (fk): [Page tables](./docs/lec/l-vm.txt) ([boards](./docs/lec/l-vm-boards.pdf)) [video](https://youtu.be/f1Hpjty3TT8)
+- Preparation: Read [Chapter 3](./docs/lec/book-riscv-rev1.pdf) and kernel/memlayout.h, kernel/vm.c, kernel/kalloc.c, kernel/riscv.h, and kernel/exec.c
+- Assignment: <a href="./docs/assignment/Lab_ page tables.html">Lab pgtbl: Page tables</a>
+
+课前预习是读书第三章，我的笔记在这了：[./docs/drafts/lec.04.md](./docs/drafts/lec.04.md)
+
+- [Chapter 3 Page tables](./docs/drafts/lec.04.md#chapter-3-page-tables)
+  - [3.1 Paging hardware 页表基本概念与分级、 satp 寄存器](./docs/drafts/lec.04.md#31-paging-hardware-页表基本概念与分级-satp-寄存器)
+  - [3.2 Kernel address space](./docs/drafts/lec.04.md#32-kernel-address-space)
+  - [3.3 Code: creating an address space 以及 TLB](./docs/drafts/lec.04.md#33-code-creating-an-address-space-以及-tlb)
+  - [3.4 Physical memory allocation](./docs/drafts/lec.04.md#34-physical-memory-allocation)
+  - [3.5 Code: Physical memory allocator](./docs/drafts/lec.04.md#35-code-physical-memory-allocator)
+  - [3.6 Process address space](./docs/drafts/lec.04.md#36-process-address-space)
+  - [3.7 Code: sbrk 系统调用](./docs/drafts/lec.04.md#37-code-sbrk-系统调用)
+  - [3.8 Code: exec](./docs/drafts/lec.04.md#38-code-exec)
+  - [3.9 Real world](./docs/drafts/lec.04.md#39-real-world)
+  - [3.10 Exercises](./docs/drafts/lec.04.md#310-exercises)
+
+本节课的 lab 留到下节课听完再做。
