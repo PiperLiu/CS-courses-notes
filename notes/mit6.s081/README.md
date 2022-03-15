@@ -150,4 +150,17 @@ sep 16
   - [3.9 Real world](./docs/drafts/lec.04.md#39-real-world)
   - [3.10 Exercises](./docs/drafts/lec.04.md#310-exercises)
 
-本节课的 lab 留到下节课听完再做。
+课堂笔记：[./docs/drafts/lec.04c.md](./docs/drafts/lec.04c.md)
+
+- [虚拟内存的基本概念](./docs/drafts/lec.04c.md#虚拟内存的基本概念)
+- [页表](./docs/drafts/lec.04c.md#页表)
+  - [虚拟地址到物理地址转换](./docs/drafts/lec.04c.md#虚拟地址到物理地址转换)
+  - [多级页表](./docs/drafts/lec.04c.md#多级页表)
+  - [页表缓存 TLB](./docs/drafts/lec.04c.md#页表缓存-tlb)
+  - [kernel page table](./docs/drafts/lec.04c.md#kernel-page-table)
+- [阅读 kernel 代码](./docs/drafts/lec.04c.md#阅读-kernel-代码)
+  - [kvminit 函数](./docs/drafts/lec.04c.md#kvminit-函数)
+  - [kvminithart 函数](./docs/drafts/lec.04c.md#kvminithart-函数)
+  - [walk 函数](./docs/drafts/lec.04c.md#walk-函数)
+
+
