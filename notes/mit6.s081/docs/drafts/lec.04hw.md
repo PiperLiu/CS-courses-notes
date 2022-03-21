@@ -509,3 +509,242 @@ Explain why the third test srcva + len < srcva is necessary in copyin_new(): giv
 
 说白了，就是接着上一个实验，把两个页表合并。这涉及到你要在创建进程的地方进行魔改。
 
+一些细节让我吃了不少苦头。
+
+做法是跟着 hints 一步步来。
+
+kernel/vm.c
+
+```cpp
+// Copy from user to kernel.
+// Copy len bytes to dst from virtual address srcva in a given page table.
+// Return 0 on success, -1 on error.
+int
+copyin(pagetable_t pagetable, char *dst, uint64 srcva, uint64 len)
+{
+  /** 这里是把 srcva 映射成 pa 然后 memmove
+   * 但是我们这里 user page table 与 kernel page table 合并了， va 与 pa 相等
+  uint64 n, va0, pa0;
+
+  while(len > 0){
+    va0 = PGROUNDDOWN(srcva);
+    pa0 = walkaddr(pagetable, va0);
+    if(pa0 == 0)
+      return -1;
+    n = PGSIZE - (srcva - va0);
+    if(n > len)
+      n = len;
+    memmove(dst, (void *)(pa0 + (srcva - va0)), n);
+
+    len -= n;
+    dst += n;
+    srcva = va0 + PGSIZE;
+  }
+  return 0;
+  */
+ return copyin_new(pagetable, dst, srcva, len);
+}
+
+// Copy a null-terminated string from user to kernel.
+// Copy bytes to dst from virtual address srcva in a given page table,
+// until a '\0', or max.
+// Return 0 on success, -1 on error.
+int
+copyinstr(pagetable_t pagetable, char *dst, uint64 srcva, uint64 max)
+{
+  /** 这里与 copyin 修改理由同
+  uint64 n, va0, pa0;
+  int got_null = 0;
+
+  while(got_null == 0 && max > 0){
+    va0 = PGROUNDDOWN(srcva);
+    pa0 = walkaddr(pagetable, va0);
+    if(pa0 == 0)
+      return -1;
+    n = PGSIZE - (srcva - va0);
+    if(n > max)
+      n = max;
+
+    char *p = (char *) (pa0 + (srcva - va0));
+    while(n > 0){
+      if(*p == '\0'){
+        *dst = '\0';
+        got_null = 1;
+        break;
+      } else {
+        *dst = *p;
+      }
+      --n;
+      --max;
+      p++;
+      dst++;
+    }
+
+    srcva = va0 + PGSIZE;
+  }
+  if(got_null){
+    return 0;
+  } else {
+    return -1;
+  }
+  */
+  return copyinstr_new(pagetable, dst, srcva, max);
+}
+```
+
+kernel/proc.c
+
+```cpp
+// Create a new process, copying the parent.
+// Sets up child kernel stack to return as if from fork() system call.
+int
+fork(void)
+{
+  int i, pid;
+  struct proc *np;
+  struct proc *p = myproc();
+  pte_t *pte, *kpte;
+
+  // Allocate process.
+  if((np = allocproc()) == 0){
+    return -1;
+  }
+
+  // Copy user memory from parent to child.
+  if(uvmcopy(p->pagetable, np->pagetable, p->sz) < 0){
+    freeproc(np);
+    release(&np->lock);
+    return -1;
+  }
+  np->sz = p->sz;
+
+  // 把 user page table 内容放到 kernel page table 里
+  // 为什么可以把 user page 中的 pte 直接放到 kernel page table 对应的 pte 上呢？
+  // 因为下面的 walk 会分配真实的物理地址
+  // 此外， kernel page 中低于 PLIC 的地址 就是被设计的直接虚拟地址映射到物理地址
+  for (int j = 0; j < np->sz; j += PGSIZE) {
+    pte = walk(np->pagetable, j, 0);
+    kpte = walk(np->kpagetable, j, 1);  // alloc=1
+    *kpte = (*pte) & ~PTE_U;  // 把 pte 的值覆盖到 kpte ，并且取消 PTE_U 权限（为了内核能访问）
+  }
+
+  ...
+}
+```
+
+kernel/exec.c
+
+```cpp
+int
+exec(char *path, char **argv)
+{
+  ...
+    if (sz1 >= PLIC)
+      goto bad;  // 地址不能超过 PLIC
+    sz = sz1;
+    if(ph.vaddr % PGSIZE != 0)
+      goto bad;
+    if(loadseg(pagetable, ph.vaddr, ip, ph.off, ph.filesz) < 0)
+      goto bad;
+  ...
+
+  // 把 kpagetable 从 0 地址的映射开始清空（清空 user page table 的内容）
+  uvmunmap(p->kpagetable, 0, PGROUNDUP(oldsz) / PGSIZE, 0);
+  for (int j = 0; j < sz; j += PGSIZE) {
+    pte = walk(pagetable, j, 0);
+    kpte = walk(p->kpagetable, j, 1); // alloc=1
+    *kpte = (*pte) & ~PTE_U; // 把 pte 的值覆盖到 kpte ，并且取消 PTE_U 权限（为了内核能访问）
+  }
+  ...
+}
+```
+
+kernel/sysproc.c
+
+```cpp
+uint64
+sys_sbrk(void)
+{
+  int addr;
+  int n;
+  // 声明变量
+  struct proc *p = myproc();
+  pte_t *pte, *kpte;
+
+  if(argint(0, &n) < 0)
+    return -1;
+  addr = myproc()->sz;
+
+  // 不允许地址超出 PLIC
+  if (addr + n >= PLIC) {
+    return -1;
+  }
+
+  if(growproc(n) < 0)
+    return -1;
+  
+  // 如果 n > 0 说明进程的内容是被扩大了，这里把 page table 的东西放进 kernel page table
+  if (n > 0) {
+    for (int j = addr; j < addr + n; j += PGSIZE) {
+      pte = walk(p->pagetable, j, 0);
+      kpte = walk(p->kpagetable, j, 1);  // alloc=1
+      *kpte = (*pte) & ~PTE_U;  // 把 pte 的值覆盖到 kpte ，并且取消 PTE_U 权限（为了内核能访问）
+    }
+  } else {
+    for (int j = addr - PGSIZE; j >= addr + n; j -= PGSIZE) {
+      // 如果内存减小，也要释放掉相应的映射
+      uvmunmap(p->kpagetable, j, 1, 0);
+    }
+  }
+
+  return addr;
+}
+```
+
+kernel/proc.c
+
+```cpp
+// free a proc structure and the data hanging from it,
+// including user pages.
+// p->lock must be held.
+static void
+freeproc(struct proc *p)
+{
+  ...
+  if(p->kpagetable)
+    // proc_freekpagetable(p->kpagetable, p->kstack);
+    // 修改 proc_freekpagetable 函数，使其释放掉 user page table 对应的地方
+    proc_freekpagetable(p->kpagetable, p->kstack, p->sz);
+  ...
+}
+
+void
+proc_freekpagetable(pagetable_t kpagetable, uint64 kstack, uint64 sz)
+{
+  ...
+  // 新增释放 user size 的部分
+  uvmunmap(kpagetable, 0, PGROUNDUP(sz) / PGSIZE, 0);  // 这里一定要有 PGROUNDUP 否则 panic: freewalk: leaf
+  ...
+}
+
+// Set up first user process.
+void
+userinit(void)
+{
+  ...
+  // 给第一个进程也加上到 kernel page table 的映射
+  for (int j = 0; j < p->sz; j += PGSIZE) {
+    pte = walk(p->pagetable, j, 0);
+    kpte = walk(p->kpagetable, j, 1);  // alloc=1
+    *kpte = (*pte) & ~PTE_U;  // 把 pte 的值覆盖到 kpte ，并且取消 PTE_U 权限（为了内核能访问）
+  }
+
+  ...
+}
+```
+
+Explain why the thirdsstest srcva + len < srcva is necessary in copyin_new(): give values for srcva and len for which the first two test fail (i.e., they will not cause to return -1) but for which the third one is true (resulting in returning -1).
+
+srcva + len < srcva 是防止超过 64 位，防溢出的。
+
+![](./images/lab3.done.png)
