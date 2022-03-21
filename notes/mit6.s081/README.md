@@ -12,6 +12,7 @@
   - [LEC 2 (TAs/dm): C and gdb (pointers example)](#lec-2-tasdm-c-and-gdb-pointers-example)
   - [LEC 3 (fk): OS organization and system calls](#lec-3-fk-os-organization-and-system-calls)
   - [LEC 4 (fk): Page tables (boards)](#lec-4-fk-page-tables-boards)
+  - [LEC 5 (TAs/nk): Calling conventions and stack frames RISC-V](#lec-5-tasnk-calling-conventions-and-stack-frames-risc-v)
 
 <!-- /code_chunk_output -->
 
@@ -163,4 +164,20 @@ sep 16
   - [kvminithart 函数](./docs/drafts/lec.04c.md#kvminithart-函数)
   - [walk 函数](./docs/drafts/lec.04c.md#walk-函数)
 
-lab 3 地址如下：[]()
+lab 3 地址如下：[./docs/drafts/lec.04hw.md](./docs/drafts/lec.04hw.md)
+
+这个实验对我来讲真的是难，断断续续做了五天。做完后，发现其实真的很简单：只要捋清了页表在哪里会被创建（与进程被创建、被 fork 、被扩容有关），在哪里被取消映射、取消哪里的映射。实际上，由于这个操作系统的优秀设计，把用户虚拟地址和内核虚拟地址放在一个页表上完全不会冲突。
+
+#### LEC 5 (TAs/nk): Calling conventions and stack frames RISC-V
+
+sep 21
+
+- LEC 5 (TAs/nk): [Calling conventions and stack frames RISC-V](./docs/lec/l-riscv.txt) ([slides](./docs/lec/l-riscv-slides.pdf)) [video](https://youtu.be/s-Z5t_yTyTM)
+- Preparation: Read [Calling Convention](./docs/lec/riscv-calling.pdf)
+
+课前读书是关于 the C compiler standards for RV32 and RV64 programs ，读书笔记在此：[./docs/drafts/lec.05.md](./docs/drafts/lec.05.md)
+
+- [读书 Chapter 18 Calling Convention](./docs/drafts/lec.05.md#读书-chapter-18-calling-convention)
+  - [18.1 C Datatypes and Alignment](./docs/drafts/lec.05.md#181-c-datatypes-and-alignment)
+  - [18.2 RVG Calling Convention](./docs/drafts/lec.05.md#182-rvg-calling-convention)
+  - [18.3 Soft-Float Calling Convention](./docs/drafts/lec.05.md#183-soft-float-calling-convention)
