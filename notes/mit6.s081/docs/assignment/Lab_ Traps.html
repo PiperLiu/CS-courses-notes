@@ -1,0 +1,465 @@
+<html>
+<head>
+<title>Lab: Traps</title>
+<link rel="stylesheet" href="labs.css" type="text/css" />
+<script src="js/jquery-1.10.2.min.js"></script> 
+<script src="guidance.js"></script>
+</head>
+<body>
+
+<h1>Lab: traps</h1>
+
+<p>This lab explores how system calls are implemented using traps.
+  You will first do a warm-up exercises with stacks and then you will
+  implement an example of user-level trap handling.
+
+<div class="prereq">
+<p>Before you start coding, read Chapter 4 of the <a href="../xv6/book-riscv-rev1.pdf">xv6 book</a>, and
+    related source files:
+  
+  <ul>
+
+    <li> <tt>kernel/trampoline.S</tt>: the assembly involved in
+      changing from user space to kernel space and back
+      
+    <li> <tt>kernel/trap.c</tt>: code handling all interrupts
+  
+  </ul>
+</div>
+
+<p>To start the lab, switch to the trap branch:
+  <pre>
+  $ <kbd>git fetch</kbd>
+  $ <kbd>git checkout traps</kbd>
+  $ <kbd>make clean</kbd>
+  </pre>
+
+<h2>RISC-V assembly <script>g("easy")</script></h2>
+
+<p>It will be important to understand a bit of
+  RISC-V assembly, which you were exposed to in 6.004. There is a file
+  <tt>user/call.c</tt> in your xv6 repo.  <kbd>make fs.img</kbd> compiles it
+  and also produces a readable assembly version of the program in
+  <tt>user/call.asm</tt>.
+
+<p>Read the code in call.asm for the functions <tt>g</tt>, <tt>f</tt>, and <tt>main</tt>.
+  The instruction
+  manual for RISC-V is on the <a href="../reference.html">reference page</a>.
+  Here are some questions that you should answer (store the answers in
+  a file answers-traps.txt):
+
+  <div class="question">
+    Which registers contain arguments to functions?  For example, which
+    register holds 13 in main's call to <tt>printf</tt>?
+  </div>
+  
+  <div class="question">
+    Where is the call to function <tt>f</tt>
+    in the assembly code for main? Where is the call to <tt>g</tt>?  (Hint: the
+    compiler may inline functions.)
+  </div>
+  
+  <div class="question">
+    At what address is the
+    function <tt>printf</tt> located?
+  </div>
+
+  <div class="question">
+    What value is in the register <tt>ra</tt>
+    just after the <tt>jalr</tt> to <tt>printf</tt> in <tt>main</tt>?
+  </div>
+
+  <div class="question">
+    <p>Run the following code.
+      <pre>
+	unsigned int i = 0x00646c72;
+	printf("H%x Wo%s", 57616, &amp;i);
+      </pre>
+      What is the output?
+      <a href="http://web.cs.mun.ca/~michael/c/ascii-table.html">Here's an ASCII
+	table</a> that maps bytes to characters.
+
+    <p>The output depends on that fact that the RISC-V is
+      little-endian.  If the RISC-V were instead big-endian what would
+      you set <code>i</code> to in order to yield the same output?
+      Would you need to change
+      <code>57616</code> to a different value?</p>
+
+    <p>
+      <a href="http://www.webopedia.com/TERM/b/big_endian.html">Here's
+	a description of little- and big-endian</a>
+      and
+      <a href="http://www.networksorcery.com/enp/ien/ien137.txt">a more
+	whimsical description</a>.
+    </p>
+
+  </div>
+
+  <div class="question">
+    <p>In the following code, what is going to be printed after
+      <code>'y='</code>?  (note: the answer is not a specific value.)  Why
+      does this happen?
+
+      <pre>
+	printf("x=%d y=%d", 3);
+      </pre>
+  </div>
+
+
+  <h2>Backtrace <script>g("moderate")</script></h2>
+
+ <p>For debugging it is often useful to have a backtrace: a list
+    of the function calls on the stack above the point
+    at which the error occurred.
+
+<div class="required">
+<p>
+  Implement a <tt>backtrace()</tt> function
+  in <tt>kernel/printf.c</tt>.  Insert a call to this function
+  in <tt>sys_sleep</tt>, and then run <kbd>bttest</kbd>, which
+  calls <tt>sys_sleep</tt>.
+  Your output should be as follows:
+  <pre>
+backtrace:
+0x0000000080002cda
+0x0000000080002bb6
+0x0000000080002898
+  </pre>
+  After <tt>bttest</tt> exit qemu. In your terminal: the addresses may be slightly different but if you
+  run <tt>addr2line -e kernel/kernel</tt> (or <tt>riscv64-unknown-elf-addr2line -e kernel/kernel</tt>) and cut-and-paste the above addresses as
+  follows:
+  <pre>
+    $ <kbd>addr2line -e kernel/kernel</kbd>
+    0x0000000080002de2
+    0x0000000080002f4a
+    0x0000000080002bfc
+    Ctrl-D
+  </pre>
+  You should see something like this:
+  <pre>
+    kernel/sysproc.c:74
+    kernel/syscall.c:224
+    kernel/trap.c:85
+  </pre>
+</div>
+
+<p>The compiler puts in each stack frame a frame pointer that holds
+  the address of the caller's frame pointer.  Your <tt>backtrace</tt>
+  should use these frame pointers to walk up the stack and print the
+  saved return address in each stack frame.
+
+<p>Some hints:
+ <ul>
+ <li>Add the prototype for backtrace to <tt>kernel/defs.h</tt> so that
+  you can invoke <tt>backtrace</tt> in <tt>sys_sleep</tt>.
+ <li>The GCC compiler stores the frame pointer of the currently
+ executing function in the
+ register <tt>s0</tt>. Add the following function
+ to <tt>kernel/riscv.h</tt>:
+ <pre>
+static inline uint64
+r_fp()
+{
+  uint64 x;
+  asm volatile("mv %0, s0" : "=r" (x) );
+  return x;
+}
+</pre>
+ and call this function in <tt>backtrace</tt> to read the current frame pointer.  This function uses <a href="https://gcc.gnu.org/onlinedocs/gcc/Using-Assembly-Language-with-C.html">in-line
+ assembly</a> to read <tt>s0</tt>.
+ <li>These
+ <a href="https://pdos.csail.mit.edu/6.828/2020/lec/l-riscv-slides.pdf">lecture
+ notes</a> have a picture of the layout of stack frames. Note that the
+ return address lives at a fixed offset (-8) from the frame pointer of a
+ stackframe, and that the saved frame pointer lives at fixed offset (-16) from the frame pointer.
+ <li>Xv6 allocates one page for each stack in the xv6 kernel at
+ PAGE-aligned address. You can compute
+ the top and bottom address of the stack page by
+ using <tt>PGROUNDDOWN(fp)</tt> and <tt>PGROUNDUP(fp)</tt>
+ (see <tt>kernel/riscv.h</tt>. These number are helpful
+ for <tt>backtrace</tt> to terminate its loop.
+ </ul>
+
+<p>Once your backtrace is working, call it from <tt>panic</tt>
+  in <tt>kernel/printf.c</tt> so that you see the kernel's backtrace
+  when it panics.
+
+<h2>Alarm <script>g("hard")</script></h2>
+
+<div class="required">
+<p>
+In this exercise you'll add a feature to xv6 that periodically alerts
+a process as it uses CPU time. This might be useful for compute-bound
+processes that want to limit how much CPU time they chew up, or for
+processes that want to compute but also want to take some periodic
+action. More generally, you'll be implementing a primitive form of
+user-level interrupt/fault handlers; you could use something similar
+to handle page faults in the application, for example.  Your solution
+is correct if it passes alarmtest and usertests.
+</div>
+
+<p>
+You should add a new <tt>sigalarm(interval, handler)</tt> system call.
+If an application calls <tt>sigalarm(n, fn)</tt>, then after every
+<tt>n</tt> "ticks" of CPU time that the program consumes, the kernel
+should cause application function
+<tt>fn</tt> to be called. When <tt>fn</tt> returns, the application
+should resume where it left off. A tick is a fairly arbitrary unit of
+time in xv6, determined by how often a hardware timer generates
+interrupts.
+If an application calls <tt>sigalarm(0, 0)</tt>, the kernel should
+stop generating periodic alarm calls.
+
+<p>
+You'll find a file <tt>user/alarmtest.c</tt> in your xv6
+repository. Add it to the Makefile. It won't compile correctly
+until you've added <tt>sigalarm</tt> and <tt>sigreturn</tt>
+system calls (see below).
+
+<p>
+<tt>alarmtest</tt> calls <tt>sigalarm(2, periodic)</tt>
+in <tt>test0</tt> to ask the kernel to force a call
+to <tt>periodic()</tt> every 2 ticks, and then spins for a while.  You
+can see the assembly code for alarmtest in user/alarmtest.asm, which
+may be handy for debugging.  Your solution is correct when
+<tt>alarmtest</tt> produces output like this and usertests also runs
+correctly:
+
+<pre>
+$ <kbd>alarmtest</kbd>
+test0 start
+........alarm!
+test0 passed
+test1 start
+...alarm!
+..alarm!
+...alarm!
+..alarm!
+...alarm!
+..alarm!
+...alarm!
+..alarm!
+...alarm!
+..alarm!
+test1 passed
+test2 start
+................alarm!
+test2 passed
+$ <kbd>usertests</kbd>
+...
+ALL TESTS PASSED
+$
+</pre>
+
+<p>When you're done, your solution will be only a few lines of code,
+  but it may be tricky to get it right. We'll test your code with the
+  version of alarmtest.c in the original repository. You can modify
+  alarmtest.c to help you debug, but make sure the original alarmtest
+  says that all the tests pass.
+
+<h3>test0: invoke handler</h3>
+
+<p>Get started by modifying the kernel to jump to the alarm handler in
+user space, which will cause test0 to print "alarm!". Don't worry yet
+what happens after the "alarm!" output; it's OK for now if your
+program crashes after printing "alarm!". Here are some hints:
+
+<ul>
+
+<li>You'll need to modify the Makefile to cause <tt>alarmtest.c</tt>
+to be compiled as an xv6 user program.
+
+<li>The right declarations to put in <tt>user/user.h</tt> are:
+<pre>
+    int sigalarm(int ticks, void (*handler)());
+    int sigreturn(void);
+</pre>
+
+<li>Update user/usys.pl (which generates user/usys.S),
+    kernel/syscall.h, and kernel/syscall.c 
+   to allow <tt>alarmtest</tt> to invoke the sigalarm and
+   sigreturn system calls.
+
+<li>For now, your <tt>sys_sigreturn</tt> should just return zero.
+
+<li>Your <tt>sys_sigalarm()</tt> should store the alarm interval and
+the pointer to the handler function in new fields in the <tt>proc</tt>
+structure (in <tt>kernel/proc.h</tt>).
+
+<li>You'll need to keep track of how many ticks have passed since the
+last call (or are left until the next call) to a process's alarm
+handler; you'll need a new field in <tt>struct&nbsp;proc</tt> for this
+too.  You can initialize <tt>proc</tt> fields in <tt>allocproc()</tt>
+in <tt>proc.c</tt>.
+
+<li>Every tick, the hardware clock forces an interrupt, which is handled
+in <tt>usertrap()</tt> in <tt>kernel/trap.c</tt>.
+
+
+<li>You only want to manipulate a process's alarm ticks if there's a 
+  timer interrupt; you want something like
+<pre>
+    if(which_dev == 2) ...
+</pre>
+
+<li>Only invoke the alarm function if the process has a
+  timer outstanding.  Note that the address of the user's alarm
+  function might be 0 (e.g., in user/alarmtest.asm, <tt>periodic</tt> is at
+  address 0).
+
+ <li>You'll need to modify
+  <tt>usertrap()</tt> so that when a
+  process's alarm interval expires, the user process executes
+  the handler function.
+  When a trap on the RISC-V returns to user space, what determines
+  the instruction address at which user-space code resumes execution?
+
+<li>It will be easier to look at traps with gdb if you tell qemu to
+use only one CPU, which you can do by running
+<pre>
+    make CPUS=1 qemu-gdb
+</pre>
+
+<li>You've succeeded if alarmtest prints "alarm!".
+
+</ul>
+
+<h3>test1/test2(): resume interrupted code</h3>
+
+<p>Chances are that alarmtest crashes in test0 or test1 after it prints
+"alarm!", or that alarmtest (eventually) prints "test1 failed",
+or that alarmtest exits without printing "test1 passed".
+To fix this, you must
+ensure that, when the alarm handler is done,
+control returns to
+the instruction at which the user program was originally
+interrupted by the timer interrupt. You must ensure that
+the register contents are restored to the values they held
+at the time of the interrupt, so that the user program
+can continue undisturbed after the alarm.
+Finally,
+you should "re-arm" the alarm counter after each time it goes
+off, so that the handler is called periodically.
+
+<p>As a starting point, we've made a design decision for you:
+user alarm handlers are required to call the <tt>sigreturn</tt>
+system call when they have finished. Have a look at
+<tt>periodic</tt> in <tt>alarmtest.c</tt> for an example.
+This means that you can add code to <tt>usertrap</tt> and
+<tt>sys_sigreturn</tt> that cooperate to cause the user
+process to resume properly after it has handled the alarm.
+
+
+<p>
+  Some hints:
+  <ul>
+    <li>Your solution will require you to save and restore
+      registers---what registers do you need to save and restore to resume
+      the interrupted code correctly? (Hint: it will be many).
+    <li>Have <tt>usertrap</tt> save enough state in
+      <tt>struct proc</tt> when the timer goes off
+      that <tt>sigreturn</tt> can correctly return to the
+      interrupted user code.
+
+    <li>Prevent re-entrant calls to the handler----if a handler hasn't
+      returned yet, the kernel shouldn't call it again. <tt>test2</tt>
+      tests this.
+  </ul>
+
+<p>Once you pass <tt>test0</tt>, <tt>test1</tt>, and <tt>test2</tt>
+  run <tt>usertests</tt> to make sure you didn't break any other parts
+  of the kernel.
+
+
+<p><a name="submit"></>
+<h2>Submit the lab</h2>
+
+<p><b>This completes the lab.</b> Make sure you pass all of the make
+grade tests. If this lab had questions, don't forget to write up your
+answers to the questions in answers-<i>lab-name</i>.txt. Commit your changes
+(including adding answers-<i>lab-name</i>.txt) and type make handin in the lab
+  directory to hand in your lab.
+
+<h3>Time spent</h3>
+
+<p>Create a new file, <tt>time.txt</tt>, and put in it a single integer, the
+number of hours you spent on the lab. Don't forget to <tt>git add</tt> and
+<tt>git commit</tt> the file.
+
+<h3>Submit</h3>
+
+You will turn in your assignments using
+the <a href="https://6828.scripts.mit.edu/2020/handin.py/">submission
+website</a>.  You need to request once an API key from the submission
+website before you can turn in any assignments or labs.
+</p>
+
+<p>After committing your final changes to the lab, type <kbd>make
+handin</kbd> to submit your lab.
+<pre>
+$ <kbd>git commit -am "ready to submit my lab"</kbd>
+[util c2e3c8b] ready to submit my lab
+ 2 files changed, 18 insertions(+), 2 deletions(-)
+
+$ <kbd>make handin</kbd>
+tar: Removing leading `/' from member names
+Get an API key for yourself by visiting https://6828.scripts.mit.edu/2020/handin.py/
+Please enter your API key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 79258  100   239  100 79019    853   275k --:--:-- --:--:-- --:--:--  276k
+$
+</pre>
+<kbd>make handin</kbd> will store your API key in <i>myapi.key</i>. If you need
+to change your API key, just remove this file and let <kbd>make handin</kbd>
+generate it again (<i>myapi.key</i> must not include newline characters).
+</p>
+
+<p>
+If you run <kbd>make handin</kbd> and you have either uncomitted changes or
+untracked files, you will see output similar to the following:
+<pre>
+ M hello.c
+?? bar.c
+?? foo.pyc
+Untracked files will not be handed in.  Continue? [y/N]
+</pre>
+Inspect the above lines and make sure all files that your lab solution needs
+are tracked i.e. not listed in a line that begins with <kbd>??</kbd>.
+You can cause <tt>git</tt> to track a new file that you create using
+<tt>git add filename</tt>.
+</p>
+
+<p>
+If <kbd>make handin</kbd> does not work properly, 
+try fixing the problem with the curl or Git commands.
+Or you can run <kbd>make tarball</kbd>.
+This will make a tar file for you, which you can
+then upload via our 
+<a href="https://6828.scripts.mit.edu/2020/handin.py/">web interface</a>.
+</p>
+
+<p>
+<div class="warning">
+<ul>
+  <li>Please run `make grade` to ensure that your code passes all of the tests</li>
+  <li>Commit any modified source code before running `make handin`</li>
+  <li>You can inspect the status of your submission and download the submitted code at <a href="https://6828.scripts.mit.edu/2020/handin.py/">https://6828.scripts.mit.edu/2020/handin.py/</a> </li>
+</ul>
+</div>
+
+
+
+
+<h2>Optional challenge exercises</h2>
+
+<ul>
+
+  <li>Print the names of the functions and line numbers
+  in <tt>backtrace()</tt> instead of numerical
+  addresses <script>g("hard")</script>.</li>
+
+</ul>
+
+</body>
+</html>

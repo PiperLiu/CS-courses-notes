@@ -13,6 +13,7 @@
   - [LEC 3 (fk): OS organization and system calls](#lec-3-fk-os-organization-and-system-calls)
   - [LEC 4 (fk): Page tables (boards)](#lec-4-fk-page-tables-boards)
   - [LEC 5 (TAs/nk): Calling conventions and stack frames RISC-V](#lec-5-tasnk-calling-conventions-and-stack-frames-risc-v)
+  - [LEC 6 (rtm): Isolation & system call entry/exit](#lec-6-rtm-isolation-system-call-entryexit)
 
 <!-- /code_chunk_output -->
 
@@ -196,4 +197,12 @@ sep 21
 - [关于栈 stack](./docs/drafts/images/2022032212.png#关于栈-stack)
   - [【重要】关于stack的gdb调试（查看当前函数调用）](./docs/drafts/images/2022032212.png#重要关于stack的gdb调试查看当前函数调用)
 - [struct （内存中是一段连续的地址）](./docs/drafts/images/2022032212.png#struct-内存中是一段连续的地址)
+
+#### LEC 6 (rtm): Isolation & system call entry/exit
+
+sep 23
+
+- LEC 6 (rtm): [Isolation & system call entry/exit](./docs/lec/l-internal.txt) ([video](https://youtu.be/T26UuauaxWA))
+- Preparation: [Read Chapter 4, except 4.6](./docs/lec/book-riscv-rev1.pdf) and kernel/riscv.h, kernel/trampoline.S, and kernel/trap.c
+- Assignment: <a href="./docs/assignment/Lab_ Traps.html">Lab traps: Trap</a>
 
