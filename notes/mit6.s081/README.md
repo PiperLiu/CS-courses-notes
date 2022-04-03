@@ -206,3 +206,13 @@ sep 23
 - Preparation: [Read Chapter 4, except 4.6](./docs/lec/book-riscv-rev1.pdf) and kernel/riscv.h, kernel/trampoline.S, and kernel/trap.c
 - Assignment: <a href="./docs/assignment/Lab_ Traps.html">Lab traps: Trap</a>
 
+课前读书笔记在这里：[./docs/drafts/lec.06.md](./docs/drafts/lec.06.md)
+
+- [读书 Chapter 4 Traps and system calls](./docs/drafts/lec.06.md#读书-chapter-4-traps-and-system-calls)
+  - [4.1 RISC-V trap machinery](./docs/drafts/lec.06.md#41-risc-v-trap-machinery)
+  - [4.2 Traps from user space](./docs/drafts/lec.06.md#42-traps-from-user-space)
+  - [4.3 Code: Calling system calls](./docs/drafts/lec.06.md#43-code-calling-system-calls)
+  - [4.4 Code: System call arguments](./docs/drafts/lec.06.md#44-code-system-call-arguments)
+  - [4.5 Traps from kernel space](./docs/drafts/lec.06.md#45-traps-from-kernel-space)
+  - [4.7 Real world](./docs/drafts/lec.06.md#47-real-world)
+  - [4.8 Exercises](./docs/drafts/lec.06.md#48-exercises)
