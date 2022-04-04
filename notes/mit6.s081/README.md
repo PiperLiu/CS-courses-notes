@@ -216,3 +216,18 @@ sep 23
   - [4.5 Traps from kernel space](./docs/drafts/lec.06.md#45-traps-from-kernel-space)
   - [4.7 Real world](./docs/drafts/lec.06.md#47-real-world)
   - [4.8 Exercises](./docs/drafts/lec.06.md#48-exercises)
+
+课堂笔记在这里：[./docs/drafts/lec.06c.md](./docs/drafts/lec.06c.md)
+
+- [trap概述](./docs/drafts/lec.06c.md)#trap概述)
+  - [trap时硬件以及kernel要做什么？](./docs/drafts/lec.06c.md)#trap时硬件以及kernel要做什么)
+  - [supervisor mode能做什么](./docs/drafts/lec.06c.md)#supervisor-mode能做什么)
+  - [trap 执行流程](./docs/drafts/lec.06c.md)#trap-执行流程)
+- [使用gdb跟踪trap流程](./docs/drafts/lec.06c.md)#使用gdb跟踪trap流程)
+  - [查看 shell 调用 write（打断点、看寄存器、看页表）](./docs/drafts/lec.06c.md)#查看-shell-调用-write打断点-看寄存器-看页表)
+  - [进入 ecall](./docs/drafts/lec.06c.md)#进入-ecall)
+  - [ecall 实际上只做了三件事（我们该额外做什么）](./docs/drafts/lec.06c.md)#ecall-实际上只做了三件事我们该额外做什么)
+  - [trampoline page的起始，也是uservec函数的起始](./docs/drafts/lec.06c.md)#trampoline-page的起始也是uservec函数的起始)
+  - [usertrap函数是位于trap.c文件的一个函数](./docs/drafts/lec.06c.md)#usertrap函数是位于trapc文件的一个函数)
+  - [usertrapret函数，在返回到用户空间之前内核要做的工作](./docs/drafts/lec.06c.md)#usertrapret函数在返回到用户空间之前内核要做的工作)
+  - [userret函数（又到了trampoline）](./docs/drafts/lec.06c.md)#userret函数又到了trampoline)
