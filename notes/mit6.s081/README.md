@@ -220,18 +220,18 @@ sep 23
 
 课堂笔记在这里：[./docs/drafts/lec.06c.md](./docs/drafts/lec.06c.md)
 
-- [trap概述](./docs/drafts/lec.06c.md)#trap概述)
-  - [trap时硬件以及kernel要做什么？](./docs/drafts/lec.06c.md)#trap时硬件以及kernel要做什么)
-  - [supervisor mode能做什么](./docs/drafts/lec.06c.md)#supervisor-mode能做什么)
-  - [trap 执行流程](./docs/drafts/lec.06c.md)#trap-执行流程)
-- [使用gdb跟踪trap流程](./docs/drafts/lec.06c.md)#使用gdb跟踪trap流程)
-  - [查看 shell 调用 write（打断点、看寄存器、看页表）](./docs/drafts/lec.06c.md)#查看-shell-调用-write打断点-看寄存器-看页表)
-  - [进入 ecall](./docs/drafts/lec.06c.md)#进入-ecall)
-  - [ecall 实际上只做了三件事（我们该额外做什么）](./docs/drafts/lec.06c.md)#ecall-实际上只做了三件事我们该额外做什么)
-  - [trampoline page的起始，也是uservec函数的起始](./docs/drafts/lec.06c.md)#trampoline-page的起始也是uservec函数的起始)
-  - [usertrap函数是位于trap.c文件的一个函数](./docs/drafts/lec.06c.md)#usertrap函数是位于trapc文件的一个函数)
-  - [usertrapret函数，在返回到用户空间之前内核要做的工作](./docs/drafts/lec.06c.md)#usertrapret函数在返回到用户空间之前内核要做的工作)
-  - [userret函数（又到了trampoline）](./docs/drafts/lec.06c.md)#userret函数又到了trampoline)
+- [trap概述](./docs/drafts/lec.06c.md#trap概述)
+  - [trap时硬件以及kernel要做什么？](./docs/drafts/lec.06c.md#trap时硬件以及kernel要做什么)
+  - [supervisor mode能做什么](./docs/drafts/lec.06c.md#supervisor-mode能做什么)
+  - [trap 执行流程](./docs/drafts/lec.06c.md#trap-执行流程)
+- [使用gdb跟踪trap流程](./docs/drafts/lec.06c.md#使用gdb跟踪trap流程)
+  - [查看 shell 调用 write（打断点、看寄存器、看页表）](./docs/drafts/lec.06c.md#查看-shell-调用-write打断点-看寄存器-看页表)
+  - [进入 ecall](./docs/drafts/lec.06c.md#进入-ecall)
+  - [ecall 实际上只做了三件事（我们该额外做什么）](./docs/drafts/lec.06c.md#ecall-实际上只做了三件事我们该额外做什么)
+  - [trampoline page的起始，也是uservec函数的起始](./docs/drafts/lec.06c.md#trampoline-page的起始也是uservec函数的起始)
+  - [usertrap函数是位于trap.c文件的一个函数](./docs/drafts/lec.06c.md#usertrap函数是位于trapc文件的一个函数)
+  - [usertrapret函数，在返回到用户空间之前内核要做的工作](./docs/drafts/lec.06c.md#usertrapret函数在返回到用户空间之前内核要做的工作)
+  - [userret函数（又到了trampoline）](./docs/drafts/lec.06c.md#userret函数又到了trampoline)
 
 lab 先不做，先把下节课答疑听了再做。
 
@@ -246,3 +246,5 @@ sep 28
   - [关于 guard page 和 stack page](./docs/drafts/lec.07c.md#关于-guard-page-和-stack-page)
 - [之前的 page table lab](./docs/drafts/lec.07c.md#之前的-page-table-lab)
   - [第二问：共享内核页](./docs/drafts/lec.07c.md#第二问共享内核页)
+
+好了，现在把 Lab traps: Trap 给做了吧，笔记：[./docs/drafts/lec.07hw.md](./docs/drafts/lec.07hw.md)
