@@ -14,6 +14,7 @@
   - [LEC 4 (fk): Page tables (boards)](#lec-4-fk-page-tables-boards)
   - [LEC 5 (TAs/nk): Calling conventions and stack frames RISC-V](#lec-5-tasnk-calling-conventions-and-stack-frames-risc-v)
   - [LEC 6 (rtm): Isolation & system call entry/exit](#lec-6-rtm-isolation-system-call-entryexit)
+  - [LEC 7 (fk): Q&A labs](#lec-7-fk-qa-labs)
 
 <!-- /code_chunk_output -->
 
@@ -231,3 +232,17 @@ sep 23
   - [usertrap函数是位于trap.c文件的一个函数](./docs/drafts/lec.06c.md)#usertrap函数是位于trapc文件的一个函数)
   - [usertrapret函数，在返回到用户空间之前内核要做的工作](./docs/drafts/lec.06c.md)#usertrapret函数在返回到用户空间之前内核要做的工作)
   - [userret函数（又到了trampoline）](./docs/drafts/lec.06c.md)#userret函数又到了trampoline)
+
+lab 先不做，先把下节课答疑听了再做。
+
+#### LEC 7 (fk): Q&A labs
+
+sep 28
+
+- LEC 7 (fk): [Q&A labs](./docs/lec/l-QA1.txt) ([boards](./docs/lec/l-QA1.pdf)) [video](https://youtu.be/_WWjNIJAfVg)
+
+一些课堂笔记：[./docs/drafts/lec.07c.md](./docs/drafts/lec.07c.md)
+- [复习页表](./docs/drafts/lec.07c.md#复习页表)
+  - [关于 guard page 和 stack page](./docs/drafts/lec.07c.md#关于-guard-page-和-stack-page)
+- [之前的 page table lab](./docs/drafts/lec.07c.md#之前的-page-table-lab)
+  - [第二问：共享内核页](./docs/drafts/lec.07c.md#第二问共享内核页)
