@@ -184,20 +184,20 @@ sep 21
   - [18.2 RVG Calling Convention](./docs/drafts/lec.05.md#182-rvg-calling-convention)
   - [18.3 Soft-Float Calling Convention](./docs/drafts/lec.05.md#183-soft-float-calling-convention)
 
-课上内容：[./docs/drafts/images/2022032212.png](./docs/drafts/images/2022032212.png)
+课上内容：[./docs/drafts/lec.05c.md](./docs/drafts/lec.05c.md)
 
-- [关于 RISC-V 处理器与指令集](./docs/drafts/images/2022032212.png#关于-risc-v-处理器与指令集)
-  - [ISA（Instruction Sets Architecture）](./docs/drafts/images/2022032212.png#isainstruction-sets-architecture)
-  - [x86指令集（CISC）](./docs/drafts/images/2022032212.png#x86指令集cisc)
-  - [简单提一下 ARM 指令架构（RISC）](./docs/drafts/images/2022032212.png#简单提一下-arm-指令架构risc)
-  - [RISC-V 区分了基本int指令与其他标准扩展](./docs/drafts/images/2022032212.png#risc-v-区分了基本int指令与其他标准扩展)
-- [汇编代码在内存的位置及其执行](./docs/drafts/images/2022032212.png#汇编代码在内存的位置及其执行)
-  - [“代码段”的具象化.text](./docs/drafts/images/2022032212.png#代码段的具象化text)
-  - [关于 gdb](./docs/drafts/images/2022032212.png#关于-gdb)
-- [关于 RISC-V 寄存器](./docs/drafts/images/2022032212.png#关于-risc-v-寄存器)
-- [关于栈 stack](./docs/drafts/images/2022032212.png#关于栈-stack)
-  - [【重要】关于stack的gdb调试（查看当前函数调用）](./docs/drafts/images/2022032212.png#重要关于stack的gdb调试查看当前函数调用)
-- [struct （内存中是一段连续的地址）](./docs/drafts/images/2022032212.png#struct-内存中是一段连续的地址)
+- [关于 RISC-V 处理器与指令集](./docs/drafts/lec.05c.md#关于-risc-v-处理器与指令集)
+  - [ISA（Instruction Sets Architecture）](./docs/drafts/lec.05c.md#isainstruction-sets-architecture)
+  - [x86指令集（CISC）](./docs/drafts/lec.05c.md#x86指令集cisc)
+  - [简单提一下 ARM 指令架构（RISC）](./docs/drafts/lec.05c.md#简单提一下-arm-指令架构risc)
+  - [RISC-V 区分了基本int指令与其他标准扩展](./docs/drafts/lec.05c.md#risc-v-区分了基本int指令与其他标准扩展)
+- [汇编代码在内存的位置及其执行](./docs/drafts/lec.05c.md#汇编代码在内存的位置及其执行)
+  - [“代码段”的具象化.text](./docs/drafts/lec.05c.md#代码段的具象化text)
+  - [关于 gdb](./docs/drafts/lec.05c.md#关于-gdb)
+- [关于 RISC-V 寄存器](./docs/drafts/lec.05c.md#关于-risc-v-寄存器)
+- [关于栈 stack](./docs/drafts/lec.05c.md#关于栈-stack)
+  - [【重要】关于stack的gdb调试（查看当前函数调用）](./docs/drafts/lec.05c.md#重要关于stack的gdb调试查看当前函数调用)
+- [struct （内存中是一段连续的地址）](./docs/drafts/lec.05c.md#struct-内存中是一段连续的地址)
 
 #### LEC 6 (rtm): Isolation & system call entry/exit
 
