@@ -15,6 +15,7 @@
   - [LEC 5 (TAs/nk): Calling conventions and stack frames RISC-V](#lec-5-tasnk-calling-conventions-and-stack-frames-risc-v)
   - [LEC 6 (rtm): Isolation & system call entry/exit](#lec-6-rtm-isolation-system-call-entryexit)
   - [LEC 7 (fk): Q&A labs](#lec-7-fk-qa-labs)
+  - [LEC 8 (fk): Page faults](#lec-8-fk-page-faults)
 
 <!-- /code_chunk_output -->
 
@@ -254,3 +255,12 @@ sep 28
 - [Alarm 根据 tick 做回调](./docs/drafts/lec.07hw.md#alarm-根据-tick-做回调)
   - [test0: invoke handler](./docs/drafts/lec.07hw.md#test0-invoke-handler)
   - [test1/test2(): resume interrupted code](./docs/drafts/lec.07hw.md#test1test2-resume-interrupted-code)
+
+#### LEC 8 (fk): Page faults
+
+sep 30
+
+- LEC 8 (fk): [Page faults](./docs/lec/l-pgfaults.txt) ([boards](./docs/lec/l-pgfaults.pdf)) [video](https://youtu.be/KSYO-gTZo0A)
+- Preparation: Read [Section 4.6](./docs/lec/book-riscv-rev1.pdf)
+- Assignment: <a href="./docs/lec/Lab_ xv6 lazy page allocation.html">Lab lazy: Lazy allocation</a>
+

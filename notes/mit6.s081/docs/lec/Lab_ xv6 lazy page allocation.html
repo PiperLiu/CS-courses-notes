@@ -1,0 +1,271 @@
+<html>
+<head>
+<title>Lab: xv6 lazy page allocation</title>
+<link rel="stylesheet" href="labs.css" type="text/css" />
+<script src="guidance.js"></script>
+</head>
+<body>
+
+<h1>Lab: xv6 lazy page allocation</h1>
+
+<p>
+One of the many neat tricks an O/S can play with page table hardware
+is lazy allocation of user-space heap memory. Xv6 applications ask the
+kernel for heap memory using the sbrk() system call. In the kernel
+we've given you, sbrk() allocates physical memory and maps it into the
+process's virtual address space. It can take a long time for a kernel
+to allocate and map memory for a large request. Consider, for example,
+that a gigabyte consists of 262,144 4096-byte pages; that's a huge
+number of allocations even if each is individually cheap. In addition,
+some programs allocate more memory than they actually use (e.g., to
+implement sparse arrays), or allocate memory well in advance of use.
+To allow sbrk() to complete more quickly in these cases, sophisticated
+kernels allocate user memory lazily. That is, sbrk() doesn't allocate
+physical memory, but just remembers which user addresses are
+allocated and marks those addresses as invalid in the user page table.
+When the process first tries to use any given page of
+lazily-allocated memory, the CPU generates a page fault, which the
+kernel handles by allocating physical memory, zeroing it, and mapping
+it. You'll add this lazy allocation feature to xv6 in this lab.
+
+<div class="prereq">
+<p>Before you start coding, read Chapter 4 (in particular 4.6) of
+  the <a href="../xv6/book-riscv-rev1.pdf">xv6 book</a>, and related
+  files you are likely to modify:
+  <ul>
+    <li> <tt>kernel/trap.c</tt>
+    <li> <tt>kernel/vm.c</tt>
+    <li> <tt>kernel/sysproc.c</tt>
+  </ul>
+
+</div>
+
+<p>To start the lab, switch to the lazy branch:
+  <pre>
+  $ <kbd>git fetch</kbd>
+  $ <kbd>git checkout lazy</kbd>
+  $ <kbd>make clean</kbd>
+  </pre>
+
+  
+<h2>Eliminate allocation from sbrk() <script>g("easy")</script></h2>
+
+<div class="required">
+Your first task is to delete page allocation from the sbrk(n) system
+call implementation, which is the function sys_sbrk() in sysproc.c. The
+sbrk(n) system call grows the process's memory size by n bytes, and
+then returns the start of the newly allocated region (i.e., the old
+size). Your new sbrk(n) should just increment the process's size
+(myproc()->sz) by n and return the old size. It should not allocate memory
+-- so you should delete the call to growproc() (but you still need to
+increase the process's size!).
+</div>
+
+<p>
+Try to guess what the result of this modification will be: what will
+break?
+
+<p>
+Make this modification, boot xv6, and type <tt>echo hi</tt> to the shell.
+You should see something like this:
+
+<pre>
+init: starting sh
+$ echo hi
+usertrap(): unexpected scause 0x000000000000000f pid=3
+            sepc=0x0000000000001258 stval=0x0000000000004008
+va=0x0000000000004000 pte=0x0000000000000000
+panic: uvmunmap: not mapped
+</pre>
+
+The "usertrap(): ..." message is from the user trap handler in trap.c;
+it has caught an exception that it does not know how to handle. Make
+sure you understand why this page fault occurs. The "stval=0x0..04008"
+indicates that the virtual address that caused the page fault is
+0x4008.
+
+<h2>Lazy allocation <script>g("moderate")</script></h2>
+
+<div class="required">
+Modify the code in trap.c to respond to a page fault from user space
+by mapping a newly-allocated page of physical memory at the faulting
+address, and then returning back to user space to let the process
+continue executing. You should add your code just before
+the <tt>printf</tt> call that produced the "usertrap(): ..." message.
+Modify whatever other xv6 kernel code you need to in order to
+get <tt>echo hi</tt> to work.
+</div>
+
+Here are some hints:
+ 
+<ul>
+
+<li>You can check whether a fault is a page fault by seeing if
+  r_scause() is 13 or 15 in usertrap().
+
+<li><tt>r_stval()</tt> returns the RISC-V <tt>stval</tt> register,
+which contains the virtual
+address that caused the page fault.
+
+<li>Steal code from uvmalloc() in vm.c, which is what sbrk()
+calls (via growproc()). You'll need to call kalloc() and mappages().
+
+<li>Use PGROUNDDOWN(va) to round the faulting virtual address
+down to a page boundary.
+
+<li>uvmunmap() will panic; modify it to not panic if some pages aren't mapped.
+
+<li>If the kernel crashes, look up sepc in kernel/kernel.asm
+
+<li>Use your <tt>vmprint</tt> function from pgtbl lab to print the content of a page table.
+
+<li>If you see the error "incomplete type proc", include "spinlock.h" then "proc.h".
+
+</ul>
+
+<p>
+If all goes well, your lazy allocation code should result in <tt>echo
+hi</tt> working. You should get at least one page fault (and thus lazy
+allocation), and perhaps two.
+
+<h2>Lazytests and Usertests <script>g("moderate")</script></h2>
+
+<p>We've supplied you with <tt>lazytests</tt>, an xv6 user program that
+tests some specific situations that may stress your lazy memory allocator.
+Modify your kernel code so that all of both <tt>lazytests</tt>
+and <tt>usertests</tt> pass.
+
+<ul>
+
+  <li> Handle negative sbrk() arguments.
+
+  <li> Kill a process if it page-faults on a virtual memory address
+       higher than any allocated with sbrk().
+
+  <li> Handle the parent-to-child memory copy in fork() correctly.
+
+  <li> Handle the case in which a process passes a valid address
+       from sbrk()
+       to a system call such as read or write, but the memory for
+       that address has not yet been allocated.
+
+  <li> Handle out-of-memory correctly: if kalloc() fails in the
+page fault handler, kill the current process.
+
+  <li> Handle faults on the invalid page below the user stack.
+
+</ul>
+
+<p>Your solution is acceptable if your kernel passes lazytests and usertests:
+<pre>
+$ <kbd> lazytests</kbd>
+lazytests starting
+running test lazy alloc
+test lazy alloc: OK
+running test lazy unmap...
+usertrap(): ...
+test lazy unmap: OK
+running test out of memory
+usertrap(): ...
+test out of memory: OK
+ALL TESTS PASSED
+$ <kbd>usertests</kbd>
+...
+ALL TESTS PASSED
+$
+</pre>
+
+<p><a name="submit"></>
+<h2>Submit the lab</h2>
+
+<p><b>This completes the lab.</b> Make sure you pass all of the make
+grade tests. If this lab had questions, don't forget to write up your
+answers to the questions in answers-<i>lab-name</i>.txt. Commit your changes
+(including adding answers-<i>lab-name</i>.txt) and type make handin in the lab
+  directory to hand in your lab.
+
+<h3>Time spent</h3>
+
+<p>Create a new file, <tt>time.txt</tt>, and put in it a single integer, the
+number of hours you spent on the lab. Don't forget to <tt>git add</tt> and
+<tt>git commit</tt> the file.
+
+<h3>Submit</h3>
+
+You will turn in your assignments using
+the <a href="https://6828.scripts.mit.edu/2020/handin.py/">submission
+website</a>.  You need to request once an API key from the submission
+website before you can turn in any assignments or labs.
+</p>
+
+<p>After committing your final changes to the lab, type <kbd>make
+handin</kbd> to submit your lab.
+<pre>
+$ <kbd>git commit -am "ready to submit my lab"</kbd>
+[util c2e3c8b] ready to submit my lab
+ 2 files changed, 18 insertions(+), 2 deletions(-)
+
+$ <kbd>make handin</kbd>
+tar: Removing leading `/' from member names
+Get an API key for yourself by visiting https://6828.scripts.mit.edu/2020/handin.py/
+Please enter your API key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 79258  100   239  100 79019    853   275k --:--:-- --:--:-- --:--:--  276k
+$
+</pre>
+<kbd>make handin</kbd> will store your API key in <i>myapi.key</i>. If you need
+to change your API key, just remove this file and let <kbd>make handin</kbd>
+generate it again (<i>myapi.key</i> must not include newline characters).
+</p>
+
+<p>
+If you run <kbd>make handin</kbd> and you have either uncomitted changes or
+untracked files, you will see output similar to the following:
+<pre>
+ M hello.c
+?? bar.c
+?? foo.pyc
+Untracked files will not be handed in.  Continue? [y/N]
+</pre>
+Inspect the above lines and make sure all files that your lab solution needs
+are tracked i.e. not listed in a line that begins with <kbd>??</kbd>.
+You can cause <tt>git</tt> to track a new file that you create using
+<tt>git add filename</tt>.
+</p>
+
+<p>
+If <kbd>make handin</kbd> does not work properly, 
+try fixing the problem with the curl or Git commands.
+Or you can run <kbd>make tarball</kbd>.
+This will make a tar file for you, which you can
+then upload via our 
+<a href="https://6828.scripts.mit.edu/2020/handin.py/">web interface</a>.
+</p>
+
+<p>
+<div class="warning">
+<ul>
+  <li>Please run `make grade` to ensure that your code passes all of the tests</li>
+  <li>Commit any modified source code before running `make handin`</li>
+  <li>You can inspect the status of your submission and download the submitted code at <a href="https://6828.scripts.mit.edu/2020/handin.py/">https://6828.scripts.mit.edu/2020/handin.py/</a> </li>
+</ul>
+</div>
+
+
+
+
+<h2>Optional challenge exercises</h2>
+
+<ul>
+
+  <li>Make lazy page allocation work with your simple <tt>copyin</tt>
+  from the previous lab.
+
+</ul>
+
+</body>
+</html>
+
+</body>
+</html>
