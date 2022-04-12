@@ -264,3 +264,7 @@ sep 30
 - Preparation: Read [Section 4.6](./docs/lec/book-riscv-rev1.pdf)
 - Assignment: <a href="./docs/lec/Lab_ xv6 lazy page allocation.html">Lab lazy: Lazy allocation</a>
 
+读了一个小节，与课堂内容有很多重叠，不详细记录了：[./docs/drafts/lec.08.md](./docs/drafts/lec.08.md)
+- [读书 4.6 Page-fault exceptions](./docs/drafts/lec.08.md#读书-46-page-fault-exceptions)
+  - [什么是 page-fault exception](./docs/drafts/lec.08.md#什么是-page-fault-exception)
+
