@@ -248,3 +248,9 @@ sep 28
   - [第二问：共享内核页](./docs/drafts/lec.07c.md#第二问共享内核页)
 
 好了，现在把 Lab traps: Trap 给做了吧，笔记：[./docs/drafts/lec.07hw.md](./docs/drafts/lec.07hw.md)
+
+- [RISC-V assembly（汇编、RISC-V是小端机）](./docs/drafts/lec.07hw.md#risc-v-assembly汇编-risc-v是小端机)
+- [Backtrace 报错时回溯打印栈 stack](./docs/drafts/lec.07hw.md#backtrace-报错时回溯打印栈-stack)
+- [Alarm 根据 tick 做回调](./docs/drafts/lec.07hw.md#alarm-根据-tick-做回调)
+  - [test0: invoke handler](./docs/drafts/lec.07hw.md#test0-invoke-handler)
+  - [test1/test2(): resume interrupted code](./docs/drafts/lec.07hw.md#test1test2-resume-interrupted-code)

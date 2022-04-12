@@ -21,7 +21,9 @@
 
 - [RISC-V assembly（汇编、RISC-V是小端机）](#risc-v-assembly汇编-risc-v是小端机)
 - [Backtrace 报错时回溯打印栈 stack](#backtrace-报错时回溯打印栈-stack)
-- [Alarm](#alarm)
+- [Alarm 根据 tick 做回调](#alarm-根据-tick-做回调)
+  - [test0: invoke handler](#test0-invoke-handler)
+  - [test1/test2(): resume interrupted code](#test1test2-resume-interrupted-code)
 
 <!-- /code_chunk_output -->
 
@@ -153,5 +155,228 @@ backtrace(void)
 在 sys_sleep 和 panic 添加 backtrace 调用
 ```
 
-### Alarm
+### Alarm 根据 tick 做回调
 
+In this exercise you'll add a feature to xv6 that periodically alerts a process as it uses CPU time. This might be useful for compute-bound processes that want to limit how much CPU time they chew up, or for processes that want to compute but also want to take some periodic action. More generally, you'll be implementing a primitive form of user-level interrupt/fault handlers; you could use something similar to handle page faults in the application, for example. Your solution is correct if it passes alarmtest and usertests.
+
+You should add a new `sigalarm(interval, handler)` system call. If an application calls `sigalarm(n, fn)`, then after every n "ticks" of CPU time that the program consumes, the kernel should cause application function fn to be called. When fn returns, the application should resume where it left off. A tick is a fairly arbitrary unit of time in xv6, determined by how often a hardware timer generates interrupts. If an application calls `sigalarm(0, 0)`, the kernel should stop generating periodic alarm calls.
+
+You'll find a file user/alarmtest.c in your xv6 repository. Add it to the Makefile. It won't compile correctly until you've added sigalarm and sigreturn system calls (see below).
+
+alarmtest calls `sigalarm(2, periodic)` in test0 to ask the kernel to force a call to periodic() every 2 ticks, and then spins for a while. You can see the assembly code for alarmtest in user/alarmtest.asm, which may be handy for debugging. Your solution is correct when alarmtest produces output like this and usertests also runs correctly:
+
+```
+$ alarmtest
+test0 start
+........alarm!
+test0 passed
+test1 start
+...alarm!
+..alarm!
+...alarm!
+..alarm!
+...alarm!
+..alarm!
+...alarm!
+..alarm!
+...alarm!
+..alarm!
+test1 passed
+test2 start
+................alarm!
+test2 passed
+$ usertests
+...
+ALL TESTS PASSED
+$
+```
+
+When you're done, your solution will be only a few lines of code, but it may be tricky to get it right. We'll test your code with the version of alarmtest.c in the original repository. You can modify alarmtest.c to help you debug, but make sure the original alarmtest says that all the tests pass.
+
+#### test0: invoke handler
+
+Get started by modifying the kernel to jump to the alarm handler in user space, which will cause test0 to print "alarm!". Don't worry yet what happens after the "alarm!" output; it's OK for now if your program crashes after printing "alarm!". Here are some hints:
+- You'll need to modify the Makefile to cause alarmtest.c to be compiled as an xv6 user program.
+- The right declarations to put in user/user.h are:
+  - `int sigalarm(int ticks, void (*handler)());`
+  - `int sigreturn(void);`
+- Update user/usys.pl (which generates user/usys.S), kernel/syscall.h, and kernel/syscall.c to allow alarmtest to invoke the sigalarm and sigreturn system calls.
+- For now, your sys_sigreturn should just return zero.
+- Your sys_sigalarm() should store the alarm interval and the pointer to the handler function in new fields in the proc structure (in kernel/proc.h).
+- You'll need to keep track of how many ticks have passed since the last call (or are left until the next call) to a process's alarm handler; you'll need a new field in struct proc for this too. You can initialize proc fields in allocproc() in proc.c.
+- Every tick, the hardware clock forces an interrupt, which is handled in usertrap() in kernel/trap.c.
+- You only want to manipulate a process's alarm ticks if there's a timer interrupt; you want something like
+  - `if(which_dev == 2) ...`
+- Only invoke the alarm function if the process has a timer outstanding. Note that the address of the user's alarm function might be 0 (e.g., in user/alarmtest.asm, periodic is at address 0).
+- You'll need to modify usertrap() so that when a process's alarm interval expires, the user process executes the handler function. When a trap on the RISC-V returns to user space, what determines the instruction address at which user-space code resumes execution?
+- It will be easier to look at traps with gdb if you tell qemu to use only one CPU, which you can do by running
+  - `make CPUS=1 qemu-gdb`
+- You've succeeded if alarmtest prints "alarm!".
+
+#### test1/test2(): resume interrupted code
+
+Chances are that alarmtest crashes in test0 or test1 after it prints "alarm!", or that alarmtest (eventually) prints "test1 failed", or that alarmtest exits without printing "test1 passed". To fix this, you must ensure that, when the alarm handler is done, control returns to the instruction at which the user program was originally interrupted by the timer interrupt. You must ensure that the register contents are restored to the values they held at the time of the interrupt, so that the user program can continue undisturbed after the alarm. Finally, you should "re-arm" the alarm counter after each time it goes off, so that the handler is called periodically.
+
+As a starting point, we've made a design decision for you: user alarm handlers are required to call the sigreturn system call when they have finished. Have a look at periodic in alarmtest.c for an example. This means that you can add code to usertrap and sys_sigreturn that cooperate to cause the user process to resume properly after it has handled the alarm.
+
+Some hints:
+- Your solution will require you to save and restore registers---what registers do you need to save and restore to resume the interrupted code correctly? (Hint: it will be many).
+- Have usertrap save enough state in struct proc when the timer goes off that sigreturn can correctly return to the interrupted user code.
+- Prevent re-entrant calls to the handler----if a handler hasn't returned yet, the kernel shouldn't call it again. test2 tests this.
+- Once you pass test0, test1, and test2 run usertests to make sure you didn't break any other parts of the kernel.
+
+这里有很多细节，参考了[这篇文章](https://blog.csdn.net/rocketeerLi/article/details/121665215)。
+
+这道题是干什么？
+- 用户通过系统调用 `sigalarm(n, fn)` 让内核每 n 个时钟中断调用 fn
+- 在 user/alarmtest.c 中，每次时钟中断，调用 fn 函数中最后一句话都是另一个系统调用 `sigreturn` ，这个 `sigreturn` 调用会恢复用户进程的所有寄存器值，然后返回到用户进程的上一个中断处。换句话说， fn 可能会改边用户进程的寄存器值，这不行，我们在执行完 fn 后，要恢复用户进程的寄存器值为调用 sigalarm 导致的中断前的状态。这是这道题细节的地方。
+
+最开始，别忘了把 alarmtest 放到 makefile 里。
+
+首先添加两个系统调用，细节比较多，可以参考 [lab2](./lec.03hw.md) ，不详细写了。
+
+```c
+// user/user.h
+// new syscalls
+int sigalarm(int ticks, void (*handler)());
+int sigreturn(void);
+
+// user/usys.pl
+entry("sigalarm");
+entry("sigreturn");
+
+// kernel/syscall.h
+#define SYS_sigalarm 22
+#define SYS_sigreturn 23
+
+// kernel/syscall.c
+extern uint64 sys_sigalarm(void);
+extern uint64 sys_sigreturn(void);
+
+static uint64 (*syscalls[])(void) = {
+...
+[SYS_sigalarm]  sys_sigalarm,
+[SYS_sigreturn] sys_sigreturn,
+};
+```
+
+然后开始实现功能。
+
+修改进程，让进程记录目前调用了多少中断，以及是否要调用回调。因此就修改 kernel/proc.h ：
+
+```c
+  // 中断间隔、回调函数、 tick 计数器
+  int interval;
+  uint64 handler;
+  int ticks;
+  // 保存在 handler 前 trapframe ，用于恢复
+  struct trapframe *pretrapframe;
+```
+
+把系统调用也写在 kernel/sysproc.c ：
+
+```c
+uint64
+sys_sigalarm(void)
+{
+  int interval;
+  uint64 handler;
+  struct proc *p;
+  if (argint(0, &interval) < 0
+      || argaddr(1, &handler)
+      || interval < 0)
+  {
+    return -1;
+  }
+  p = myproc();
+  p->interval = interval;
+  p->handler  = handler;
+  p->ticks    = 0;
+  return 0;
+}
+
+uint64
+sys_sigreturn(void)
+{
+  struct proc *p = myproc();
+  *p->trapframe = *p->pretrapframe;
+  p->ticks = 0;
+  return 0;
+}
+```
+
+然后将调用 handler 的逻辑加入 kernel/trap.c ：
+
+```c
+//
+// handle an interrupt, exception, or system call from user space.
+// called from trampoline.S
+//
+void
+usertrap(void)
+{
+  int which_dev = 0;
+
+  ...
+
+  // give up the CPU if this is a timer interrupt.
+  if(which_dev == 2) {
+    if (p->interval) {
+      if (p->ticks == p->interval) {
+        *p->pretrapframe = *p->trapframe;
+        // epc 是 saved user program counter
+        // 这样这个中断结束后就会调用 handler
+        p->trapframe->epc = p->handler;
+        // 这里并不需要将 ticks 设为 0
+        // 因为这样可能导致 handler 没运行完，就运行下一个 handler
+        // 因此在 sigreturn 里将 tick 设为 0
+        // 这样 handler 没有运行到 sigreturn 则永远不能运行新的 handler
+      }
+      p->ticks++;
+    }
+    yield();
+  }
+
+  usertrapret();
+}
+```
+
+最后，这进程初始化以及释放的时候要做相应处理：
+
+kernel/proc.c
+```c
+// Look in the process table for an UNUSED proc.
+// If found, initialize state required to run in the kernel,
+// and return with p->lock held.
+// If there are no free procs, or a memory allocation fails, return 0.
+static struct proc*
+allocproc(void)
+{
+  ...
+  p->interval = 0;
+  p->handler  = 0;
+  p->ticks    = 0;
+  if ((p->pretrapframe = (struct trapframe *) kalloc()) == 0) {
+    release(&p->lock);
+    return 0;
+  }
+
+  ...
+}
+
+// free a proc structure and the data hanging from it,
+// including user pages.
+// p->lock must be held.
+static void
+freeproc(struct proc *p)
+{
+  ...
+  p->interval = 0;
+  p->handler  = 0;
+  p->ticks    = 0;
+  if (p->pretrapframe)
+    kfree((void *) p->pretrapframe);
+}
+```
+
+![](./images/lab4.done.png)
