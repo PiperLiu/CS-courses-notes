@@ -268,3 +268,14 @@ sep 30
 - [读书 4.6 Page-fault exceptions](./docs/drafts/lec.08.md#读书-46-page-fault-exceptions)
   - [什么是 page-fault exception](./docs/drafts/lec.08.md#什么是-page-fault-exception)
 
+上课：[./docs/drafts/lec.08.md](./docs/drafts/lec.08.md)
+- [page fault 课程内容概述](./docs/drafts/lec.08.md#page-fault-课程内容概述)
+  - [内核需要什么样的信息才能够响应 page fault](./docs/drafts/lec.08.md#内核需要什么样的信息才能够响应-page-fault)
+- [Lazy page allocation (sbrk)](./docs/drafts/lec.08.md#lazy-page-allocation-sbrk)
+  - [简单修改 sys_sbrk](./docs/drafts/lec.08.md#简单修改-sys_sbrk)
+- [Zero Fill On Demand](./docs/drafts/lec.08.md#zero-fill-on-demand)
+- [Copy On Write Fork](./docs/drafts/lec.08.md#copy-on-write-fork)
+- [Demand paging](./docs/drafts/lec.08.md#demand-paging)
+  - [在lazy allocation中，如果内存耗尽了该如何办？（dirty page）](./docs/drafts/lec.08.md#在lazy-allocation中如果内存耗尽了该如何办dirty-page)
+- [Memory Mapped Files](./docs/drafts/lec.08.md#memory-mapped-files)
+
