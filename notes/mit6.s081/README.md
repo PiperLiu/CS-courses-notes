@@ -279,3 +279,7 @@ sep 30
   - [在lazy allocation中，如果内存耗尽了该如何办？（dirty page）](./docs/drafts/lec.08.md#在lazy-allocation中如果内存耗尽了该如何办dirty-page)
 - [Memory Mapped Files](./docs/drafts/lec.08.md#memory-mapped-files)
 
+lab 就是设计一个 lazy allocation ，挺简单的：[./docs/drafts/lec.08hw.md](./docs/drafts/lec.08hw.md)
+- [Eliminate allocation from sbrk()](./docs/drafts/lec.08hw.md#eliminate-allocation-from-sbrk)
+- [Lazy allocation](./docs/drafts/lec.08hw.md#lazy-allocation)
+- [Lazytests and Usertests](./docs/drafts/lec.08hw.md#lazytests-and-usertests)
