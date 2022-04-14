@@ -220,16 +220,17 @@ sys_sbrk(void)
 {
   int addr;
   int n;
+  struct proc *p;
 
   if(argint(0, &n) < 0)
     return -1;
-  addr = myproc()->sz;
-  if (n >= 0 && addr + n > addr) {  // addr + n > addr 保证不溢出
+  p = myproc();
+  addr = p->sz;
+  if (n >= 0 && addr + n >= addr) {  // addr + n > addr 保证不溢出
     // 无需检测 addr + n < trapframe ，因为 addr + n 都是 int
     p->sz += n;
-  } else if (n < 0 && addr + n >= PGROUNDUP(myproc()->trapframe->sp)) {
-    // 这里不能让 heap 把 stack 反噬了
-    p-sz = uvmdealloc(p->pagetable, addr, addr + n);
+  } else if (n < 0 && addr + n >= PGROUNDUP(p->trapframe->sp)) {
+    p->sz = uvmdealloc(p->pagetable, addr, addr + n);
   } else {
     return -1;
   }
@@ -240,12 +241,39 @@ sys_sbrk(void)
 对于 uvmunmap 函数：
 
 ```c
+// Remove npages of mappings starting from va. va must be
+// page-aligned. The mappings must exist.
+// Optionally free the physical memory.
+void
+uvmunmap(pagetable_t pagetable, uint64 va, uint64 npages, int do_free)
+{
+  uint64 a;
+  pte_t *pte;
+
+  if((va % PGSIZE) != 0)
+    panic("uvmunmap: not aligned");
+
+  for(a = va; a < va + npages*PGSIZE; a += PGSIZE){
     if((pte = walk(pagetable, a, 0)) == 0)
       // panic("uvmunmap: walk");
     { // 如果 sbrk 申请的空间很大，这将导致新增很多一级页表
       // 因此可能一级页表也是未使用的，无效的
       continue;
     }
+    if((*pte & PTE_V) == 0)
+      // panic("uvmunmap: not mapped");
+    { // 如果不可该页无效，大概率是 lazy allocation ，不 panic
+      continue;
+    }
+    if(PTE_FLAGS(*pte) == PTE_V)
+      panic("uvmunmap: not a leaf");
+    if(do_free){
+      uint64 pa = PTE2PA(*pte);
+      kfree((void*)pa);
+    }
+    *pte = 0;
+  }
+}
 ```
 
 - [X] Handle negative sbrk() arguments.
@@ -322,6 +350,7 @@ walkaddr(pagetable_t pagetable, uint64 va)
 {
   pte_t *pte;
   uint64 pa;
+  struct proc *p = myproc();
 
   if(va >= MAXVA)
     return 0;
@@ -333,7 +362,8 @@ walkaddr(pagetable_t pagetable, uint64 va)
       if ((mem = kalloc()) == 0)
         return 0;
       memset(mem, 0, PGSIZE);
-      if (mappages(p->pagetable, PGROUNDDOWN(va), PGSIZE, (uint64) mem, PTE_W|PTE_R|PTE_U) != 0) {
+      if (mappages(p->pagetable, PGROUNDDOWN(va), PGSIZE, (uint64)mem, PTE_W | PTE_R | PTE_U) != 0)
+      {
         kfree(mem);
         return 0;
       }
@@ -396,6 +426,7 @@ usertrap(void)
   } else if (r_scause() == 13 || r_scause() == 15) {  // 如果是 page fault
     char *mem;
     if ((mem = kalloc()) != 0) {  // 分配一个物理页
+      uint64 va = r_stval();
       if (va >= p->sz) {
         printf("usertrap(): invalid va=%p larger than p->sz=%p\n", va, p->sz);
         p->killed = 1;
@@ -407,7 +438,7 @@ usertrap(void)
         goto killp;
       }
       memset(mem, 0, PGSIZE);
-      uint64 va = PGROUNDDOWN(r_stval());  // 虚地址向下取整
+      va = PGROUNDDOWN(va);  // 虚地址向下取整
       // 页表映射
       if (mappages(p->pagetable, va, PGSIZE, (uint64) mem, PTE_W|PTE_R|PTE_U) != 0) {
         kfree(mem);
