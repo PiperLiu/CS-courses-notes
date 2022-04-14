@@ -283,3 +283,10 @@ lab 就是设计一个 lazy allocation ，挺简单的：[./docs/drafts/lec.08hw
 - [Eliminate allocation from sbrk()](./docs/drafts/lec.08hw.md#eliminate-allocation-from-sbrk)
 - [Lazy allocation](./docs/drafts/lec.08hw.md#lazy-allocation)
 - [Lazytests and Usertests](./docs/drafts/lec.08hw.md#lazytests-and-usertests)
+
+#### LEC 9 (fk): Interrupts
+
+oct 5
+
+- LEC 9 (fk): [Interrupts](./docs/lec/l-interrupt.txt) ([boards](./docs/lec/l-interrupt.pdf)) [video](https://youtu.be/zRnGNndcVEA)
+- Preparation: Read [Chapter 5](./docs/lec/book-riscv-rev1.pdf) and kernel/kernelvec.S, kernel/plic.c, kernel/console.c, kernel/uart.c, kernel/printf.c
