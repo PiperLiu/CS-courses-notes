@@ -9,13 +9,14 @@
 - [🥞本仓库资源](#本仓库资源)
 - [🍱课程索引](#课程索引)
   - [LEC 1 (rtm): Introduction and examples](#lec-1-rtm-introduction-and-examples)
-  - [LEC 2 (TAs/dm): C and gdb (pointers example)](#lec-2-tasdm-c-and-gdb-pointers-example)
+  - [LEC 2 (TAs/dm): C and gdb](#lec-2-tasdm-c-and-gdb)
   - [LEC 3 (fk): OS organization and system calls](#lec-3-fk-os-organization-and-system-calls)
-  - [LEC 4 (fk): Page tables (boards)](#lec-4-fk-page-tables-boards)
+  - [LEC 4 (fk): Page tables](#lec-4-fk-page-tables)
   - [LEC 5 (TAs/nk): Calling conventions and stack frames RISC-V](#lec-5-tasnk-calling-conventions-and-stack-frames-risc-v)
   - [LEC 6 (rtm): Isolation & system call entry/exit](#lec-6-rtm-isolation-system-call-entryexit)
   - [LEC 7 (fk): Q&A labs](#lec-7-fk-qa-labs)
   - [LEC 8 (fk): Page faults](#lec-8-fk-page-faults)
+  - [LEC 9 (fk): Interrupts](#lec-9-fk-interrupts)
 
 <!-- /code_chunk_output -->
 
@@ -72,7 +73,7 @@ sep 2
 
 本节作业笔记：[./docs/drafts/lec.01hw.md](./docs/drafts/lec.01hw.md)
 
-#### LEC 2 (TAs/dm): C and gdb (pointers example)
+#### LEC 2 (TAs/dm): C and gdb
 
 sep 9
 
@@ -132,7 +133,7 @@ sep 9
 
 然后把 lab 2 做了吧：[./docs/drafts/lec.03hw.md](./docs/drafts/lec.03hw.md)
 
-#### LEC 4 (fk): Page tables (boards)
+#### LEC 4 (fk): Page tables
 
 sep 16
 
@@ -290,3 +291,19 @@ oct 5
 
 - LEC 9 (fk): [Interrupts](./docs/lec/l-interrupt.txt) ([boards](./docs/lec/l-interrupt.pdf)) [video](https://youtu.be/zRnGNndcVEA)
 - Preparation: Read [Chapter 5](./docs/lec/book-riscv-rev1.pdf) and kernel/kernelvec.S, kernel/plic.c, kernel/console.c, kernel/uart.c, kernel/printf.c
+
+课前预习读读书：[./docs/drafts/lec.09.md](./docs/drafts/lec.09.md)
+- [Chapter 5 Interrupts and device drivers](./docs/drafts/lec.09.md#chapter-5-interrupts-and-device-drivers)
+  - [5.1 Code: Console input](./docs/drafts/lec.09.md#51-code-console-input)
+  - [5.2 Code: Console output (I/O concurrency IO 并行)](./docs/drafts/lec.09.md#52-code-console-output-io-concurrency-io-并行)
+  - [5.3 Concurrency in drivers](./docs/drafts/lec.09.md#53-concurrency-in-drivers)
+  - [5.4 Timer interrupts](./docs/drafts/lec.09.md#54-timer-interrupts)
+  - [5.5 Real world (DMA 这里引出了 Linux 常用的多路复用技术 polling 等)](./docs/drafts/lec.09.md#55-real-world-dma-这里引出了-linux-常用的多路复用技术-polling-等)
+  - [5.6 Exercises](./docs/drafts/lec.09.md#56-exercises)
+- [中断相关代码](./docs/drafts/lec.09.md#中断相关代码)
+  - [kernel/kernelvec.S](./docs/drafts/lec.09.md#kernelkernelvecs)
+  - [kernel/plic.c](./docs/drafts/lec.09.md#kernelplicc)
+  - [kernel/console.c](./docs/drafts/lec.09.md#kernelconsolec)
+  - [kernel/uart.c](./docs/drafts/lec.09.md#kerneluartc)
+  - [kernel/printf.c](./docs/drafts/lec.09.md#kernelprintfc)
+
