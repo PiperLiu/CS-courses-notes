@@ -323,3 +323,5 @@ oct 5
 - [Interrupt相关的并发（对buffer的producer/consumer并发）](./docs/drafts/lec.09c.md#interrupt相关的并发对buffer的producerconsumer并发)
 - [UART读取键盘输入](./docs/drafts/lec.09c.md#uart读取键盘输入)
 - [Interrupt的演进（引出polling）](./docs/drafts/lec.09c.md#interrupt的演进引出polling)
+
+好了，在进入 Multiprocessors and locking 之前，先把 page allocation 的内容解决掉，把 Lab 6 Copy-on-Write Fork for xv6 写了：[./docs/drafts/lec.09hw.md](./docs/drafts/lec.09hw.md)
