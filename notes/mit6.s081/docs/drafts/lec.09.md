@@ -558,7 +558,7 @@ uartinit(void)
   WriteReg(IER, IER_TX_ENABLE | IER_RX_ENABLE);
 
   initlock(&uart_tx_lock, "uart");
-}
+}7
 
 // add a character to the output buffer and tell the
 // UART to start sending if it isn't already.
