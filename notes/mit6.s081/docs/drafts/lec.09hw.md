@@ -1,6 +1,7 @@
 # Lab: Copy-on-Write Fork for xv6
 
 本节作业：
+- https://github.com/PiperLiu/xv6-labs-2020/tree/cow-fault
 - https://github.com/PiperLiu/xv6-labs-2020/tree/cow
 
 目录：
@@ -81,4 +82,9 @@ Some hints:
 - usertests explores scenarios that cowtest does not test, so don't forget to check that all tests pass for both.
 - Some helpful macros and definitions for page table flags are at the end of kernel/riscv.h.
 - If a COW page fault occurs and there's no free memory, the process should be killed.
+
+自己做了很久，可惜错了。只要调用 exec 系统调用就会从用户的 main 开始运行。很疑惑。参考了[这篇文章](https://zhuanlan.zhihu.com/p/372428507)，但是觉得这里很多细节不对。我写的错误的代码在：
+- https://github.com/PiperLiu/xv6-labs-2020/tree/cow-fault
+
+参考了[这些代码](https://github.com/duguosheng/xv6-labs-2020/commit/c165edb1fa25112fe068b4a80b95ef1c33ea1f1f)，希望可以。
 
