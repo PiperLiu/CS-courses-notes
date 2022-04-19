@@ -263,7 +263,7 @@ sep 30
 
 - LEC 8 (fk): [Page faults](./docs/lec/l-pgfaults.txt) ([boards](./docs/lec/l-pgfaults.pdf)) [video](https://youtu.be/KSYO-gTZo0A)
 - Preparation: Read [Section 4.6](./docs/lec/book-riscv-rev1.pdf)
-- Assignment: <a href="./docs/lec/Lab_ xv6 lazy page allocation.html">Lab lazy: Lazy allocation</a>
+- Assignment: <a href="./docs/assignment/Lab_ xv6 lazy page allocation.html">Lab lazy: Lazy allocation</a>
 
 读了一个小节，与课堂内容有很多重叠，不详细记录了：[./docs/drafts/lec.08.md](./docs/drafts/lec.08.md)
 - [读书 4.6 Page-fault exceptions](./docs/drafts/lec.08.md#读书-46-page-fault-exceptions)
@@ -326,3 +326,14 @@ oct 5
 
 好了，在进入 Multiprocessors and locking 之前，先把 page allocation 的内容解决掉，把 Lab 6 Copy-on-Write Fork for xv6 写了：[./docs/drafts/lec.09hw.md](./docs/drafts/lec.09hw.md)
 - [Implement copy-on write](./docs/drafts/lec.09hw.md#implement-copy-on-write)
+
+#### LEC 10 (fk): Multiprocessors and locking
+
+oct 7
+
+- LEC 10 (fk): [Multiprocessors and locking](./docs/lec/l-lockv2.txt) ([boards](./docs/lec/l-lock.pdf)) [video](https://youtu.be/NGXu3vN7yAk)
+- Preparation: Read "[Locking](./docs/lec/book-riscv-rev1.pdf)" with kernel/spinlock.h and kernel/spinlock.c
+- Assignment: <a href="./docs/assignment/Lab_ Copy-on-Write Fork for xv6.html">Lab cow: Copy-on-write fork</a>
+
+这个 Lab 上节课写完了。
+
