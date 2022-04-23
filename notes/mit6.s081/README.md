@@ -17,6 +17,7 @@
   - [LEC 7 (fk): Q&A labs](#lec-7-fk-qa-labs)
   - [LEC 8 (fk): Page faults](#lec-8-fk-page-faults)
   - [LEC 9 (fk): Interrupts](#lec-9-fk-interrupts)
+  - [LEC 10 (fk): Multiprocessors and locking](#lec-10-fk-multiprocessors-and-locking)
 
 <!-- /code_chunk_output -->
 
@@ -337,3 +338,15 @@ oct 7
 
 这个 Lab 上节课写完了。
 
+读书预习一下：[./docs/drafts/lec.10.md](./docs/drafts/lec.10.md)
+- [Chapter 6 Locking](./docs/drafts/lec.10.md#chapter-6-locking)
+  - [6.1 Race conditions 竞态条件](./docs/drafts/lec.10.md#61-race-conditions-竞态条件)
+    - [critical sectio 临界区](./docs/drafts/lec.10.md#critical-sectio-临界区)
+  - [6.2 Code: Locks 这里以自旋锁 spinlock 为例](./docs/drafts/lec.10.md#62-code-locks-这里以自旋锁-spinlock-为例)
+  - [6.3 Code: Using locks](./docs/drafts/lec.10.md#63-code-using-locks)
+  - [6.4 Deadlock and lock ordering](./docs/drafts/lec.10.md#64-deadlock-and-lock-ordering)
+  - [6.5 Locks and interrupt handlers](./docs/drafts/lec.10.md#65-locks-and-interrupt-handlers)
+  - [6.6 Instruction and memory ordering](./docs/drafts/lec.10.md#66-instruction-and-memory-ordering)
+  - [6.7 Sleep locks 引出不用自旋锁 spinlock](./docs/drafts/lec.10.md#67-sleep-locks-引出不用自旋锁-spinlock)
+  - [6.8 Real world](./docs/drafts/lec.10.md#68-real-world)
+  - [6.9 Exercises](./docs/drafts/lec.10.md#69-exercises)
