@@ -18,6 +18,7 @@
   - [LEC 8 (fk): Page faults](#lec-8-fk-page-faults)
   - [LEC 9 (fk): Interrupts](#lec-9-fk-interrupts)
   - [LEC 10 (fk): Multiprocessors and locking](#lec-10-fk-multiprocessors-and-locking)
+  - [LEC 11 (rtm): Thread switching](#lec-11-rtm-thread-switching)
 
 <!-- /code_chunk_output -->
 
@@ -370,3 +371,11 @@ oct 7
   - [spinlock 具体实现（acquire 和 release）](./docs/drafts/lec.10c.md#spinlock-具体实现acquire-和-release)
   - [为什么在acquire函数的最开始，会先关闭中断？](./docs/drafts/lec.10c.md#为什么在acquire函数的最开始会先关闭中断)
   - [memory ordering 防止指令顺序被优化](./docs/drafts/lec.10c.md#memory-ordering-防止指令顺序被优化)
+
+#### LEC 11 (rtm): Thread switching
+
+oct 14
+
+- LEC 11 (rtm): [Thread switching](./docs/lec/l-threads.txt) ([video](https://youtu.be/vsgrTHY5tkg))
+- Preparation: Read "[Scheduling](./docs/lec/book-riscv-rev1.pdf)" through Section 7.4, and kernel/proc.c, kernel/swtch.S
+- Assignment: <a href="./docs/assignment/Lab_ Multithreading.html">Assignment: Lab thread: Multithreading</a>

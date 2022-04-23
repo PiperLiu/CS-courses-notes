@@ -1,0 +1,470 @@
+<html>
+<head>
+<title>Lab: Multithreading</title>
+<link rel="stylesheet" href="labs.css" type="text/css" />
+<script src="js/jquery-1.10.2.min.js"></script>
+<script src="guidance.js"></script>
+</head>
+<body>
+
+<h1>Lab: Multithreading</h1>
+
+<p>This lab will familiarize you with multithreading.  You will
+implement switching between threads in a user-level threads package,
+use multiple threads to speed up a program, and implement a barrier.
+
+<div class="prereq">
+<p>Before writing code, you should make sure you have read "Chapter 7: Scheduling" from
+  the <a href="../xv6/book-riscv-rev1.pdf">xv6 book</a> and studied
+  the corresponding code.
+</div>
+
+<p>To start the lab, switch to the thread branch:
+  <pre>
+  $ <kbd>git fetch</kbd>
+  $ <kbd>git checkout thread</kbd>
+  $ <kbd>make clean</kbd>
+  </pre>
+
+
+<h2>Uthread: switching between threads <script>g("moderate")</script></h2>
+
+<p>In this exercise you will design the context switch mechanism for a
+  user-level threading system, and then implement it.  To get you
+  started, your xv6 has two files user/uthread.c and
+  user/uthread_switch.S, and a rule in the Makefile to build a uthread
+  program.  uthread.c contains most of a user-level threading package,
+  and code for three simple test threads.
+  The threading package is missing some of the code to create a thread and to switch
+  between threads.
+
+  <div class="required">
+<p>
+Your job is to come up with a plan to create threads and save/restore
+registers to switch between threads, and implement that plan.
+When you're done,
+<tt>make grade</tt> should say that your solution passes the
+<tt>uthread</tt> test.
+</div>
+
+Once you've finished, you should see the following output when you
+run <tt>uthread</tt> on xv6 (the three threads might start in
+a different order):
+
+<pre>
+$ <kbd>make qemu</kbd>
+...
+$ <kbd>uthread</kbd>
+thread_a started
+thread_b started
+thread_c started
+thread_c 0
+thread_a 0
+thread_b 0
+thread_c 1
+thread_a 1
+thread_b 1
+...
+thread_c 99
+thread_a 99
+thread_b 99
+thread_c: exit after 100
+thread_a: exit after 100
+thread_b: exit after 100
+thread_schedule: no runnable threads
+$
+</pre>
+
+<p>
+This output comes from the three test threads, each of which has
+a loop that prints a line and then yields the CPU to the
+other threads.
+<p>
+
+<p>
+At this point, however, with no context switch code, you'll see
+no output.
+<p>
+
+<p>You will need to add code to <tt>thread_create()</tt> and
+   <tt>thread_schedule()</tt> in <tt>user/uthread.c</tt>,
+   and <tt>thread_switch</tt> in <tt>user/uthread_switch.S</tt>.
+   One goal is ensure that when <tt>thread_schedule()</tt> runs a given
+   thread for the first time, the thread executes
+   the function passed to <tt>thread_create()</tt>, on its own stack.
+   Another goal is to ensure that <tt>thread_switch</tt> saves
+   the registers of the thread being switched away from, restores the registers
+   of the thread being switched to, and returns to the point in the
+   latter thread's instructions where it last left off.
+   You will
+  have to decide where to save/restore registers; modifying
+  <tt>struct thread</tt> to hold registers is a good plan.
+  You'll need to add a call to <tt>thread_switch</tt> in <tt>thread_schedule</tt>;
+  you can pass whatever arguments you need to <tt>thread_switch</tt>,
+  but the intent is to switch from thread <tt>t</tt> to
+  <tt>next_thread</tt>.
+
+<p>Some hints:
+  <ul>
+    <li> <tt>thread_switch</tt> needs to save/restore only
+the callee-save registers. Why?
+    <li> You can see the assembly code for uthread in user/uthread.asm, which
+may be handy for debugging.
+<li>To test your code it might be helpful to single step through your
+<tt>thread_switch</tt> using <tt>riscv64-linux-gnu-gdb</tt>.  You can
+get started in this way:
+
+<pre>
+(gdb) file user/_uthread
+Reading symbols from user/_uthread...
+(gdb) b uthread.c:60
+
+</pre>
+
+<p>This sets a breakpoint at line 60 of <tt>uthread.c</tt>.
+The breakpoint may (or may not) be triggered before you even run
+<tt>uthread</tt>. How could that happen?
+
+<p>Once your xv6 shell runs, type "uthread", and gdb will break at line 60.
+Now you can type commands like the following to inspect
+the state of <tt>uthread</tt>:
+
+<pre>
+  (gdb) p/x *next_thread
+</pre>
+
+With "x", you can examine the content of a memory location:
+<pre>
+  (gdb) x/x next_thread->stack
+</pre>
+
+<p>You can skip to the start of <tt>thread_switch</tt> thus:
+<pre>
+   (gdb) b thread_switch
+   (gdb) c
+</pre>
+
+<p>You can single step assembly instructions using:
+<pre>
+   (gdb) si
+</pre>
+
+<p>On-line documentation for gdb is <a href="https://sourceware.org/gdb/current/onlinedocs/gdb/">here</a>.
+
+</ul>
+
+<h2>Using threads  <script>g("moderate")</script></h2>
+
+<p>In this assignment you will explore parallel programming with
+threads and locks using a hash table. You should do this assignment on
+a real Linux or MacOS computer (not xv6, not qemu) that has multiple
+cores. Most recent laptops have multicore processors.
+
+<p>
+This assignment uses the UNIX <tt>pthread</tt> threading library.
+You can find information about it from the manual page, with
+<tt>man pthreads</tt>, and you can look on the web, for example
+<a href="https://pubs.opengroup.org/onlinepubs/007908799/xsh/pthread_mutex_lock.html">here</a>,
+<a href="https://pubs.opengroup.org/onlinepubs/007908799/xsh/pthread_mutex_init.html">here</a>,
+and
+<a href="https://pubs.opengroup.org/onlinepubs/007908799/xsh/pthread_create.html">here</a>.
+
+<p>The file <tt>notxv6/ph.c</tt> contains a simple hash table that
+is correct if used from a single thread, but incorrect when used from
+multiple threads.
+In your main xv6 directory (perhaps <tt>~/xv6-labs-2020</tt>),
+type this:
+<pre>
+$ make ph
+$ ./ph 1
+</pre>
+Note that to build <tt>ph</tt> the Makefile uses your OS's gcc, not
+the 6.S081 tools.
+The argument to <tt>ph</tt> specifies the number of threads that
+execute put and get operations on the the hash table.
+After running for a little while, <tt>ph 1</tt> will produce output similar
+to this:
+
+<pre>
+100000 puts, 3.991 seconds, 25056 puts/second
+0: 0 keys missing
+100000 gets, 3.981 seconds, 25118 gets/second
+</pre>
+
+<p>
+The numbers you see may differ from this sample output by a factor of
+two or more, depending on how fast your computer is, whether it has
+multiple cores, and whether it's busy doing other things.
+
+<p>
+<tt>ph</tt> runs two benchmarks. First it adds lots of keys to the
+hash table by calling <tt>put()</tt>, and prints the achieved rate in
+puts per second. The it fetches keys from the hash table
+with <tt>get()</tt>. It prints the number keys that should have been
+in the hash table as a result of the puts but are missing (zero in
+this case), and it prints the number of gets per second it achieved.
+
+<p>
+You can tell <tt>ph</tt> to use its hash table from multiple
+threads at the same time by giving it an argument greater than
+one. Try <tt>ph 2</tt>:
+
+<pre>
+$ ./ph 2
+100000 puts, 1.885 seconds, 53044 puts/second
+1: 16579 keys missing
+0: 16579 keys missing
+200000 gets, 4.322 seconds, 46274 gets/second
+</pre>
+
+<pp>
+The first line of this <tt>ph 2</tt> output indicates that when two
+threads concurrently add entries to the hash table, they
+achieve a total rate of 53,044 inserts per second. That's about
+twice the rate of the single thread from running
+<tt>ph 1</tt>. That's an excellent "parallel speedup" of about 2x,
+as much as one could possibly hope for (i.e. twice as many
+cores yielding twice as much work per unit time).
+
+<p>
+However, the two lines saying <tt>16579 keys missing</tt> indicate that
+a large number of keys that should have been in the hash table are not
+there. That is, the puts were supposed to add those keys to the hash
+table, but something went wrong.
+Have a look at <tt>notxv6/ph.c</tt>, particularly at <tt>put()</tt>
+and <tt>insert()</tt>.
+
+<div class="question">
+Why are there missing keys
+with 2 threads, but not with 1 thread?  Identify a sequence of
+events with 2 threads that can lead to a key being missing.
+Submit your sequence with a short explanation in answers-thread.txt
+</div>
+
+<div class="required">
+
+<p>To avoid this sequence of events, insert lock and unlock statements
+in
+<tt>put</tt> and <tt>get</tt> in <tt>notxv6/ph.c</tt> so that the
+number of keys missing is always 0 with two threads. The relevant
+pthread calls are:
+
+<pre>
+pthread_mutex_t lock;            // declare a lock
+pthread_mutex_init(&lock, NULL); // initialize the lock
+pthread_mutex_lock(&lock);       // acquire lock
+pthread_mutex_unlock(&lock);     // release lock
+</pre>
+
+<p>
+You're done when <tt>make grade</tt> says that your code passes the <tt>ph_safe</tt> test,
+which requires zero missing keys with two threads.
+It's OK at this point to fail the <tt>ph_fast</tt> test.
+</div>
+
+<p>
+Don't forget to call <tt>pthread_mutex_init()</tt>.
+Test your code first with 1 thread, then test it with 2 threads.
+Is it correct (i.e. have you eliminated missing keys?)?  Does the
+two-threaded version achieve parallel speedup (i.e. more total
+work per unit time) relative
+to the single-threaded version?
+
+<p>
+There are situations where concurrent <tt>put()</tt>s
+have no overlap in the memory they read or write in the
+hash table, and thus don't need a lock to protect against
+each other.
+Can you change <tt>ph.c</tt> to take advantage of such situations to obtain parallel
+speedup for some <tt>put()</tt>s?
+Hint: how about a lock per hash bucket?
+
+<div class="required">
+<p>Modify your code so that some <tt>put</tt> operations run in parallel
+  while maintaining correctness.
+You're done when <tt>make grade</tt> says your code passes
+both the <tt>ph_safe</tt> and <tt>ph_fast</tt> tests.
+The <tt>ph_fast</tt> test requires that two threads yield at least 1.25 times as
+many puts/second as one thread.
+</div>
+
+<h2>Barrier<script>g("moderate")</script></h2>
+
+<p>In this assignment you'll implement a <a
+href="http://en.wikipedia.org/wiki/Barrier_(computer_science)">barrier</a>:
+a point in an
+application at which all participating threads must wait until all other participating threads reach
+that point too. You'll use pthread condition variables, which are a sequence
+coordination technique similar to xv6's sleep and wakeup.
+
+<p>You should do this assignment on a real computer (not xv6, not qemu).
+
+<p>The file <tt>notxv6/barrier.c</tt> contains a broken barrier.
+<pre>
+$ make barrier
+$ ./barrier 2
+barrier: notxv6/barrier.c:42: thread: Assertion `i == t' failed.
+</pre>
+
+The 2 specifies the number of threads that synchronize on the barrier (
+<tt>nthread</tt> in <tt>barrier.c</tt>).  Each thread executes a loop. In
+each loop iteration a thread calls <tt>barrier()</tt> and then sleeps for a
+random number of microseconds. The assert triggers, because one thread leaves the
+barrier before the other thread has reached the barrier.  The desired behavior is
+that each thread blocks in <tt>barrier()</tt> until all <tt>nthreads</tt> of them have called
+<tt>barrier()</tt>.
+
+<div class="required">
+<p>Your goal is to achieve the desired barrier behavior. In addition to the
+ lock primitives that you have seen in the <tt>ph</tt> assignment, you will need
+ the following new pthread primitives;
+look
+<a href="https://pubs.opengroup.org/onlinepubs/007908799/xsh/pthread_cond_wait.html">here</a> and
+<a href="https://pubs.opengroup.org/onlinepubs/007908799/xsh/pthread_cond_broadcast.html">here</a>
+for details.
+
+<pre>
+pthread_cond_wait(&cond, &mutex);  // go to sleep on cond, releasing lock mutex, acquiring upon wake up
+pthread_cond_broadcast(&cond);     // wake up every thread sleeping on cond
+</pre>
+
+<p>
+Make sure your solution passes <tt>make grade</tt>'s <tt>barrier</tt> test.
+</div>
+
+<tt>pthread_cond_wait</tt> releases the <tt>mutex</tt> when called,
+and re-acquires the <tt>mutex</tt> before returning.
+
+<p>We have given you <tt>barrier_init()</tt>. Your job is to implement
+<tt>barrier()</tt> so that the panic doesn't occur.
+We've defined <tt>struct barrier</tt> for you; its fields are for
+your use.
+
+<p>There are two issues that complicate your task:
+
+<ul>
+
+<li> You have to deal with a succession of barrier calls,
+each of which we'll call a round.
+  <tt>bstate.round</tt> records the current round.  You
+  should increment <tt>bstate.round</tt> each time all
+  threads have reached the barrier.
+
+<li> You have to handle the case in which one thread races around the loop before
+the others have exited the barrier. In particular, you are re-using
+the <tt>bstate.nthread</tt> variable from one round to the next.  Make sure that a thread that
+leaves the barrier and races around the loop doesn't increase <tt>bstate.nthread</tt>
+while a previous round is still using it.
+
+</ul>
+
+<p>Test your code with one, two, and more than two threads.
+
+
+<p><a name="submit"></>
+<h2>Submit the lab</h2>
+
+<p><b>This completes the lab.</b> Make sure you pass all of the make
+grade tests. If this lab had questions, don't forget to write up your
+answers to the questions in answers-<i>lab-name</i>.txt. Commit your changes
+(including adding answers-<i>lab-name</i>.txt) and type make handin in the lab
+  directory to hand in your lab.
+
+<h3>Time spent</h3>
+
+<p>Create a new file, <tt>time.txt</tt>, and put in it a single integer, the
+number of hours you spent on the lab. Don't forget to <tt>git add</tt> and
+<tt>git commit</tt> the file.
+
+<h3>Submit</h3>
+
+You will turn in your assignments using
+the <a href="https://6828.scripts.mit.edu/2020/handin.py/">submission
+website</a>.  You need to request once an API key from the submission
+website before you can turn in any assignments or labs.
+</p>
+
+<p>After committing your final changes to the lab, type <kbd>make
+handin</kbd> to submit your lab.
+<pre>
+$ <kbd>git commit -am "ready to submit my lab"</kbd>
+[util c2e3c8b] ready to submit my lab
+ 2 files changed, 18 insertions(+), 2 deletions(-)
+
+$ <kbd>make handin</kbd>
+tar: Removing leading `/' from member names
+Get an API key for yourself by visiting https://6828.scripts.mit.edu/2020/handin.py/
+Please enter your API key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 79258  100   239  100 79019    853   275k --:--:-- --:--:-- --:--:--  276k
+$
+</pre>
+<kbd>make handin</kbd> will store your API key in <i>myapi.key</i>. If you need
+to change your API key, just remove this file and let <kbd>make handin</kbd>
+generate it again (<i>myapi.key</i> must not include newline characters).
+</p>
+
+<p>
+If you run <kbd>make handin</kbd> and you have either uncomitted changes or
+untracked files, you will see output similar to the following:
+<pre>
+ M hello.c
+?? bar.c
+?? foo.pyc
+Untracked files will not be handed in.  Continue? [y/N]
+</pre>
+Inspect the above lines and make sure all files that your lab solution needs
+are tracked i.e. not listed in a line that begins with <kbd>??</kbd>.
+You can cause <tt>git</tt> to track a new file that you create using
+<tt>git add filename</tt>.
+</p>
+
+<p>
+If <kbd>make handin</kbd> does not work properly, 
+try fixing the problem with the curl or Git commands.
+Or you can run <kbd>make tarball</kbd>.
+This will make a tar file for you, which you can
+then upload via our 
+<a href="https://6828.scripts.mit.edu/2020/handin.py/">web interface</a>.
+</p>
+
+<p>
+<div class="warning">
+<ul>
+  <li>Please run `make grade` to ensure that your code passes all of the tests</li>
+  <li>Commit any modified source code before running `make handin`</li>
+  <li>You can inspect the status of your submission and download the submitted code at <a href="https://6828.scripts.mit.edu/2020/handin.py/">https://6828.scripts.mit.edu/2020/handin.py/</a> </li>
+</ul>
+</div>
+
+
+
+
+<h2>Optional challenges for uthread</h2>
+
+<p>The user-level thread package interacts badly with the operating system in
+several ways.  For example, if one user-level thread blocks in a system call,
+another user-level thread won't run, because the user-level threads scheduler
+doesn't know that one of its threads has been descheduled by the xv6 scheduler.  As
+another example, two user-level threads will not run concurrently on different
+cores, because the xv6 scheduler isn't aware that there are multiple
+threads that could run in parallel.  Note that if two user-level threads were to
+run truly in parallel, this implementation won't work because of several races
+(e.g., two threads on different processors could call <tt>thread_schedule</tt>
+concurrently, select the same runnable thread, and both run it on different
+processors.)
+
+<p>There are several ways of addressing these problems.  One is
+ using <a href="http://en.wikipedia.org/wiki/Scheduler_activations">scheduler
+ activations</a> and another is to use one kernel thread per
+ user-level thread (as Linux kernels do).  Implement one of these ways
+ in xv6.  This is not easy to get right; for example, you will need to
+ implement TLB shootdown when updating a page table for a
+ multithreaded user process.
+
+<p>Add locks, condition variables, barriers,
+etc. to your thread package.
+
+</body>
+</html>
