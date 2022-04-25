@@ -379,3 +379,9 @@ oct 14
 - LEC 11 (rtm): [Thread switching](./docs/lec/l-threads.txt) ([video](https://youtu.be/vsgrTHY5tkg))
 - Preparation: Read "[Scheduling](./docs/lec/book-riscv-rev1.pdf)" through Section 7.4, and kernel/proc.c, kernel/swtch.S
 - Assignment: <a href="./docs/assignment/Lab_ Multithreading.html">Assignment: Lab thread: Multithreading</a>
+
+课前预习把书 7.4 读了：[./docs/drafts/lec.11.md](./docs/drafts/lec.11.md)
+- [Chapter 7 Scheduling](./docs/drafts/lec.11.md#chapter-7-scheduling)
+  - [7.4 Code: mycpu and myproc](./docs/drafts/lec.11.md#74-code-mycpu-and-myproc)
+
+听课笔记：[./docs/drafts/lec.11c.md](./docs/drafts/lec.11c.md)
