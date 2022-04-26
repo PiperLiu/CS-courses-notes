@@ -11,6 +11,7 @@
 - [线程（Thread）概述](#线程thread概述)
 - [Xv6 线程调度](#xv6-线程调度)
 - [从代码看进程调度](#从代码看进程调度)
+- [本节课精华：swtch函数](#本节课精华swtch函数)
 
 <!-- /code_chunk_output -->
 
@@ -34,6 +35,8 @@
   - [yield 与 sched 函数](#yield-与-sched-函数)
   - [swtch函数（把 callee 寄存器保存）](#swtch函数把-callee-寄存器保存)
   - [scheduler函数以及锁完成的事情](#scheduler函数以及锁完成的事情)
+  - [XV6线程第一次调用swtch函数以及forkret](#xv6线程第一次调用swtch函数以及forkret)
+- [本节课精华：swtch函数](#本节课精华swtch函数)
 
 <!-- /code_chunk_output -->
 
@@ -611,23 +614,27 @@ scheduler(void)
 
 首先，出让CPU涉及到很多步骤，我们需要将进程的状态从RUNNING改成RUNABLE，我们需要将进程的寄存器保存在context对象中，并且我们还需要停止使用当前进程的栈。所以这里至少有三个步骤，而这三个步骤需要花费一些时间。所以锁的第一个工作就是在这三个步骤完成之前，阻止任何一个其他核的调度器线程看到当前进程。锁这里确保了三个步骤的原子性。从CPU核的角度来说，三个步骤要么全发生，要么全不发生。
 
-第二，当我们开始要运行一个进程时，`p->lock`也有类似的保护功能。当我们要运行一个进程时，我们需要将进程的状态设置为RUNNING，我们需要将进程的context移到RISC-V的寄存器中。但是，如果在这个过程中，发生了中断，从中断的角度来说进程将会处于一个奇怪的状态。比如说进程的状态是RUNNING，但是又还没有将所有的寄存器从context对象拷贝到RISC-V寄存器中。所以，如果这时候有了一个定时器中断将会是个灾难，因为我们可能在寄存器完全恢复之前，从这个进程中切换走。而从这个进程切换走的过程中，将会保存不完整的RISC-V寄存器到进程的context对象中。所以我们希望启动一个进程的过程也具有原子性。在这种情况下，切换到一个进程的过程中，也需要获取进程的锁以确保其他的CPU核不能看到这个进程。**同时在切换到进程的过程中，还需要关闭中断，这样可以避免定时器中断看到还在切换过程中的进程。（注，这就是为什么需要加锁，因为 acquire 关闭了中断）**
+第二，当我们开始要运行一个进程时，`p->lock`也有类似的保护功能。当我们要运行一个进程时，我们需要将进程的状态设置为RUNNING，我们需要将进程的context移到RISC-V的寄存器中。但是，如果在这个过程中，发生了中断，从中断的角度来说进程将会处于一个奇怪的状态。比如说进程的状态是RUNNING，但是又还没有将所有的寄存器从context对象拷贝到RISC-V寄存器中。所以，如果这时候有了一个定时器中断将会是个灾难，因为我们可能在寄存器完全恢复之前，从这个进程中切换走。而从这个进程切换走的过程中，将会保存不完整的RISC-V寄存器到进程的context对象中。所以我们希望启动一个进程的过程也具有原子性。在这种情况下，切换到一个进程的过程中，也需要获取进程的锁以确保其他的CPU核不能看到这个进程。 **同时在切换到进程的过程中，还需要关闭中断，这样可以避免定时器中断看到还在切换过程中的进程。（注，这就是为什么需要加锁，因为 acquire 关闭了中断）**
 
 现在我们在scheduler函数的循环中，代码会检查所有的进程并找到一个来运行。现在我们知道还有另一个进程，因为我们之前fork了另一个spin进程。这里我跳过进程检查，直接在找到RUNABLE进程的位置设置一个断点。
 
-![]()
+![](./images/2022042610.png)
+
+![](./images/2022042611.png)
 
 可以看到进程名还是spin，但是pid已经变成了4，而前一个进程的pid是3。我们还可以查看目标进程的context对象。
 
-![]()
+![](./images/2022042612.png)
 
 其中ra寄存器的内容就是我们要切换到的目标线程的代码位置。虽然我们调用的是swtch函数，但是我们前面已经看过了swtch函数会返回到即将恢复的ra寄存器地址，所以我们真正关心的就是ra指向的地址。
 
-通过打印这个地址的内容，可以看到switch函数会返回到sched函数中。这完全在意料之中，因为可以预期的是，将要切换到的进程之前是被定时器中断通过sched函数挂起的，并且之前在sched函数中又调用了switch函数。
+![](./images/2022042613.png)
+
+通过打印这个地址的内容，可以看到swtch函数会返回到sched函数中。这完全在意料之中，因为可以预期的是，将要切换到的进程之前是被定时器中断通过sched函数挂起的，并且之前在sched函数中又调用了swtch函数。
 
 在swtch函数的最开始，我们仍然在调度器线程中，但是这一次是从调度器线程切换到目标进程的内核线程。所以从swtch函数内部将会返回到目标进程的内核线程的sched函数，通过打印backtrace如下。
 
-![]()
+![](./images/2022042614.png)
 
 我们可以看到，之前有一个usertrap的调用，这必然是之前因为定时器中断而出现的调用。之后在中断处理函数中还调用了yield和sched函数，正如我们之前看到的一样。但是，这里调用yield和sched函数是在pid为4的进程调用的，而不是我们刚刚看的pid为3的进程。
 
@@ -638,3 +645,135 @@ scheduler(void)
 
 另一件需要注意的事情是，swtch函数是线程切换的核心，但是swtch函数中只有保存寄存器，再加载寄存器的操作。线程除了寄存器以外的还有很多其他状态，它有变量，堆中的数据等等，但是所有的这些数据都在内存中，并且会保持不变。我们没有改变线程的任何栈或者堆数据。 **所以线程切换的过程中，处理器中的寄存器是唯一的不稳定状态，且需要保存并恢复。而所有其他在内存中的数据会保存在内存中不被改变，所以不用特意保存并恢复。** 我们只是保存并恢复了处理器中的寄存器，因为我们想在新的线程中也使用相同的一组寄存器。
 
+### XV6线程第一次调用swtch函数以及forkret
+
+- 学生提问：当调用swtch函数的时候，实际上是从一个线程对于swtch的调用切换到了另一个线程对于swtch的调用。 **所以线程第一次调用swtch函数时，需要伪造一个“另一个线程”对于swtch的调用，是吧？因为也不能通过swtch函数随机跳到其他代码去。**
+
+是的。我们来看一下第一次调用swtch时，“另一个”调用swtch函数的线程的context对象。proc.c文件中的allocproc函数会被启动时的第一个进程和fork调用，allocproc会设置好新进程的context，如下所示。
+
+```c
+// Set up first user process.
+void
+userinit(void)
+{
+  struct proc *p;
+
+  p = allocproc();  // 这里分配第一个进程
+  initproc = p;
+  
+  // allocate one user page and copy init's instructions
+  // and data into it.
+  uvminit(p->pagetable, initcode, sizeof(initcode));
+  p->sz = PGSIZE;
+
+  // prepare for the very first "return" from kernel to user.
+  p->trapframe->epc = 0;      // user program counter
+  p->trapframe->sp = PGSIZE;  // user stack pointer
+
+  safestrcpy(p->name, "initcode", sizeof(p->name));
+  p->cwd = namei("/");
+
+  p->state = RUNNABLE;
+
+  release(&p->lock);
+}
+
+// Look in the process table for an UNUSED proc.
+// If found, initialize state required to run in the kernel,
+// and return with p->lock held.
+// If there are no free procs, or a memory allocation fails, return 0.
+static struct proc*
+allocproc(void)
+{
+  struct proc *p;
+
+  for(p = proc; p < &proc[NPROC]; p++) {
+    acquire(&p->lock);
+    if(p->state == UNUSED) {
+      goto found;
+    } else {
+      release(&p->lock);
+    }
+  }
+  return 0;
+
+found:
+  p->pid = allocpid();
+  p->state = USED;
+
+  // Allocate a trapframe page.
+  if((p->trapframe = (struct trapframe *)kalloc()) == 0){
+    freeproc(p);
+    release(&p->lock);
+    return 0;
+  }
+
+  // An empty user page table.
+  p->pagetable = proc_pagetable(p);
+  if(p->pagetable == 0){
+    freeproc(p);
+    release(&p->lock);
+    return 0;
+  }
+
+  // 如下分配了第一个进程
+  // Set up new context to start executing at forkret,
+  // which returns to user space.
+  memset(&p->context, 0, sizeof(p->context));
+  p->context.ra = (uint64)forkret;
+  p->context.sp = p->kstack + PGSIZE;
+
+  return p;
+}
+```
+
+**实际上大部分寄存器的内容都无所谓。但是ra很重要，因为这是进程的第一个swtch调用会返回的位置。** 同时因为进程需要有自己的栈，所以ra和sp都被设置了。这里设置的forkret函数就是进程的第一次调用swtch函数会切换到的“另一个”线程位置。
+
+- 学生提问：所以当swtch函数返回时，CPU会执行forkret中的指令，就像forkret刚刚调用了swtch函数并且返回了一样？
+
+Robert教授：是的，从swtch返回就直接跳到了forkret的最开始位置。
+
+- 学生提问：因吹斯听，我们会在其他场合调用forkret吗？还是说它只会用在这？
+
+Robert教授：是的，它只会在启动进程的时候以这种奇怪的方式运行。下面是forkret函数的代码。
+
+```c
+// A fork child's very first scheduling by scheduler()
+// will swtch to forkret.
+void
+forkret(void)
+{
+  static int first = 1;
+
+  // Still holding p->lock from scheduler.
+  release(&myproc()->lock);
+
+  if (first) {
+    // File system initialization must be run in the context of a
+    // regular process (e.g., because it calls sleep), and thus cannot
+    // be run from main().
+    first = 0;
+    fsinit(ROOTDEV);
+  }
+
+  usertrapret();
+}
+```
+
+从代码中看，它的工作其实就是释放调度器之前获取的锁。函数最后的usertrapret函数其实也是一个假的函数，它会使得程序表现的看起来像是从trap中返回，但是对应的trapframe其实也是假的，这样才能跳到用户的第一个指令中。
+
+- 学生提问：与之前的context对象类似的是，对于trapframe也不用初始化任何寄存器，因为我们要去的是程序的最开始，所以不需要做任何假设，对吧？
+
+Robert教授：我认为程序计数器还是要被初始化为0的。
+
+因为fork拷贝的进程会同时拷贝父进程的程序计数器，所以我们唯一不是通过fork创建进程的场景就是创建第一个进程的时候。这时需要设置程序计数器为0。
+
+- 学生提问：在fortret函数中，`if(first)`是什么意思？
+
+Robert教授：文件系统需要被初始化，具体来说，需要从磁盘读取一些数据来确保文件系统的运行，比如说文件系统究竟有多大，各种各样的东西在文件系统的哪个位置，同时还需要有crash recovery log。完成任何文件系统的操作都需要等待磁盘操作结束，但是XV6只能在进程的context下执行文件系统操作，比如等待I/O。所以初始化文件系统需要等到我们有了一个进程才能进行。而这一步是在第一次调用forkret时完成的，所以在forkret中才有了`if(first)`判断。
+
+## 本节课精华：swtch函数
+
+我认真这节课至少需要记住一件事：swtch函数。
+
+精彩之处在于，swtch 最后一个指令是 ret ，由于在 swtch 中就修改了 ra 寄存器，因此最后 ret 就从 p 的代码片段跑到了 cpu 调度器的代码片段或反之。这个 swtch 都是在内核态的，但是实现的是用户进程的内核态以及调度器内核态二者间的巧妙跳转。
