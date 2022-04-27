@@ -19,6 +19,7 @@
   - [LEC 9 (fk): Interrupts](#lec-9-fk-interrupts)
   - [LEC 10 (fk): Multiprocessors and locking](#lec-10-fk-multiprocessors-and-locking)
   - [LEC 11 (rtm): Thread switching](#lec-11-rtm-thread-switching)
+  - [LEC 7 (fk): Q&A labs](#lec-7-fk-qa-labs-1)
 
 <!-- /code_chunk_output -->
 
@@ -406,3 +407,10 @@ oct 14
 - [Uthread: switching between threads （用户态模拟线程切换）](./docs/drafts/lec.11hw.md#uthread-switching-between-threads-用户态模拟线程切换)
 - [Using threads 基于 unix 库给 pthread 加锁](./docs/drafts/lec.11hw.md#using-threads-基于-unix-库给-pthread-加锁)
 - [Barrier 使用条件变量](./docs/drafts/lec.11hw.md#barrier-使用条件变量)
+
+#### LEC 7 (fk): Q&A labs
+sep 28
+
+- LEC 7 (fk): [Q&A labs](./docs/lec/l-QA2.txt) ([boards](./docs/lec/l-QA2.pdf)) [video](https://youtu.be/_WWjNIJAfVg)
+
+这节课不记录了。
