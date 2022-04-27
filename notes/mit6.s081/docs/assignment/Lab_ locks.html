@@ -1,0 +1,430 @@
+<html>
+<head>
+<title>Lab: locks</title>
+<link rel="stylesheet" href="labs.css" type="text/css" />
+<script src="guidance.js"></script>
+</head>
+<body>
+
+<h1>Lab: locks</h1>
+
+<p>In this lab you'll gain experience in re-designing code to increase
+parallelism. A common symptom of poor parallelism on multi-core
+machines is high lock contention. Improving parallelism often involves
+changing both data structures and locking strategies in order to
+reduce contention. You'll do this for the xv6 memory allocator and
+block cache.
+
+<div class="prereq">
+
+  <p>Before writing code, make sure to read the following
+    parts from  the <a href="../xv6/book-riscv-rev1.pdf">xv6 book</a> :
+    <ul>
+
+    <li> Chapter 6: "Locking" and the corresponding code.
+
+    <li> Section 3.5: "Code: Physical memory allocator"
+
+    <li> Section 8.1 through 8.3: "Overview", "Buffer cache layer", and
+    "Code: Buffer cache"
+
+    </ul>
+
+</div>
+
+  
+<pre>
+  $ <kbd>git fetch</kbd>
+  $ <kbd>git checkout lock</kbd>
+  $ <kbd>make clean</kbd>
+</pre>
+
+  
+<h2>Memory allocator <script>g("moderate")</script></h2>
+
+<p>The program user/kalloctest stresses xv6's memory allocator: three
+  processes grow and shrink their address spaces, resulting in many
+  calls to <tt>kalloc</tt> and <tt>kfree</tt>.
+  <tt>kalloc</tt> and <tt>kfree</tt>
+  obtain <tt>kmem.lock</tt>.  kalloctest prints (as "#fetch-and-add") the number of
+  loop iterations in <tt>acquire</tt> due to attempts to acquire a lock
+  that another core already holds, for the
+  <tt>kmem</tt> lock and a few other locks.
+  The number of loop iterations in <tt>acquire</tt>
+  is a rough measure of lock contention.
+  The output of <tt>kalloctest</tt> looks similar to this
+  before you complete the lab:
+
+<pre>
+$ <kbd>kalloctest</kbd>
+start test1
+test1 results:
+--- lock kmem/bcache stats
+lock: kmem: #fetch-and-add 83375 #acquire() 433015
+lock: bcache: #fetch-and-add 0 #acquire() 1260
+--- top 5 contended locks:
+lock: kmem: #fetch-and-add 83375 #acquire() 433015
+lock: proc: #fetch-and-add 23737 #acquire() 130718
+lock: virtio_disk: #fetch-and-add 11159 #acquire() 114
+lock: proc: #fetch-and-add 5937 #acquire() 130786
+lock: proc: #fetch-and-add 4080 #acquire() 130786
+tot= 83375
+test1 FAIL
+</pre>
+
+<p>
+<tt>acquire</tt> maintains, for each lock, the count of
+calls to <tt>acquire</tt> for that lock, and the
+number of times the loop in <tt>acquire</tt> tried but failed to set the lock.
+  kalloctest calls
+  a system call that causes the kernel to print those counts for the
+  kmem and bcache locks (which are the focus of this lab) and for
+  the 5 most contended locks.  If there is lock contention the
+  number of <tt>acquire</tt> loop iterations will be large.
+  The system call returns
+  the sum of the number of loop iterations for the kmem and bcache locks.
+
+<p>For this lab, you must use a dedicated unloaded machine with multiple
+cores. If you use a machine that is doing other things, the 
+counts that kalloctest prints will be nonsense. You can use a dedicated
+Athena workstation, or your own laptop, but don't use a dialup machine.
+
+<p>The root cause of lock contention in kalloctest is that <tt>kalloc()</tt> has a
+  single free list, protected by a single lock.  To remove lock
+  contention, you will have to redesign the memory allocator to avoid
+  a single lock and list.  The basic idea is to maintain a free list
+  per CPU, each list with its own lock. Allocations and frees on different
+  CPUs can run in parallel, because each CPU will operate on a
+  different list. The main challenge will be to deal with the case
+  in which one CPU's free list is empty, but another CPU's list has free
+  memory; in that case, the one CPU must "steal" part of the other
+  CPU's free list.  Stealing may introduce lock contention, but that
+  will hopefully be infrequent.
+
+<div class="required">
+<p>Your job is to implement per-CPU freelists, and stealing when a
+  CPU's free list is empty.
+  You must give all of your locks names that start with "kmem".
+That is, you should call
+<tt>initlock</tt>
+for each of your locks,
+and pass a name that starts with "kmem".
+ Run kalloctest to see if your
+  implementation has reduced lock contention. To check that it can still allocate
+  all of memory, run <tt>usertests sbrkmuch</tt>. Your output will look similar to that shown below,
+  with much-reduced contention in total on kmem locks, although
+  the specific numbers will differ. Make sure all tests in <tt>usertests</tt> pass.
+  <tt>make grade</tt> should say that the kalloctests pass.
+</div>
+
+<pre>
+$ <kbd>kalloctest</kbd>
+start test1
+test1 results:
+--- lock kmem/bcache stats
+lock: kmem: #fetch-and-add 0 #acquire() 42843
+lock: kmem: #fetch-and-add 0 #acquire() 198674
+lock: kmem: #fetch-and-add 0 #acquire() 191534
+lock: bcache: #fetch-and-add 0 #acquire() 1242
+--- top 5 contended locks:
+lock: proc: #fetch-and-add 43861 #acquire() 117281
+lock: virtio_disk: #fetch-and-add 5347 #acquire() 114
+lock: proc: #fetch-and-add 4856 #acquire() 117312
+lock: proc: #fetch-and-add 4168 #acquire() 117316
+lock: proc: #fetch-and-add 2797 #acquire() 117266
+tot= 0
+test1 OK
+start test2
+total free number of pages: 32499 (out of 32768)
+.....
+test2 OK
+$ <kbd>usertests sbrkmuch</kbd>
+usertests starting
+test sbrkmuch: OK
+ALL TESTS PASSED
+$ <kbd>usertests</kbd>
+...
+ALL TESTS PASSED
+$
+</pre>
+  
+<p>Some hints:
+  <ul>
+    <li>You can use the constant <tt>NCPU</tt> from kernel/param.h
+    <li>Let <tt>freerange</tt> give all free memory to the CPU
+      running <tt>freerange</tt>.
+    <li>The function <tt>cpuid</tt> returns the current core number, but 
+    it's only safe to call it and use its result when
+    interrupts are turned off. You should use
+    <tt>push_off()</tt> and <tt>pop_off()</tt> to turn
+    interrupts off and on.
+    <li>Have a look at the <tt>snprintf</tt> function in kernel/sprintf.c for string formatting ideas. It 	is OK to just name all locks "kmem" though.
+  </ul>
+
+<h2>Buffer cache  <script>g("hard")</script></h2>
+
+<p> This half of the assignment is independent from the first half;
+you can work on this half (and pass the tests) whether or not you
+have completed the first half.
+
+<p>If multiple processes use the file system intensively, they
+  will likely contend for <tt>bcache.lock</tt>, which protects the disk block
+  cache in kernel/bio.c.
+  <tt>bcachetest</tt> creates
+  several processes that repeatedly read different files
+  in order to generate contention on <tt>bcache.lock</tt>;
+  its output looks like this (before you complete this lab):
+
+<pre>
+$ <kbd>bcachetest</kbd>
+start test0
+test0 results:
+--- lock kmem/bcache stats
+lock: kmem: #fetch-and-add 0 #acquire() 33035
+lock: bcache: #fetch-and-add 16142 #acquire() 65978
+--- top 5 contended locks:
+lock: virtio_disk: #fetch-and-add 162870 #acquire() 1188
+lock: proc: #fetch-and-add 51936 #acquire() 73732
+lock: bcache: #fetch-and-add 16142 #acquire() 65978
+lock: uart: #fetch-and-add 7505 #acquire() 117
+lock: proc: #fetch-and-add 6937 #acquire() 73420
+tot= 16142
+test0: FAIL
+start test1
+test1 OK
+</pre>
+You will likely see different output, but
+the number of <tt>acquire</tt> loop iterations for the <tt>bcache</tt> lock will be high.
+If you look at the code in <tt>kernel/bio.c</tt>, you'll see that
+<tt>bcache.lock</tt> protects the list of cached block buffers,
+the reference count (<tt>b->refcnt</tt>) in each block buffer, and the identities of
+the cached blocks (<tt>b->dev</tt> and <tt>b->blockno</tt>).
+
+<p>
+
+<div class="required">
+  <p>Modify the block cache so that the number of <tt>acquire</tt> loop iterations
+    for all locks in the bcache is close to zero when running <tt>bcachetest</tt>.
+    Ideally the sum of the counts for all locks involved in the block
+    cache should be zero, but it's OK if the sum is less than 500.
+    Modify <tt>bget</tt>
+    and <tt>brelse</tt> so that concurrent lookups and releases for
+    different blocks that are in the bcache are unlikely to conflict
+    on locks (e.g., don't all have to wait for
+  <tt>bcache.lock</tt>).
+You must maintain the invariant that at
+  most one copy of each block is cached.  When you are done, your
+  output should be similar to that shown below (though not identical).
+  Make sure usertests still passes.
+  <tt>make grade</tt> should pass all tests when you are done.
+</div>
+
+<pre>
+$ <kbd>bcachetest</kbd>
+start test0
+test0 results:
+--- lock kmem/bcache stats
+lock: kmem: #fetch-and-add 0 #acquire() 32954
+lock: kmem: #fetch-and-add 0 #acquire() 75
+lock: kmem: #fetch-and-add 0 #acquire() 73
+lock: bcache: #fetch-and-add 0 #acquire() 85
+lock: bcache.bucket: #fetch-and-add 0 #acquire() 4159
+lock: bcache.bucket: #fetch-and-add 0 #acquire() 2118
+lock: bcache.bucket: #fetch-and-add 0 #acquire() 4274
+lock: bcache.bucket: #fetch-and-add 0 #acquire() 4326
+lock: bcache.bucket: #fetch-and-add 0 #acquire() 6334
+lock: bcache.bucket: #fetch-and-add 0 #acquire() 6321
+lock: bcache.bucket: #fetch-and-add 0 #acquire() 6704
+lock: bcache.bucket: #fetch-and-add 0 #acquire() 6696
+lock: bcache.bucket: #fetch-and-add 0 #acquire() 7757
+lock: bcache.bucket: #fetch-and-add 0 #acquire() 6199
+lock: bcache.bucket: #fetch-and-add 0 #acquire() 4136
+lock: bcache.bucket: #fetch-and-add 0 #acquire() 4136
+lock: bcache.bucket: #fetch-and-add 0 #acquire() 2123
+--- top 5 contended locks:
+lock: virtio_disk: #fetch-and-add 158235 #acquire() 1193
+lock: proc: #fetch-and-add 117563 #acquire() 3708493
+lock: proc: #fetch-and-add 65921 #acquire() 3710254
+lock: proc: #fetch-and-add 44090 #acquire() 3708607
+lock: proc: #fetch-and-add 43252 #acquire() 3708521
+tot= 128
+test0: OK
+start test1
+test1 OK
+$ <kbd>usertests</kbd>
+  ...
+ALL TESTS PASSED
+$
+</pre>
+
+<p>
+Please give all of your locks  names that start with "bcache".
+That is, you should call
+<tt>initlock</tt>
+for each of your locks,
+and pass a name that starts with "bcache".
+
+<p>
+  Reducing contention in the block cache is more
+  tricky than for kalloc, because bcache buffers are truly
+  shared among processes (and thus CPUs).
+  For kalloc, one could eliminate most contention by
+  giving each CPU its own
+  allocator; that won't work for the block cache.
+We suggest you look up block numbers in the cache with a hash table
+that has a lock per hash bucket.
+
+<p>
+There are some circumstances in which it's OK if your solution
+has lock conflicts:
+<ul>
+<li>When two processes concurrently use the same block number.
+<tt>bcachetest</tt> <tt>test0</tt> doesn't ever do this.
+<li>When two processes concurrently miss in the cache, and
+need to find an unused block to replace.
+<tt>bcachetest</tt> <tt>test0</tt> doesn't ever do this.
+<li>When two processes concurrently use blocks that conflict
+in whatever scheme you use to partition the blocks and
+locks; for example, if two processes use blocks whose block
+numbers hash to the same slot in a hash table.
+<tt>bcachetest</tt> <tt>test0</tt> might do this, depending on your
+design, but you should try to adjust your scheme's
+details to avoid conflicts (e.g., change the size of
+your hash table).
+</ul>
+
+<p>
+<tt>bcachetest</tt>'s <tt>test1</tt> uses more distinct blocks than there are buffers,
+  and exercises lots of file system code paths.
+
+<p>Here are some hints:
+  <ul>
+    <li>Read the description of the block cache in the xv6 book (Section 8.1-8.3).
+
+    <li>It is OK to use a fixed number of buckets and not resize the
+    hash table dynamically. Use a prime number of
+    buckets (e.g., 13) to reduce the likelihood of hashing conflicts.
+
+    <li>Searching in the hash table for a buffer and allocating an
+      entry for that buffer when the buffer is not found must be
+      atomic.
+
+    <li>Remove the list of all buffers (<tt>bcache.head</tt> etc.)
+    and instead time-stamp buffers using the
+    time of their last use (i.e., using <tt>ticks</tt> in kernel/trap.c).
+    With this change <tt>brelse</tt> doesn't need to acquire the bcache
+    lock, and <tt>bget</tt> can select the least-recently used block
+    based on the time-stamps.
+
+    <li>It is OK to serialize eviction in <tt>bget</tt> (i.e., the
+    part of <tt>bget</tt> that selects a buffer to re-use when
+    a lookup misses in the cache).
+
+    <li>Your solution might need to hold two locks in some cases; for
+    example, during eviction you may need to hold the bcache lock and
+    a lock per bucket.  Make sure you avoid deadlock.
+
+    <li>When replacing a block, you might move a <tt>struct buf</tt> from one
+    bucket to another bucket, because the new block hashes to a
+    different bucket.  You might have a
+    tricky case: the new block might hash to the same bucket as the
+    old block.  Make sure you avoid deadlock in that case.
+
+    <li>Some debugging tips: implement bucket locks but leave the global 
+    bcache.lock acquire/release at the beginning/end of bget to serialize
+    the code. Once you are sure it is correct without race conditions,
+    remove the global locks and deal with concurrency issues. You can also
+    run <tt>make CPUS=1 qemu</tt> to test with one core.
+          
+  </ul>
+
+<p><a name="submit"></>
+<h2>Submit the lab</h2>
+
+<p><b>This completes the lab.</b> Make sure you pass all of the make
+grade tests. If this lab had questions, don't forget to write up your
+answers to the questions in answers-<i>lab-name</i>.txt. Commit your changes
+(including adding answers-<i>lab-name</i>.txt) and type make handin in the lab
+  directory to hand in your lab.
+
+<h3>Time spent</h3>
+
+<p>Create a new file, <tt>time.txt</tt>, and put in it a single integer, the
+number of hours you spent on the lab. Don't forget to <tt>git add</tt> and
+<tt>git commit</tt> the file.
+
+<h3>Submit</h3>
+
+You will turn in your assignments using
+the <a href="https://6828.scripts.mit.edu/2020/handin.py/">submission
+website</a>.  You need to request once an API key from the submission
+website before you can turn in any assignments or labs.
+</p>
+
+<p>After committing your final changes to the lab, type <kbd>make
+handin</kbd> to submit your lab.
+<pre>
+$ <kbd>git commit -am "ready to submit my lab"</kbd>
+[util c2e3c8b] ready to submit my lab
+ 2 files changed, 18 insertions(+), 2 deletions(-)
+
+$ <kbd>make handin</kbd>
+tar: Removing leading `/' from member names
+Get an API key for yourself by visiting https://6828.scripts.mit.edu/2020/handin.py/
+Please enter your API key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 79258  100   239  100 79019    853   275k --:--:-- --:--:-- --:--:--  276k
+$
+</pre>
+<kbd>make handin</kbd> will store your API key in <i>myapi.key</i>. If you need
+to change your API key, just remove this file and let <kbd>make handin</kbd>
+generate it again (<i>myapi.key</i> must not include newline characters).
+</p>
+
+<p>
+If you run <kbd>make handin</kbd> and you have either uncomitted changes or
+untracked files, you will see output similar to the following:
+<pre>
+ M hello.c
+?? bar.c
+?? foo.pyc
+Untracked files will not be handed in.  Continue? [y/N]
+</pre>
+Inspect the above lines and make sure all files that your lab solution needs
+are tracked i.e. not listed in a line that begins with <kbd>??</kbd>.
+You can cause <tt>git</tt> to track a new file that you create using
+<tt>git add filename</tt>.
+</p>
+
+<p>
+If <kbd>make handin</kbd> does not work properly, 
+try fixing the problem with the curl or Git commands.
+Or you can run <kbd>make tarball</kbd>.
+This will make a tar file for you, which you can
+then upload via our 
+<a href="https://6828.scripts.mit.edu/2020/handin.py/">web interface</a>.
+</p>
+
+<p>
+<div class="warning">
+<ul>
+  <li>Please run `make grade` to ensure that your code passes all of the tests</li>
+  <li>Commit any modified source code before running `make handin`</li>
+  <li>You can inspect the status of your submission and download the submitted code at <a href="https://6828.scripts.mit.edu/2020/handin.py/">https://6828.scripts.mit.edu/2020/handin.py/</a> </li>
+</ul>
+</div>
+
+
+
+
+<h2>Optional challenge exercises</h2>
+  
+  <ul>
+  <li>make lookup in the buffer cache lock-free. Hint: use
+    gcc's <tt>__sync_*</tt> functions. How do you convince yourself
+    that your implementation is correct?
+  </ul>
+
+</body>
+</html>

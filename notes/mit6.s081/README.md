@@ -20,6 +20,7 @@
   - [LEC 10 (fk): Multiprocessors and locking](#lec-10-fk-multiprocessors-and-locking)
   - [LEC 11 (rtm): Thread switching](#lec-11-rtm-thread-switching)
   - [LEC 7 (fk): Q&A labs](#lec-7-fk-qa-labs-1)
+  - [LEC 13 (rtm): sleep&wakeup and code](#lec-13-rtm-sleepwakeup-and-code)
 
 <!-- /code_chunk_output -->
 
@@ -409,8 +410,35 @@ oct 14
 - [Barrier 使用条件变量](./docs/drafts/lec.11hw.md#barrier-使用条件变量)
 
 #### LEC 7 (fk): Q&A labs
+
 sep 28
 
 - LEC 7 (fk): [Q&A labs](./docs/lec/l-QA2.txt) ([boards](./docs/lec/l-QA2.pdf)) [video](https://youtu.be/_WWjNIJAfVg)
 
 这节课不记录了。
+
+#### LEC 13 (rtm): sleep&wakeup and code
+
+oct 21
+
+- LEC 13 (rtm): [sleep&wakeup](./docs/lec/l-coordination.txt) and [code](./docs/lec/l-coordination.c) ([video](https://youtu.be/gP67sJ4PTnc))
+- Preparation: Read remainder of "[Scheduling](./docs/lec/book-riscv-rev1.pdf)", and corresponding parts of kernel/proc.c, kernel/sleeplock.c
+- Assignment: <a href="./docs/assignment/Lab_ locks.html">Lab lock: Parallelism/locking</a>
+
+读书收获总是很小，因此先把课听了，之后有什么问题再查书。听课笔记：[./docs/drafts/lec.12c.md](./docs/drafts/lec.12c.md)
+- [线程切换过程中锁的限制](./docs/drafts/lec.12c.md#线程切换过程中锁的限制)
+  - [xv6 不允许进程在执行 switch 函数的过程中，持有任何其他的锁](./docs/drafts/lec.12c.md#xv6-不允许进程在执行-switch-函数的过程中持有任何其他的锁)
+- [通过Sleep与Wakeup实现Coordination](./docs/drafts/lec.12c.md#通过sleep与wakeup实现coordination)
+  - [如何设计让进程等待特点事件？](./docs/drafts/lec.12c.md#如何设计让进程等待特点事件)
+  - [以修改后的UART的驱动代码看如何Sleep&Wakeup](./docs/drafts/lec.12c.md#以修改后的uart的驱动代码看如何sleepwakeup)
+- [sleep函数为什么需要一个锁使用作为参数传入](./docs/drafts/lec.12c.md#sleep函数为什么需要一个锁使用作为参数传入)
+  - [lost wakeup 带来的问题](./docs/drafts/lec.12c.md#lost-wakeup-带来的问题)
+  - [用 broken_sleep 修改代码导致的lose wakeup](./docs/drafts/lec.12c.md#用-broken_sleep-修改代码导致的lose-wakeup)
+  - [如何避免Lost wakeup（wakeup和sleep的实现）](./docs/drafts/lec.12c.md#如何避免lost-wakeupwakeup和sleep的实现)
+- [Pipe 中的 sleep 和 wakeup](./docs/drafts/lec.12c.md#pipe-中的-sleep-和-wakeup)
+- [一些 Coordination 相关的系统调用](./docs/drafts/lec.12c.md#一些-coordination-相关的系统调用)
+  - [exit](./docs/drafts/lec.12c.md#exit)
+  - [wait](./docs/drafts/lec.12c.md#wait)
+  - [kill](./docs/drafts/lec.12c.md#kill)
+  - [init 进程会退出吗？](./docs/drafts/lec.12c.md#init-进程会退出吗)
+- [个人总结： sleep 与 spinlock 的区别](./docs/drafts/lec.12c.md#个人总结-sleep-与-spinlock-的区别)
