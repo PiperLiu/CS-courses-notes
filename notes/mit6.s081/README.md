@@ -19,7 +19,7 @@
   - [LEC 9 (fk): Interrupts](#lec-9-fk-interrupts)
   - [LEC 10 (fk): Multiprocessors and locking](#lec-10-fk-multiprocessors-and-locking)
   - [LEC 11 (rtm): Thread switching](#lec-11-rtm-thread-switching)
-  - [LEC 12 (rtm): Q&A labss](#lec-12-rtm-qa-labss)
+  - [LEC 12 (rtm): Q&A labs](#lec-12-rtm-qa-labs)
   - [LEC 13 (rtm): sleep&wakeup and code](#lec-13-rtm-sleepwakeup-and-code)
 
 <!-- /code_chunk_output -->
@@ -409,7 +409,7 @@ oct 14
 - [Using threads 基于 unix 库给 pthread 加锁](./docs/drafts/lec.11hw.md#using-threads-基于-unix-库给-pthread-加锁)
 - [Barrier 使用条件变量](./docs/drafts/lec.11hw.md#barrier-使用条件变量)
 
-#### LEC 12 (rtm): Q&A labss
+#### LEC 12 (rtm): Q&A labs
 
 oct 19
 
@@ -450,3 +450,7 @@ oct 21
     - [一个生产者一个消费者模型示例](./docs/drafts/lec.13.md#一个生产者一个消费者模型示例)
     - [企图解决 lost wakeup 的讨论](./docs/drafts/lec.13.md#企图解决-lost-wakeup-的讨论)
   - [7.9 Real world 注意到 Xv6 不支持信号量](./docs/drafts/lec.13.md#79-real-world-注意到-xv6-不支持信号量)
+
+把实验做了吧：[./docs/drafts/lec.13hw.md](./docs/drafts/lec.13hw.md)
+- [Memory allocator 每个 CPU 核单独一个 freelist 链表](./docs/drafts/lec.13hw.md#memory-allocator-每个-cpu-核单独一个-freelist-链表)
+- [Buffer cache 把 bcache 分桶（分成多个链表），这样可以分解加锁的压力](./docs/drafts/lec.13hw.md#buffer-cache-把-bcache-分桶分成多个链表这样可以分解加锁的压力)
