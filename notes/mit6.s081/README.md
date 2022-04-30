@@ -21,6 +21,7 @@
   - [LEC 11 (rtm): Thread switching](#lec-11-rtm-thread-switching)
   - [LEC 12 (rtm): Q&A labs](#lec-12-rtm-qa-labs)
   - [LEC 13 (rtm): sleep&wakeup and code](#lec-13-rtm-sleepwakeup-and-code)
+  - [LEC 14 (fk): File systems](#lec-14-fk-file-systems)
 
 <!-- /code_chunk_output -->
 
@@ -454,3 +455,11 @@ oct 21
 把实验做了吧：[./docs/drafts/lec.13hw.md](./docs/drafts/lec.13hw.md)
 - [Memory allocator 每个 CPU 核单独一个 freelist 链表](./docs/drafts/lec.13hw.md#memory-allocator-每个-cpu-核单独一个-freelist-链表)
 - [Buffer cache 把 bcache 分桶（分成多个链表），这样可以分解加锁的压力](./docs/drafts/lec.13hw.md#buffer-cache-把-bcache-分桶分成多个链表这样可以分解加锁的压力)
+
+#### LEC 14 (fk): File systems
+
+oct 26
+
+- LEC 14 (fk): [File systems](./docs/lec/l-fs.txt) ([boards](./docs/lec/l-fs.pdf)) ([video](https://youtu.be/ADzLv1nRtR8))
+- Preparation: Read kernel/bio.c, kernel/fs.c, kernel/sysfile.c, kernel/file.c and ["File system" (except for the logging sections)](./docs/lec/book-riscv-rev1.pdf)
+
