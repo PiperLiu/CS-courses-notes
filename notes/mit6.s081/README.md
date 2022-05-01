@@ -22,6 +22,7 @@
   - [LEC 12 (rtm): Q&A labs](#lec-12-rtm-qa-labs)
   - [LEC 13 (rtm): sleep&wakeup and code](#lec-13-rtm-sleepwakeup-and-code)
   - [LEC 14 (fk): File systems](#lec-14-fk-file-systems)
+  - [LEC 15 (fk): Crash recovery](#lec-15-fk-crash-recovery)
 
 <!-- /code_chunk_output -->
 
@@ -480,3 +481,11 @@ oct 26
   - [XV6创建inode代码（涉及 sys_open 、 create 以及 bio.c）](./docs/drafts/lec.14c.md#xv6创建inode代码涉及-sys_open-create-以及-bioc)
 - [Sleep Lock](./docs/drafts/lec.14c.md#sleep-lock)
 - [总结](./docs/drafts/lec.14c.md#总结)
+
+#### LEC 15 (fk): Crash recovery
+
+oct 28
+
+- LEC 15 (fk): [Crash recovery](./docs/lec/l-crash.txt) ([boards](./docs/lec/l-crash.pdf)) [video](https://youtu.be/7Hk2dIorDkk)
+- Preparation: Read kernel/log.c and the [logging sections of "File system"](../mit6.s081/docs/lec/book-riscv-rev1.pdf)
+- Assignment: <a href="./docs/assignment/Lab_ file system.html">Lab fs: File system</a>

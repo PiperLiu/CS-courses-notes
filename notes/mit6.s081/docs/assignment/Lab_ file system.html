@@ -1,0 +1,340 @@
+<html>
+<head>
+<title>Lab: file system</title>
+<link rel="stylesheet" href="labs.css" type="text/css" />
+<script src="guidance.js"></script>
+</head>
+<body>
+
+<h1>Lab: file system</h1>
+
+<p>In this lab you will add large files and symbolic links to the xv6
+  file system.
+
+<div class="prereq">
+<p>Before writing code, you should read "Chapter 8:
+  File system" from the <a href="../xv6/book-riscv-rev1.pdf">xv6
+  book</a> and study the corresponding code.
+</div>
+
+<p>Fetch the xv6 source for the lab and check out the <tt>util</tt> branch:
+
+<pre>
+  $ <kbd>git fetch</kbd>
+  $ <kbd>git checkout fs</kbd>
+  $ <kbd>make clean</kbd>
+</pre>
+
+
+<h2>Large files <script>g("moderate")</script></h2>
+
+<p>In this assignment you'll increase the maximum size of an xv6
+file. Currently xv6 files are limited to 268 blocks, or 268*BSIZE
+bytes (BSIZE is 1024 in xv6). This limit comes from the fact that an
+xv6 inode contains 12 "direct" block numbers and one "singly-indirect"
+block number, which refers to a block that holds up to 256 more block
+  numbers, for a total of 12+256=268 blocks.
+
+<p>The <tt>bigfile</tt> command creates the longest file it can,
+and reports that size:
+<pre>
+$ bigfile
+..
+wrote 268 blocks
+bigfile: file is too small
+$
+</pre>
+The test fails because <tt>bigfile</tt> expects to be able
+to create a file with 65803 blocks, but unmodified xv6 limits
+files to 268 blocks.
+
+<p>You'll change the xv6 file system code to support a
+"doubly-indirect" block in each inode, containing 256 addresses of
+singly-indirect blocks, each of which can contain up to 256 addresses
+of data blocks. The result will be that a file will be able to consist
+of up to 65803 blocks, or 256*256+256+11 blocks (11 instead of 12, because we will
+sacrifice one of the direct block numbers for the double-indirect
+block).
+
+<h3>Preliminaries</h3>
+
+The <tt>mkfs</tt> program creates the xv6 file system disk image
+and determines
+how many total blocks the file system has; this size is controlled by
+<tt>FSSIZE</tt> in <tt>kernel/param.h</tt>.
+You'll see that <tt>FSSIZE</tt> in the repository for
+this lab is set to
+200,000 blocks.  You should see the following output from <tt>mkfs/mkfs</tt>
+in the make output:
+<pre>
+nmeta 70 (boot, super, log blocks 30 inode blocks 13, bitmap blocks 25) blocks 199930 total 200000
+</pre>
+This line describes the file system that <tt>mkfs/mkfs</tt> built: it
+has 70 meta-data blocks (blocks used to describe the file system) and
+199,930 data blocks, totaling 200,000 blocks.
+<br>
+If at any point during the lab you find yourself having to rebuild the file system from scratch, you
+can run <tt>make clean</tt> which forces make to rebuild fs.img.
+
+<h3>What to Look At</h3>
+
+The format of an on-disk inode is defined by <tt>struct dinode</tt>
+in <tt>fs.h</tt>. You're particularly interested in <tt>NDIRECT</tt>,
+<tt>NINDIRECT</tt>, <tt>MAXFILE</tt>, and the <tt>addrs[]</tt> element
+of <tt>struct dinode</tt>. Look at Figure 8.3 in the xv6 text for a
+diagram of the standard xv6 inode.
+
+<p>
+The code that finds a file's data on disk is in <tt>bmap()</tt>
+in <tt>fs.c</tt>. Have a look at it and make sure you understand
+what it's doing. <tt>bmap()</tt> is called both when reading and
+writing a file. When writing, <tt>bmap()</tt> allocates new
+blocks as needed to hold file content, as well as allocating
+an indirect block if needed to hold block addresses.
+
+<p>
+<tt>bmap()</tt> deals with two kinds of block numbers. The <tt>bn</tt>
+argument is a "logical block number" -- a block number within the file,
+relative to the start
+of the file. The block numbers in <tt>ip->addrs[]</tt>, and the
+argument to <tt>bread()</tt>, are disk block numbers.
+You can view <tt>bmap()</tt> as mapping a file's logical
+block numbers into disk block numbers.
+
+<h3>Your Job</h3>
+
+<div class="required">
+Modify <tt>bmap()</tt> so that it implements a doubly-indirect block,
+in addition to direct blocks and a singly-indirect block.  You'll have
+to have only 11 direct blocks, rather than 12, to make room for your
+new doubly-indirect block; you're not allowed to change the size of an
+on-disk inode.  The first 11 elements of <tt>ip->addrs[]</tt> should
+be direct blocks; the 12th should be a singly-indirect block (just
+like the current one); the 13th should be your new doubly-indirect
+block. You are done with this exercise when <tt>bigfile</tt> writes
+65803 blocks and <tt>usertests</tt> runs successfully:
+</div>
+
+<pre>
+$ <kbd>bigfile</kbd>
+..................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+wrote 65803 blocks
+done; ok
+$ usertests
+...
+ALL TESTS PASSED
+$ 
+</pre>
+
+<p>
+<tt>bigfile</tt> will take at least a minute and a half to run.
+
+<p>Hints:
+
+<ul>
+    
+<li> Make sure you understand <tt>bmap()</tt>. Write out a diagram of the
+relationships between <tt>ip->addrs[]</tt>, the indirect block, the
+doubly-indirect block and the singly-indirect blocks it points to, and
+data blocks. Make sure you understand why adding a doubly-indirect
+block increases the maximum file size by 256*256 blocks (really -1,
+since you have to decrease the number of direct blocks by one).
+
+<li>
+Think about how you'll index the doubly-indirect block, and
+the indirect blocks it points to, with the logical block
+number.
+
+<li>If you change the definition of <tt>NDIRECT</tt>, you'll
+probably have to change the declaration of <tt>addrs[]</tt>
+in <tt>struct inode</tt> in <tt>file.h</tt>. Make sure that
+<tt>struct inode</tt> and <tt>struct dinode</tt> have the
+same number of elements in their <tt>addrs[]</tt> arrays.
+
+<li>If you change the definition of <tt>NDIRECT</tt>, make sure to create a
+new <tt>fs.img</tt>, since <tt>mkfs</tt> uses <tt>NDIRECT</tt> to build the
+file system.  
+
+<li>If your file system gets into a bad state, perhaps by crashing,
+delete <tt>fs.img</tt> (do this from Unix, not xv6).  <tt>make</tt> will build a
+new clean file system image for you.
+
+<li>Don't forget to <tt>brelse()</tt> each block that you
+<tt>bread()</tt>.
+
+<li>You should allocate indirect blocks and doubly-indirect
+  blocks only as needed, like the original <tt>bmap()</tt>.
+
+<li>Make sure <tt>itrunc</tt> frees all blocks of a file, including
+  double-indirect blocks.
+
+</ul>
+
+
+<h2>Symbolic links <script>g("moderate")</script></h2>
+
+<p>In this exercise you will add symbolic links to xv6.  Symbolic
+links (or soft links) refer to a linked file by pathname; when a
+symbolic link is opened, the kernel follows the link to the referred
+file.  Symbolic links resembles hard links, but hard links are
+restricted to pointing to file on the same disk, while symbolic links
+can cross disk devices.  Although xv6 doesn't support multiple
+devices, implementing this system call is a good exercise to
+understand how pathname lookup works.
+
+<h3>Your job</h3>
+
+<div class="required">
+<p>You will implement the <tt>symlink(char *target, char *path)</tt>
+system call, which creates a new symbolic link at path that refers
+to file named by target. For further information, see the man page
+symlink.  To test, add symlinktest to the Makefile and run it. Your
+solution is complete when the tests produce the following output
+(including usertests succeeding).
+</div>
+
+<pre>
+$ <kbd>symlinktest</kbd>
+Start: test symlinks
+test symlinks: ok
+Start: test concurrent symlinks
+test concurrent symlinks: ok
+$ usertests
+...
+ALL TESTS PASSED
+$ 
+</pre>
+ 
+<p>Hints:
+
+<ul>
+
+<li> First, create a new system call number for symlink, add an entry
+to user/usys.pl, user/user.h, and implement an empty sys_symlink in kernel/sysfile.c.
+
+<li>Add a new file type (<tt>T_SYMLINK</tt>) to kernel/stat.h to
+represent a symbolic link.
+
+<li> Add a new flag to kernel/fcntl.h, (<tt>O_NOFOLLOW</tt>), that can
+be used with the <tt>open</tt> system call. Note that flags passed to
+<tt>open</tt> are combined using a bitwise OR operator, so your new
+flag should not overlap with any existing flags. This will let you
+compile user/symlinktest.c once you add it to the Makefile.
+
+<li>Implement the <tt>symlink(target, path)</tt> system call to create
+a new symbolic link at path that refers to target. Note that target
+does not need to exist for the system call to succeed. You will need
+to choose somewhere to store the target path of a symbolic link, for
+example, in the inode's data blocks. <tt>symlink</tt> should return an integer
+representing success (0) or failure (-1) similar to <tt>link</tt> and <tt>unlink</tt>.
+
+<li>Modify the <tt>open</tt> system call to handle the case where the path
+refers to a symbolic link. If the file does not exist, <tt>open</tt>
+must fail.  When a process specifies <tt>O_NOFOLLOW</tt> in the flags
+to <tt>open</tt>, <tt>open</tt> should open the symlink (and not
+follow the symbolic link).
+
+<li>If the linked file is also a symbolic link, you must recursively
+follow it until a non-link file is reached. If the links form a cycle,
+you must return an error code. You may approximate this by returning
+an error code if the depth of links reaches some threshold (e.g., 10).
+
+<li> Other system calls (e.g., link and unlink) must not
+  follow symbolic links; these system calls operate on the symbolic
+  link itself.
+
+<li>You do not have to handle symbolic links to directories for this
+lab.
+
+</ul>
+
+<p><a name="submit"></>
+<h2>Submit the lab</h2>
+
+<p><b>This completes the lab.</b> Make sure you pass all of the make
+grade tests. If this lab had questions, don't forget to write up your
+answers to the questions in answers-<i>lab-name</i>.txt. Commit your changes
+(including adding answers-<i>lab-name</i>.txt) and type make handin in the lab
+  directory to hand in your lab.
+
+<h3>Time spent</h3>
+
+<p>Create a new file, <tt>time.txt</tt>, and put in it a single integer, the
+number of hours you spent on the lab. Don't forget to <tt>git add</tt> and
+<tt>git commit</tt> the file.
+
+<h3>Submit</h3>
+
+You will turn in your assignments using
+the <a href="https://6828.scripts.mit.edu/2020/handin.py/">submission
+website</a>.  You need to request once an API key from the submission
+website before you can turn in any assignments or labs.
+</p>
+
+<p>After committing your final changes to the lab, type <kbd>make
+handin</kbd> to submit your lab.
+<pre>
+$ <kbd>git commit -am "ready to submit my lab"</kbd>
+[util c2e3c8b] ready to submit my lab
+ 2 files changed, 18 insertions(+), 2 deletions(-)
+
+$ <kbd>make handin</kbd>
+tar: Removing leading `/' from member names
+Get an API key for yourself by visiting https://6828.scripts.mit.edu/2020/handin.py/
+Please enter your API key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 79258  100   239  100 79019    853   275k --:--:-- --:--:-- --:--:--  276k
+$
+</pre>
+<kbd>make handin</kbd> will store your API key in <i>myapi.key</i>. If you need
+to change your API key, just remove this file and let <kbd>make handin</kbd>
+generate it again (<i>myapi.key</i> must not include newline characters).
+</p>
+
+<p>
+If you run <kbd>make handin</kbd> and you have either uncomitted changes or
+untracked files, you will see output similar to the following:
+<pre>
+ M hello.c
+?? bar.c
+?? foo.pyc
+Untracked files will not be handed in.  Continue? [y/N]
+</pre>
+Inspect the above lines and make sure all files that your lab solution needs
+are tracked i.e. not listed in a line that begins with <kbd>??</kbd>.
+You can cause <tt>git</tt> to track a new file that you create using
+<tt>git add filename</tt>.
+</p>
+
+<p>
+If <kbd>make handin</kbd> does not work properly, 
+try fixing the problem with the curl or Git commands.
+Or you can run <kbd>make tarball</kbd>.
+This will make a tar file for you, which you can
+then upload via our 
+<a href="https://6828.scripts.mit.edu/2020/handin.py/">web interface</a>.
+</p>
+
+<p>
+<div class="warning">
+<ul>
+  <li>Please run `make grade` to ensure that your code passes all of the tests</li>
+  <li>Commit any modified source code before running `make handin`</li>
+  <li>You can inspect the status of your submission and download the submitted code at <a href="https://6828.scripts.mit.edu/2020/handin.py/">https://6828.scripts.mit.edu/2020/handin.py/</a> </li>
+</ul>
+</div>
+
+
+
+
+<h2>Optional challenge exercises</h2>
+
+<p>Support triple-indirect blocks.
+
+<h3>Acknowledgment</h3>
+  
+<p>Thanks to the staff of UW's CSEP551 (Fall 2019) for the symlink exercise.
+  
+</body>
+</html>
