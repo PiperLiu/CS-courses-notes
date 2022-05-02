@@ -482,6 +482,10 @@ oct 26
 - [Sleep Lock](./docs/drafts/lec.14c.md#sleep-lock)
 - [总结](./docs/drafts/lec.14c.md#总结)
 
+趁热打铁，把下节课课后 Lab fs: File system 写了吧：[./docs/drafts/lec.14hw.md](./docs/drafts/lec.14hw.md)
+- [Large files 将 inode 的 block 改为二级映射](./docs/drafts/lec.14hw.md#large-files-将-inode-的-block-改为二级映射)
+- [Symbolic links 实现软链接 soft link 系统调用](./docs/drafts/lec.14hw.md#symbolic-links-实现软链接-soft-link-系统调用)
+
 #### LEC 15 (fk): Crash recovery
 
 oct 28
@@ -489,3 +493,6 @@ oct 28
 - LEC 15 (fk): [Crash recovery](./docs/lec/l-crash.txt) ([boards](./docs/lec/l-crash.pdf)) [video](https://youtu.be/7Hk2dIorDkk)
 - Preparation: Read kernel/log.c and the [logging sections of "File system"](../mit6.s081/docs/lec/book-riscv-rev1.pdf)
 - Assignment: <a href="./docs/assignment/Lab_ file system.html">Lab fs: File system</a>
+
+这个 Lab 在上节课课后写了。
+
