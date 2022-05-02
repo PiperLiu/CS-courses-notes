@@ -496,3 +496,21 @@ oct 28
 
 这个 Lab 在上节课课后写了。
 
+首先先把课听了：[./docs/drafts/lec.15c.md](./docs/drafts/lec.15c.md)
+- [File System Crash 概述](./docs/drafts/lec.15c.md#file-system-crash-概述)
+- [File System Crash 示例](./docs/drafts/lec.15c.md#file-system-crash-示例)
+  - [如果没有 logging 会有什么后果](./docs/drafts/lec.15c.md#如果没有-logging-会有什么后果)
+- [File System Logging](./docs/drafts/lec.15c.md#file-system-logging)
+  - [一些 log 基本操作（log_write 和 commit 等）](./docs/drafts/lec.15c.md#一些-log-基本操作log_write-和-commit-等)
+  - [更复杂的情况（在 log 相关操作时 crash ）](./docs/drafts/lec.15c.md#更复杂的情况在-log-相关操作时-crash)
+  - [xv6 中简单的 logging 方案（header block 结构等）](./docs/drafts/lec.15c.md#xv6-中简单的-logging-方案header-block-结构等)
+- [从代码看 logging 机制](./docs/drafts/lec.15c.md#从代码看-logging-机制)
+  - [log_write 函数与 transaction 事务](./docs/drafts/lec.15c.md#log_write-函数与-transaction-事务)
+  - [end_op 函数（如何 commit ）](./docs/drafts/lec.15c.md#end_op-函数如何-commit)
+  - [File System Recovering](./docs/drafts/lec.15c.md#file-system-recovering)
+  - [Log 写磁盘流程](./docs/drafts/lec.15c.md#log-写磁盘流程)
+- [File System Challenges](./docs/drafts/lec.15c.md#file-system-challenges)
+  - [cache eviction （用 bpin 保证 write ahead rule ）](./docs/drafts/lec.15c.md#cache-eviction-用-bpin-保证-write-ahead-rule)
+  - [文件系统操作必须适配 log 的大小](./docs/drafts/lec.15c.md#文件系统操作必须适配-log-的大小)
+  - [并发文件系统调用](./docs/drafts/lec.15c.md#并发文件系统调用)
+
