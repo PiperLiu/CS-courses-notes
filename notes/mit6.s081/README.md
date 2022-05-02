@@ -23,6 +23,7 @@
   - [LEC 13 (rtm): sleep&wakeup and code](#lec-13-rtm-sleepwakeup-and-code)
   - [LEC 14 (fk): File systems](#lec-14-fk-file-systems)
   - [LEC 15 (fk): Crash recovery](#lec-15-fk-crash-recovery)
+  - [LEC 16 (rtm): File system performance and fast crash recovery](#lec-16-rtm-file-system-performance-and-fast-crash-recovery)
 
 <!-- /code_chunk_output -->
 
@@ -514,3 +515,9 @@ oct 28
   - [文件系统操作必须适配 log 的大小](./docs/drafts/lec.15c.md#文件系统操作必须适配-log-的大小)
   - [并发文件系统调用](./docs/drafts/lec.15c.md#并发文件系统调用)
 
+#### LEC 16 (rtm): File system performance and fast crash recovery
+
+nov 2
+
+- LEC 16 (rtm): [File system performance and fast crash recovery](./docs/lec/l-journal.txt) ([video](https://youtu.be/CmDcf6rjFb4))
+- Preparation: [Read Journaling the Linux ext2fs Filesystem (1998)](./docs/lec/journal-design.pdf)
