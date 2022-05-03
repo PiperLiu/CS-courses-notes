@@ -544,7 +544,22 @@ nov 2
 
 nov 4
 
-- LEC 17 (fk): [Virtual memory for applications](./docs/lec/l-uservm.txt) ([boards](./docs/lec/l-uservm.pdf)) ([sqrt example](https://pdos.csail.mit.edu/6.S081/2020/lec/sqrt.c)) ([baker example](./docs/lec/baker.c)) [video](https://youtu.be/YNQghIvk0jc)
+- LEC 17 (fk): [Virtual memory for applications](./docs/lec/l-uservm.txt) ([boards](./docs/lec/l-uservm.pdf)) ([sqrt example](./docs/lec/sqrt.c)) ([baker example](./docs/lec/baker.c)) [video](https://youtu.be/YNQghIvk0jc)
 - Preparation: [Read Virtual Memory Primitives for User Programs (1991)](./docs/lec/appel-li.pdf)
 - Assignment: <a href="./docs/assignment/Lab_ mmap.html.html">Lab mmap: Mmap</a>
 
+把课听了：[./docs/drafts/lec.17c.md](./docs/drafts/lec.17c.md)
+- [应用程序使用虚拟内存所需要的特性](./docs/drafts/lec.17c.md#应用程序使用虚拟内存所需要的特性)
+- [支持应用程序使用虚拟内存的系统调用](./docs/drafts/lec.17c.md#支持应用程序使用虚拟内存的系统调用)
+  - [mmap](./docs/drafts/lec.17c.md#mmap)
+  - [mprotect](./docs/drafts/lec.17c.md#mprotect)
+  - [munmap](./docs/drafts/lec.17c.md#munmap)
+  - [sigaction](./docs/drafts/lec.17c.md#sigaction)
+- [虚拟内存系统实现](./docs/drafts/lec.17c.md#虚拟内存系统实现)
+  - [概述： VMA 和 User Level Trap](./docs/drafts/lec.17c.md#概述-vma-和-user-level-trap)
+  - [实例：构建一个大的缓存表（结合系统调用）](./docs/drafts/lec.17c.md#实例构建一个大的缓存表结合系统调用)
+- [Baker's Real-Time Copying Garbage Collector 垃圾回收机制](./docs/drafts/lec.17c.md#./docs/drafts/lec.17c.mdbakers-real-time-copying-garbage-collector-垃圾回收机制)
+  - [copying GC](./docs/drafts/lec.17c.md#copying-gc)
+  - [GC 如何使用虚拟内存特性](./docs/drafts/lec.17c.md#gc-如何使用虚拟内存特性)
+  - [代码：使用虚拟内存特性的GC](./docs/drafts/lec.17c.md#代码使用虚拟内存特性的gc)
+- [总结：应该使用虚拟内存吗？](./docs/drafts/lec.17c.md#总结应该使用虚拟内存吗)
