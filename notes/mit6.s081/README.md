@@ -24,6 +24,7 @@
   - [LEC 14 (fk): File systems](#lec-14-fk-file-systems)
   - [LEC 15 (fk): Crash recovery](#lec-15-fk-crash-recovery)
   - [LEC 16 (rtm): File system performance and fast crash recovery](#lec-16-rtm-file-system-performance-and-fast-crash-recovery)
+  - [LEC 17 (fk): Virtual memory for applications](#lec-17-fk-virtual-memory-for-applications)
 
 <!-- /code_chunk_output -->
 
@@ -538,3 +539,12 @@ nov 2
   - [ext3 file system 恢复过程](./docs/drafts/lec.16c.md#ext3-file-system-恢复过程)
   - [为什么新transaction需要等前一个transaction中系统调用执行完成](./docs/drafts/lec.16c.md#为什么新transaction需要等前一个transaction中系统调用执行完成)
 - [ext3 总结](./docs/drafts/lec.16c.md#ext3-总结)
+
+#### LEC 17 (fk): Virtual memory for applications
+
+nov 4
+
+- LEC 17 (fk): [Virtual memory for applications](./docs/lec/l-uservm.txt) ([boards](./docs/lec/l-uservm.pdf)) ([sqrt example](https://pdos.csail.mit.edu/6.S081/2020/lec/sqrt.c)) ([baker example](./docs/lec/baker.c)) [video](https://youtu.be/YNQghIvk0jc)
+- Preparation: [Read Virtual Memory Primitives for User Programs (1991)](./docs/lec/appel-li.pdf)
+- Assignment: <a href="./docs/assignment/Lab_ mmap.html.html">Lab mmap: Mmap</a>
+
