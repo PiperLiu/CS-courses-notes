@@ -563,3 +563,6 @@ nov 4
   - [GC 如何使用虚拟内存特性](./docs/drafts/lec.17c.md#gc-如何使用虚拟内存特性)
   - [代码：使用虚拟内存特性的GC](./docs/drafts/lec.17c.md#代码使用虚拟内存特性的gc)
 - [总结：应该使用虚拟内存吗？](./docs/drafts/lec.17c.md#总结应该使用虚拟内存吗)
+
+把 mmap 系统调用 map 做了吧：[./docs/drafts/lec.17hw.md](./docs/drafts/lec.17hw.md)
+- [写一个 mmap 和 munmap 系统调用](./docs/drafts/lec.17hw.md#写一个-mmap-和-munmap-系统调用)
