@@ -26,6 +26,7 @@
   - [LEC 16 (rtm): File system performance and fast crash recovery](#lec-16-rtm-file-system-performance-and-fast-crash-recovery)
   - [LEC 17 (fk): Virtual memory for applications](#lec-17-fk-virtual-memory-for-applications)
   - [LEC 18 (rtm): OS Organization](#lec-18-rtm-os-organization)
+  - [LEC 19 (rtm): Virtual Machines](#lec-19-rtm-virtual-machines)
 
 <!-- /code_chunk_output -->
 
@@ -591,3 +592,21 @@ nov 9
     - [L4 采用的 Synchronized 同步传输（简单快速）](./docs/drafts/lec.18c.md#l4-采用的-synchronized-同步传输简单快速)
   - [Run Linux on Top of L4 Micro Kernel](./docs/drafts/lec.18c.md#run-linux-on-top-of-l4-micro-kernel)
   - [L4 Linux 性能分析](./docs/drafts/lec.18c.md#l4-linux-性能分析)
+
+#### LEC 19 (rtm): Virtual Machines
+
+nov 16
+
+- LEC 19 (rtm): [Virtual Machines](./docs/lec/l-vmm.txt) ([video](https://youtu.be/R8obXHAIPY0))
+- Preparation: [Read Dune: Safe User-level Access to Privileged CPU Features (2012)](./docs/lec/belay-dune.pdf)
+
+把课听了：[./docs/drafts/lec.19c.md](./docs/drafts/lec.19c.md)
+- [Virtual Machine 虚拟机概述](./docs/drafts/lec.19c.md#virtual-machine-虚拟机概述)
+    - [虚拟机使用场景](./docs/drafts/lec.19c.md#虚拟机使用场景)
+- [Trap-and-Emulate](./docs/drafts/lec.19c.md#trap-and-emulate)
+  - [Trap](./docs/drafts/lec.19c.md#trap)
+  - [Emulate](./docs/drafts/lec.19c.md#emulate)
+  - [Page Table](./docs/drafts/lec.19c.md#page-table)
+  - [Devices](./docs/drafts/lec.19c.md#devices)
+- [硬件对虚拟机的支持（以 Intel VT-x 为例）](./docs/drafts/lec.19c.md#硬件对虚拟机的支持以-intel-vt-x-为例)
+- [Dune: Safe User-level Access to Privileged CPU Features](./docs/drafts/lec.19c.md#dune-safe-user-level-access-to-privileged-cpu-features)
