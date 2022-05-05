@@ -642,3 +642,12 @@ nov 18
 - [总结：Should one use HLL for a new kernel?](./docs/drafts/lec.20c.md#总结should-one-use-hll-for-a-new-kernel)
   - [怎么在硬件上直接运行 Go runtime ？](./docs/drafts/lec.20c.md#怎么在硬件上直接运行-go-runtime)
   - [关于 goroutine 其他问题](./docs/drafts/lec.20c.md#关于-goroutine-其他问题)
+
+lab 下节课听完再做。
+
+#### LEC 21 (rtm): Networking
+
+nov 30
+
+- LEC 21 (rtm): [Networking](./docs/lec/l-net.txt) ([video](https://youtu.be/Fcjychg4Tvk))
+- Preparation: [Read Receive Livelock (1996)](./docs/lec/mogul96usenix.pdf)

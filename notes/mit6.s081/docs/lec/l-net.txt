@@ -1,0 +1,237 @@
+6.S081 2020 Lecture 21: Networking
+
+topics
+  packet formats and protocols
+  software stack in kernel
+  today's paper -- livelock
+
+overall network architecture
+  diagram: apps, host, NIC, LAN, NIC, host, apps
+  diagram: hosts, LAN, router, ..., LAN, hosts
+
+ethernet packet format
+  [printout of kernel/net.h, struct eth]
+  start "flag"
+  destination ethernet address -- 48 bits
+  source ethernet address -- 48 bits
+  ether type -- 16 bits
+  payload
+  end "flag"
+
+[eth tcpdump output]
+
+ethernet addresses
+  a simple ethernet LAN broadcasts: all host NICs see all packets
+    a host uses dest addr to decide if the packet is really for it
+  today's ethernet LAN is a switch, with a cable to each host
+    the switch uses the dest addr to decide which host to send a packet to
+  ethernet addresses are assigned by NIC manufacturer
+    <24-bit manufacturer ID, 24-bit serial number>
+
+ARP
+  [kernel/net.h, struct arp]
+  a request/response protocol to translate IP address to ethernet address
+  "nested" inside an ethernet packet, with ether type 0x0806
+  ARP header indicates request vs response
+  request: desired IP address
+    request packets are broadcast to every host on a switch
+    all the hosts process the packet, but only owner of that IP addr responds
+  response: the corresponding ethernet address
+
+[arp tcpdump output]
+
+note:
+  the habit is to "nest" higher-level packets inside lower-level packets
+  e.g. ARP inside ethernet
+  so you often see a sequence of headers (ether, then ARP)
+  one layer's payload is the next layer's header
+
+the ethernet header is enough to get a packet to a local host
+  but more is needed to route the packet to a distant Internet host
+
+IP header
+  [kernel/net.h, struct ip]
+  ether type 0x0800
+  lots of stuff, but addresses are the most critical
+  a 32-bit IP address is enough to route to any Internet computer
+  the high bits contain a "network number" that helps routers
+    understand how to forward through the Internet
+  the protocol number tells the destination what to do with the packet
+    i.e. which higher-level protocol to hand it to (usually UDP or TCP)
+
+[ip tcpdump output]
+
+UDP header
+  [kernel/net.h, struct udp]
+  once a packet is at the right host, what app should it go to?
+  UDP header sits inside IP packet
+  contains src and dst port numbers
+  an application uses the "socket API" system calls to tell
+    the kernel it would like to receive all packets sent to a particular port
+  some ports are "well known", e.g. port 53 is reserved for DNS server
+  others are allocated as-needed for the client ends of connections
+  after the UDP header: payload, e.g. DNS request or response
+
+[udp tcpdump output]
+
+TCP
+  like UDP but has sequence number fields so it can retransmit lost packets,
+    and match send rate to network and destination capacity
+
+layering view of a typical kernel network stack
+  apps e.g. web browser, DNS server
+  socket, port->fd table
+  UDP | TCP
+  IP, routing table | ARP, table
+  NIC drivers
+  -- packet buffers w/ allocator (see struct mbuf in net.h)
+  -- each layer parses, validates, and strips headers on the way in
+     discards packet if there's a problem
+  -- each layer prepends a header on the way out
+  -- software layer structure partially follows header nesting
+
+control flow view of a typical kernel network stack
+  multiple independent actors
+  each has input packets, processes them, produces output
+  here's a typical setup (much variation; lab setup is simpler)
+  NICs, with internal or DMA buffering
+  rx interrupt handler, copies from NIC to s/w input queue
+  tx interrupt handler, copies from s/w output queue to NIC
+  "network thread"
+    reads packets from s/w input queue
+    what to do with it? ARP, forward, put on socket queue
+  applications -- read from per-socket queue
+  
+why all these queues of buffers?
+  absorb temporary input bursts
+  keep output NIC busy while computing
+  allow independent control flow (NICs vs network thread vs apps)
+
+other arrangements are possible and sometimes much better
+  e.g. user-level stack
+  e.g. direct user access to NIC (see Intel's DPDK)
+  e.g. polling, as in today's paper
+
+NIC packet buffering
+  paper's NIC queues packets in its own memory
+    driver s/w must copy to RAM
+  lab assignment's NIC (the Intel e1000) DMAs into host RAM
+    s/w prepares a "ring" of buffer pointers for rx, and tx
+    NIC DMAs each packet to memory pointed to by successive ring elements
+    why: DMA is faster than s/w copy loop
+         DMA can go on concurrently with compute tasks
+
+Today's paper: Eliminating Receive Livelock in an Interrupt-Driven Kernel,
+by Mogul and Ramakrishnan
+
+Why are we reading this paper?
+  To illustrate some tradeoffs in kernel network stack structure
+  It's a famous and influential paper
+  Livelock / congestion collapse comes up in many situations
+
+Explain Figure 6-1
+  This is the original system, without the authors' fixes.
+  Why does it go up?
+  What determines how high the peak is?
+    peak @ 5000 => 200 us/pkt.
+  Why does it go down?
+  What determines how fast it goes down?
+  What happens to the packets that aren't forwarded?
+
+A disk uses interrupts -- would a disk cause this kind of problem?
+  How about the UART?
+  How about a host receiving TCP traffic?
+
+Why not completely process each packet in the interrupt handler?
+  I.e. forward it?
+  (this is what the network lab does)
+  (still need out Q. starve tx intr. starve other devs' rx intrs.
+   no story for user processing.)
+
+Why not always poll, never use interrupts?
+
+Overall goal:
+  once we've started to spend CPU on a packet, make sure we finish that packet!
+    i.e. avoid partially processing, then discarding due to overload
+  for special case of forwarding:
+    give output priority over input
+  interrupts allow us no control
+
+What's the paper's solution?
+  No IP input queue
+  NIC receive interrupt just wakes up thread
+    Then leaves interrupts *disabled* for that NIC
+  Thread does all processing,
+    re-checks NIC for more input,
+    only re-enables interrupts if no input waiting
+
+NIC intr:
+  wake up net thread (but don't read any packets)
+  disable NIC interrupts
+
+loop:
+  if NIC packets waiting
+    read a few packets from NIC
+    process each packet
+    (this is the polling part)
+  else
+    enable interrupts
+    sleep
+
+What happens when packets arrive too fast?
+  Why does this help avoid livelock?
+
+What happens when packets arrive slowly?
+
+Modern Linux uses a scheme -- NAPI -- inspired by this paper.
+
+Explain Figure 6-3
+  This graph includes their system.
+  Why do the empty squares level off?
+  What happens to the excess packets?
+  Why does "Polling (no quota)" work badly?
+    Input still starves xmit-complete processing
+  Why does it immediately fall to zero, rather than gradually decreasing?
+    Livelock is made worse by doing even more processing before discard
+    I.e. each excess rx pkt consumes many tx pkts of CPU time
+
+Explain Figure 6-4
+  (this is with every packet going through a user-level program)
+  Why does "Polling, no feedback" behave badly?
+    There's a queue in front of screend
+    We can still give 100% to input thread, 0% to screend
+  Why does "Polling w/ feedback" behave well?
+    Input thread sleeps when queue to screend near-full
+    Wakes up when queue near-empty
+
+What would happen if screend hung?
+
+Big picture: polling loop is a place to exert scheduling control
+
+Why are the two solutions different?
+  1. Polling thread *with quotas*
+  2. Feedback from full queue
+  Perhaps they could have used #2 for both
+    Feedback doesn't require magic numbers
+    But hard to retro-fit into existing UNIX structure
+
+What if processing has more complex structure?
+  Chain of processing stages with queues?
+    Does feedback work?
+    What happens when a late stage is slow?
+  Split at some point, multiple parallel paths?
+    No so great; one slow path blocks all paths
+
+Can we formulate any general principles?
+  Don't spend time on new work before completing existing work
+  Design so that efficiency increases with load,
+    rather than decreasing. E.g. the paper's switch from
+    interrupts to polling under high load.
+
+Similar phenomena arise in other areas of systems
+  Timeout + retransmission in networks, as number of connections grows
+  Spin-locks, as number of cores grows
+
+A general lesson: complex (multi-stage) systems may need careful
+  scheduling of resources if they are to survive loads close to
+  capacity
