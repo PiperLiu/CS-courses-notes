@@ -1,0 +1,229 @@
+Motivation
+  Commodity kernels written in C
+  For good reason: C gives programmer total control
+
+  But C hard to use correctly
+    Memory management left to programmer
+    Serious problems for kernel developers:
+      Concurrent data structures challenging
+        (RCU, next week)
+      Memory safety bugs
+        Use-after-free (notoriously difficult to debug)
+        Buffer overflows (security vulnerabilities)
+          https://source.codeaurora.org/quic/la//kernel/msm-3.14/commit/?id=72f67b29a9c5e6e8d3c34751600c749c5f5e13e1
+            CVE-2017-0619
+          https://source.codeaurora.org/quic/la//kernel/msm-3.10/commit/?id=9656e2c2b3523af20502bf1e933e35a397f5e82f
+            CVE-2017-0621
+          https://source.codeaurora.org/quic/la//kernel/msm-4.4/commit/?id=01b2c9a5d728ff6f2f1f28a5d4e927aaeabf56ed
+            CVE-2017-0620
+
+  HLL automatically eliminates memory safety bugs!
+    HLLs have a garbage collector (GC)
+    GC automates memory deallocation
+    Convenient for programmer
+    ...and provides memory safety
+    But GC has costs:
+      CPU cycles at runtime
+      Delays execution
+      Extra memory
+    Thus HLL use is a trade-off: safety vs perf
+    Determining perf. cost important to understand this trade-off
+    No in-depth performance evaluation of HLL kernel has been done before
+      Despite researchers building many HLL kernels already
+    Want: better understanding of HLL kernel perf
+    Goal: compare perf of HLL kernel against fast kernel
+      i.e. against Linux
+
+Biscuit
+  Started in 2014
+  ~30k LOC in Go
+  Arch similar to Linux for more fair comparison
+  POSIX syscalls
+  Can run complex apps (NGINX, Redis) w/o source modifications
+  Similar to Linux in many ways
+  Some differences:
+    Kernel threads are light-weight goroutines
+      Context switch doesn't save/restore pgtable
+      Cannot dereference user pointers
+        Manually translate
+    (What are SSE regs/instructions?)
+    Go compiler freely uses SSE registers
+      While Linux avoids using SSE
+        Explicitly saves/restores SSE regs
+      Result: Biscuit saves/restores SSE regs more often
+    Go isn't designed to handle interrupts
+      Runtime doesn't disable/enable interrupts in critical sections
+        Calling critical sections (allocation) in Interrupts could deadlock
+      Interrupt handlers can't do much
+      Instead they wakeup a handling goroutine and return
+  Biggest difference: Handling OOM
+
+OOM
+  Problem Biscuit, Windows, Linux, FreeBSD etc. all face
+  (Swap doesn't solve this problem, though may make OOM less likely)
+  Many kernel ops allocate memory
+    open(2) allocates a file object
+    socket(2) allocates a socket object
+  User program decides when to release the resource/free the mem
+  => User prog determines how much heap memory kernel uses
+  But machine has limited memory
+
+  Problem: What if user programs cause kernel to allocate all of mem?
+    Why would this happen?
+      Buggy program
+      Database server is intentionally using most mem
+        + unlucky spike in allocations
+    Result: almost no operation can succeed until memory is free
+      Hard or impossible for user program to handle sensibly
+      i.e. printf() fails
+      Even exit(2) fails!
+      Memory used by other process
+    No user prog can make progress
+
+  How to recover? Need to free memory
+    Recover mem by killing mem hogging process
+    Can't simply kill
+      exit(2) must allocate to close files and keep FS consistent
+    Result: Kernel must reserve enough mem for exit(2)
+      Linux and Biscuit both do so
+
+  How kernel kills hog is important
+    Linux's approach:
+      Blocking in allocator is tempting
+        Then caller doesn't have to handle failure
+      But this can deadlock
+        Ex: Good prog takes lock on directory in FS
+          Mem hog waiting for lock
+            Kernel can't kill hog
+            Hog waits for good prog
+            Good prog waits for hog to exit
+            Deadlock
+      Avoid deadlock by failing alloc of good prog
+      Result: kernel must handle failure of nearly all allocations
+        Hard and filled with bugs
+        "Too small to fail" rule
+
+    Biscuit's approach
+      Can't use Linux's approach
+      Before executing op, wait until enough mem
+        No waiting in the middle of an op
+        No locks held
+        Thus no deadlock
+      How to calculate max mem?
+        Turns out static analysis of Go is easy
+        Wrote tool: MAXLIVE
+          Highlevel: fancy escape analysis
+          Not exact, but conservative
+            over-estimates needed memory, never under-estimates
+          Inspects call graph
+          Finds all allocations of each syscall
+          Two kinds of objects:
+            1) May be written to global
+            2) Only ever referenced by stack pointer
+          Type 1 objects always live
+          Type 2 objects freed on some stack frame destruction
+          Mem = sum of type 1 + max of type 2 at each call graph leaf
+      Result: no deadlock, almost no handling of allocation failures
+
+Experience
+  90 uses of unsafe
+  Hacked the runtime in a couple ways
+    Schedule interrupt goroutines
+    Count allocations
+  Some code non-portable due to unclear memory model
+  Go was helpful
+    Slices vs pointer+size
+    Defer vs gotos
+    Closures
+    Maps
+    GC vs manual mem
+      GC significantly simplifies concurrent data structures
+        Entries heap allocated
+        When to free an entry?
+        When all other threads done with entry?
+  Implemented many OS perf optimizations to compete with Linux
+    Map kernel text w/large pages
+    Per-CPU NIC TX queues
+    RCU-like directory cache
+    Go didn't prevent their implementation
+
+Performance
+  Three demanding apps
+    NGINX: webserver
+    Redis: key-value store
+    Cmailbench: fork/exec/VM benchmark
+  Exercise 10 Gb NIC, TCP stack, VM, FS
+  No idle CPU cycles
+  At least 80% of CPU time spent in kernel
+
+  Results:
+    Linux comparison
+      Is Biscuit performance in the same league?
+      Disabled expensive Linux features
+        Speeds Linux up
+        Makes comparison more fair
+      Biscuit within 9% of Linux on our apps
+      Linux much faster in other situations
+        More than four CPUs
+        NUMA aware
+
+    GC < 3%
+      Cost of GC determined by two factors:
+        1) Number of objects (cost increases with objects)
+          GC must mark/read pointers in each object
+        2) Amount of free heap memory (cost decreases with free mem)
+          GC each time free memory exhausted
+      Apps use up to 5GB of memory
+        And cause kernel to allocate rapidly
+        But # of kernel objects is small
+          Kernel heap contains small metadata objects
+          Separate allocator for pages
+            User memory
+            File content pages
+            Socket buffers
+            Page-table pages
+          Reduces # kernel objects
+          Increases free heap mem
+      In general:
+        Trade mem for reduced CPU overhead for large heaps
+
+    Isolate perf diff due to HLL from diff OS features
+      Modified Linux/Biscuit to get two nearly identical code paths
+        Pipe ping-pong
+        Page fault
+      CPU-time profiles show both OSes doing the same thing
+      Ping-pong 15% faster
+        Go version has safety checks/write barriers
+      Page fault 5% faster
+        Kernel entry/exit and copying dominate other work
+
+    GC pauses
+      During GC, each allocation must complete GC work
+      Pauses come from GC work
+
+      Max single pause of 115us
+      Pauses can accumulate
+      Max accumulated in NGINX: 600us
+      We reduced pause times by tuning GC
+
+Conclusion
+  HLL worked well
+  Performance pretty good
+  But C is faster
+
+Questions
+  What about other languages, like Python?
+    Other HLLs would likely have much different performance results.
+    Multithreading in Python harder than in Go
+
+  Feasible to use HLL when perf less important and C when perf important?
+    Interesting idea, seems like it could work
+    Difficult to share GC heap objects with C code
+
+  How does Biscuit access physical addresses without pointer arithmetic?
+    Uses "unsafe" pointer conversion
+
+  Why is nearly-identical Go code slower than C?
+    The Go compiler inserts more instructions
+    Safety-checks
+    Write barriers

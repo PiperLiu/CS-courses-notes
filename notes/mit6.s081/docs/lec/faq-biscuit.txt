@@ -1,0 +1,288 @@
+Q: I am confused by exactly what the shim layer does and how it is
+implemented - it supports the Go runtime, so cannot be written in Go,
+but the paper also mentions no use of C. I would guess that it's
+written in assembly, but I'm still confused on how it is used after
+the system is booted, and the interface between the shim and the
+runtime.
+
+A: The Go runtime assumes there is an OS underlying it and it makes
+system calls to it to get going.  Biscuit runs on the bare hardware
+and so Biscuit must emulate those system calls to be able to use the
+Go runtime unmodified.  This is what the shim layer in Biscuit does;
+for example, it allocates memory for the Go heap so that the runtime
+can get going.  It mostly runs at boot time and is indeed written in
+assembly.  ￼
+
+Q: It is mentioned that there are non-heap allocations in Biscuit,
+which is out of the scope of the heap exhaustion prevention mechanism
+presented. Since there is no such distinction in xv6, what exactly
+gets allocated in the Go heap and what doesn't?
+
+A: Everything the kernel allocates (file descriptors, tcp state, etc.)
+lives in the kernel heap, except for physical memory pages.
+User-level programs implement typically their memory allocation (e.g.,
+malloc in xv6), asking the kernel for extra memory pages if they need
+more memory.  The xv6 kernel doesn't do much dynamic memory
+allocation, because it doesn't have a memory allocator (although you
+implemented one in the buddy lab); instead, it has a fixed number of
+file descriptors, procs structures, etc.
+
+Q: What is a futex?
+
+A: A way of implementing user-level locks without having to make a
+system call on each lock acquisition/release.  Run "man 2 futex" on a
+Linux machine or Google it.
+
+Q: The biscuit paper talks about "garbage collection", but doesn't
+really distinguish between tracing garbage collection and memory
+management based solely on reference counting. It seems like a lot of
+the issues associated with tracing collection (long stops to sweep
+memory, unpredictable timing) are less of an issue in reference
+counting schemes. Could a kernel be written in a language that only
+used reference counting, assuming that cyclic data structures could be
+avoided?
+
+A: Biscuit has one or two cycles in its data structures.  Reference
+counting would be an option, but if reference counts are contended
+between several cores, then they can tank performance.  See the
+upcoming non-scalable locks paper. Also, see the RCU paper, which we
+will cover in future lecture, for the problems with contended cache
+lines.
+
+Q: How does go handle interrupts without disabling further interrupts?
+How does it guarantee that it wont get interrupted or how does it
+handle it if it does.
+
+A: Since Go typically runs on top of an OS it doesn't have to worry
+about interrupts, the OS deals with them.  In case of Biscuit, that
+assumption isn't longer true so Biscuit has to do something to make it
+safe to accept interrupts.  The way biscuit does it is to do basically
+nothing in the interrupt handler, other than setting a play to
+indicate an interrupt happened.  Then, later biscuit/go will schedule
+a go thread to process the interrupt; that go routine can acquire
+locks etc., allocate memory, etc, like any normal go thread.
+
+Q: Also how high level is go exactly? Is it compiled or interpreted?
+
+A: It is compiled
+
+Q: While I see the benefits of not having to handle errors from not
+having enough heap space, couldn't the blocking behavior of system
+calls still substantially slow down programs?
+
+A: Yes, if there is no memory, those system calls will make no
+progress until enough memory is available (e.g., after the kernel has
+killed a bad-citizen process).  The POSIX interface has no good way of
+communicating to user-level processes that the kernel is low on
+memory.  If the system hasn't enough memory to support the currently
+running applications, things will be slow.
+
+Q: I don't quite understand how static analysis works on lots of
+programs, e.g. programs whose memory usage could be dependent on the
+algorithm / input (e.g. a program which searches over O(n^2) possible
+line intersections, but by some mathematical reasoning, we know that
+there are at most O(n) possible candidates).
+
+A: In biscuit, the kernel programmer must annotate the Go code for
+loops where the analyzer cannot determine what the upperbound of the
+loops is (e.g., when the loop is dependent on an argument of a system
+call).  Biscuit also avoid recursive functions for the same reason.
+With relatively few annotations, the tool was able to statically
+determine what an upperbound on the total amount of memory that each
+system needs to run.  Building the tool was a bit of work, but it
+benefited from Go's packages for analyzing Go code, including a
+package that determines when variables go out of scope ("escape
+analysis").
+ 
+Q: What I found most confusing about the dependency hirarchy. For
+example, how does Go have builtin threads at the operating system
+level? I though that the whole concept of threads relied on the
+operating system to implement.
+
+A: Without Biscuit, the Go runtime implements multiple threads on top
+of OS-provided threads.  The runtime has its own scheduler and context
+switching code.  It multiplexes many go routines over a smaller number
+of kernel threads.
+
+Q: The paper says that Biscuit is not optimized for NUMA. What is NUMA
+and why is it important?
+
+A: Computers with NUMA are quite common.  For example, if you have a
+server with several sockets (each socket holding a multicore
+processor) and with several memory banks.  Often one bank is closer to
+one socket than another and so if the OS allocates memory in banks
+close to the socket that is using that memory, it is good for
+performance.  Biscuit doesn't do this, but real operating systems do.
+
+Q: I don't quite understand what the benefits are of using Go over
+other more common HLL's like Java. It seems like more popular
+nlanguages have features like garbage collection and type safety (and
+other abstractions like threads).  Wouldn't building the language in a
+more common language potentially make developing and growing the OS
+easier?
+
+A: One virtue that Go has going for it is that it designed for systems
+programming, but researchers in the past have implemented kernels in
+Java.  It is possible that the results of the paper carry equally well
+over to Java; at a high-level they are both HLL with a good garbage
+collector.  On the other hand, Go allocates more variables than Java
+on the stack instead of heap, which may change the results.
+
+Q: Didn't we say that we need to disable interrupts during critical
+periods as otherwise we could deadlock due to interrupt code trying to
+grab locks that we had already acquired. How does Biscuit avoid such
+issues? Do they use locks that you can reacquire if the interrupted
+thread already owned it?
+
+A: Biscuit avoids this deadlock problem by not taking locks in an
+interrupt handler.  It basically doesn't do anything in the interrupt
+handler, other than setting a flag that an interrupt happened.  Then,
+later the kernel schedules a kernel thread to process the interrupt;
+that is a normal thread so it can take acquire/release locks.
+
+Q: It seems like many of the commonly used operating systems would
+require too much work to be converted to a HHL but I'm sure that there
+are a lot of methods they use to avoid the pitfalls and bugs
+mentioned. What are some of the techniques that we haven't taken
+advantage of when coding our labs / when xv6 was implemented.
+
+A: Yeap, it would be an incredible amount of work to convert Linux to
+a HLL, and unlikely to make sense, since the Linux programmers are
+happy with C.  There are indeed kernel C annotations and sanitizers to
+avoid common C bugs, but nevertheless they happen (see figure 6 in the
+paper).
+
+Q: What are the difficulties or considerations to take when designing
+a garbage collection system?
+
+A: A great question, but a very broad one and it is hard to summarize
+decades of research on garbage collection in a short response.  This
+wiki page gives a high-level introduction into some of the issues:
+https://en.wikipedia.org/wiki/Garbage_collection_(computer_science).
+
+In the context of Biscuit, issues we were worried about is the number
+cycles that the garbage collector is using while running the kernel
+(i.e., slowing down kernel operations) and delays the garbage
+collector might introduce because of running a bit of collection while
+performing latency-sensitive operations (receiving and responding to a
+network package).
+
+Q: What exactly is NGINX?
+
+A: It is a widely-used high-performance web
+server. https://nginx.org/en/
+
+Q: What is the point of comparing Biscuit against Linux on user
+applications if Linux contains many more features that Biscuit doesn't
+have? The paper acknowledges this, but goes ahead to show that Linux
+is 10% faster than Biscuit. How should this be interpreted?
+
+A: With a large grain of salt.  We did our best to do a fair
+comparison, but it is inherently imprecise.  We tried to check that
+the comparison is fair (for example, we looked at execution profiles
+to see if they lined up), but it is easy to imagine that some missing
+feature could change the results.  The conclusion to draw is that it
+is likely that Go isn't in the way of getting decent performance and
+that the difference in performance isn't going to be several factors,
+but instead some small fraction.  We were worried going into this work
+that Biscuit would be much slower.
+
+Q: In chapter 7 the paper says "Goroutine scheduling decisions and the
+context switch implementation live in the runtime, not in Biscuit. One
+consequence is that Biscuit does not control scheduling policy; it
+interits the runtime's policy".  What exactly does that mean? Does
+Biscuit not have priorities for processes? What are runtime's
+policies? Are they usefull for general use? Can Biscuit be vulnerable
+to receive livelock?
+
+A: Since Biscuit uses Go's runtime scheduler to schedule go routines,
+it inherits the policy that Go uses; since the Go runtime was designed
+to run a single multi-threaded application, and wasn't designed to run
+a kernel, its policy is quite simple.  We didn't want to modify the Go
+runtime so Biscuit has a simple scheduler too.
+
+Biscuit can dynamically switch between interrupts and polling of the
+network, to avoid receive livelock.
+
+Q: The most confusing part about the paper was understanding
+reservations - specifically the last paragraph in section 6.3.2 about
+fork, exit, exec and close. I don't reallu understand why we only need
+enough heap space for one call to close.
+
+A: Fork/exit/exec may call close many times (once for each open file
+descriptor).  If each call to close() results in a bit more memory
+being alive than the upperbound grows with the number of calls to
+close.  What we did is make sure that when close() returns, there is
+no extra memory alive.  As a result, it is safe to call close many times in
+fork/exit/exec.
+
+Q: How did Biscuit overcome the lack of memory fence functionality in
+Go?
+
+A: It used primitives from the atomic package, which issue memory
+fences implicitly.
+
+Q: What is the point of using a garbage collector when malloc provides
+better control of performance.
+
+A: The programmer doesn't have to free memory explicitly.  For
+example, when the kernel cleans up an process that exited, the kernel
+programmer doesn't have to explicitly free every piece of memory that
+the process is using.  The collector will free all memory that isn't
+reachable anymore automatically.  This avoids classic C bugs such as
+double free, use after free, or forgetting to call free.
+
+Q: How does the killer thread discern between good and bad citizens by
+assuming that the process that has the most mapped memory regions,
+file descriptors, and threads after garbage collection is a genuine
+bad citizen?
+
+A: The killer thread has no reliable mechanism to tell good from bad
+citizens; it uses a heuristic: count the amount of kernel heap that a
+process is using.  The process with most kernel objects is considered
+bad.
+
+Q: Is it possible to reduce the performance reduction of garbage
+collection by simply supplying the machine with a lot more ram to
+affect how often garbage collection is done?
+
+A: Indeed, Figure 8 quantifies how much extra memory you need to keep
+the GC costs under control.
+
+Q: Was the type conversion a source of inefficiency due to the Go
+being strongly typed or was it not a problem?
+
+A: Biscuit uses few Go interfaces, which have a cost, but type
+conversion isn't the major HLL tax.  Prologue cycles for checking
+whether the stack must be expanded and whether the GC needs a stop of
+the world pause is the major one.
+
+Q: Can you elaborate on common strategies for dealing with kernel heap
+exhaustion? The paper mentions that the linux kernel unwinds many
+function calls to hopefully get back to a state where the heap is not
+exhausted. How is this implemented? What does the kernel do if the
+unwind fails? Biscuit obviously has a different design -- was this
+design chosen because of limitations encountered by using the HLL, or
+was it chosen for other reasons?
+
+A: Linux fails allocations and the caller must deal with it (check it
+and unwind further).  This works, but makes the life of kernel
+programmers harder. One reason Biscuit doesn't follow this strategy is
+because Go doesn't allow allocations to fail.
+
+Q: For how long and how many people did it take to implement Biscuit?
+
+A: We don't have a precise number, because we tried different plans
+for writing Biscuit and we didn't keep track of it. Cody, as a PhD
+student, spent a few years doing most of the work.
+
+Q: Out of curiosity are there any labs that we've completed that would
+have been impossible with Biscuit? I get the sense that Biscuit may
+use more memory and have performance delays but as far as correct
+implementation, Biscuit seems to have the necessary features of an OS
+kernel.
+
+A: Nope.  The features you implemented in the labs Biscuit has more
+advanced versions of them.  In fact, Biscuit was derived from xv6 but
+then substantially extended to achieve high performance and to be able
+to run a few Linux applications unmodified.

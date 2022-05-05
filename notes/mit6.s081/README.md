@@ -27,6 +27,7 @@
   - [LEC 17 (fk): Virtual memory for applications](#lec-17-fk-virtual-memory-for-applications)
   - [LEC 18 (rtm): OS Organization](#lec-18-rtm-os-organization)
   - [LEC 19 (rtm): Virtual Machines](#lec-19-rtm-virtual-machines)
+  - [LEC 20 (fk): Kernels and HLL](#lec-20-fk-kernels-and-hll)
 
 <!-- /code_chunk_output -->
 
@@ -548,7 +549,7 @@ nov 4
 
 - LEC 17 (fk): [Virtual memory for applications](./docs/lec/l-uservm.txt) ([boards](./docs/lec/l-uservm.pdf)) ([sqrt example](./docs/lec/sqrt.c)) ([baker example](./docs/lec/baker.c)) [video](https://youtu.be/YNQghIvk0jc)
 - Preparation: [Read Virtual Memory Primitives for User Programs (1991)](./docs/lec/appel-li.pdf)
-- Assignment: <a href="./docs/assignment/Lab_ mmap.html.html">Lab mmap: Mmap</a>
+- Assignment: <a href="./docs/assignment/Lab_ mmap.html">Lab mmap: Mmap</a>
 
 把课听了：[./docs/drafts/lec.17c.md](./docs/drafts/lec.17c.md)
 - [应用程序使用虚拟内存所需要的特性](./docs/drafts/lec.17c.md#应用程序使用虚拟内存所需要的特性)
@@ -610,3 +611,34 @@ nov 16
   - [Devices](./docs/drafts/lec.19c.md#devices)
 - [硬件对虚拟机的支持（以 Intel VT-x 为例）](./docs/drafts/lec.19c.md#硬件对虚拟机的支持以-intel-vt-x-为例)
 - [Dune: Safe User-level Access to Privileged CPU Features](./docs/drafts/lec.19c.md#dune-safe-user-level-access-to-privileged-cpu-features)
+
+#### LEC 20 (fk): Kernels and HLL
+
+nov 18
+
+- LEC 20 (fk): [Kernels and HLL](./docs/lec/l-biscuit.txt) ([slides](./docs/lec/l-biscuit-slides.pdf)) [video](https://youtu.be/AAtXWGwxI9k)
+- Preparation: [Read the Biscuit paper (2018)](./docs/lec/biscuit.pdf), [FAQ](./docs/lec/faq-biscuit.txt)
+- Assignment: <a href="./docs/assignment/Lab_ networking.html">Lab net: Network stack</a>
+
+先把课听了：[./docs/drafts/lec.20c.md](./docs/drafts/lec.20c.md)
+- [C语言实现操作系统的优劣势](./docs/drafts/lec.20c.md#c语言实现操作系统的优劣势)
+  - [C 语言实现 OS 的优势](./docs/drafts/lec.20c.md#c-语言实现-os-的优势)
+  - [C 语言实现 OS 的劣势](./docs/drafts/lec.20c.md#c-语言实现-os-的劣势)
+- [高级编程语言（HLL）实现操作系统的优劣势](./docs/drafts/lec.20c.md#高级编程语言hll实现操作系统的优劣势)
+  - [高级编程语言实现 OS 优势](./docs/drafts/lec.20c.md#高级编程语言实现-os-优势)
+  - [高级编程语言实现 OS 劣势](./docs/drafts/lec.20c.md#高级编程语言实现-os-劣势)
+- [本节 HLL 论文概述](./docs/drafts/lec.20c.md#本节-hll-论文概述)
+  - [论文的目标是能够测量出高级编程语言的优劣势](./docs/drafts/lec.20c.md#论文的目标是能够测量出高级编程语言的优劣势)
+  - [高级编程语言选择 Golang](./docs/drafts/lec.20c.md#高级编程语言选择-golang)
+  - [Biscuit 操作系统](./docs/drafts/lec.20c.md#biscuit-操作系统)
+  - [Biscuit 实现的困难： Heap Exhaustion](./docs/drafts/lec.20c.md#biscuit-实现的困难-heap-exhaustion)
+    - [不能解决 Heap Exhaustion 的方案（strawman）](./docs/drafts/lec.20c.md#不能解决-heap-exhaustion-的方案strawman)
+    - [BISCUIT solution: reserve memory](./docs/drafts/lec.20c.md#biscuit-solution-reserve-memory)
+  - [HLL benefits 概述](./docs/drafts/lec.20c.md#hll-benefits-概述)
+    - [HLL benefits 之提供了 GC](./docs/drafts/lec.20c.md#hll-benefits-之提供了-gc)
+    - [Read-lock-free example （引出 RCU）](./docs/drafts/lec.20c.md#read-lock-free-example-引出-rcu)
+    - [HLL 是否能阻止前面提到的内核漏洞](./docs/drafts/lec.20c.md#hll-是否能阻止前面提到的内核漏洞)
+  - [HLL performance cost](./docs/drafts/lec.20c.md#hll-performance-cost)
+- [总结：Should one use HLL for a new kernel?](./docs/drafts/lec.20c.md#总结should-one-use-hll-for-a-new-kernel)
+  - [怎么在硬件上直接运行 Go runtime ？](./docs/drafts/lec.20c.md#怎么在硬件上直接运行-go-runtime)
+  - [关于 goroutine 其他问题](./docs/drafts/lec.20c.md#关于-goroutine-其他问题)
