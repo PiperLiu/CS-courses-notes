@@ -25,6 +25,7 @@
   - [LEC 15 (fk): Crash recovery](#lec-15-fk-crash-recovery)
   - [LEC 16 (rtm): File system performance and fast crash recovery](#lec-16-rtm-file-system-performance-and-fast-crash-recovery)
   - [LEC 17 (fk): Virtual memory for applications](#lec-17-fk-virtual-memory-for-applications)
+  - [LEC 18 (rtm): OS Organization](#lec-18-rtm-os-organization)
 
 <!-- /code_chunk_output -->
 
@@ -566,3 +567,27 @@ nov 4
 
 把 mmap 系统调用 map 做了吧：[./docs/drafts/lec.17hw.md](./docs/drafts/lec.17hw.md)
 - [写一个 mmap 和 munmap 系统调用](./docs/drafts/lec.17hw.md#写一个-mmap-和-munmap-系统调用)
+
+#### LEC 18 (rtm): OS Organization
+
+nov 9
+
+- LEC 18 (rtm): [OS Organization](./docs/lec/l-organization.txt) ([video](https://youtu.be/dM9PLdaTpnA))
+- Preparation: [Read The Performance of micro-Kernel-Based Systems (1997)](./docs/lec/microkernel.pdf)
+
+把课听了：[./docs/drafts/lec.18c.md](./docs/drafts/lec.18c.md)
+- [抽象能力强大的 Monolithic Kernel 宏内核](./docs/drafts/lec.18c.md#抽象能力强大的-monolithic-kernel-宏内核)
+  - [宏内核好处](./docs/drafts/lec.18c.md#宏内核好处)
+  - [宏内核劣势](./docs/drafts/lec.18c.md#宏内核劣势)
+- [Micro kernel 微内核](./docs/drafts/lec.18c.md#micro-kernel-微内核)
+  - [微内核的核心就是实现了IPC](./docs/drafts/lec.18c.md#微内核的核心就是实现了ipc)
+  - [micro kernel 使用动机](./docs/drafts/lec.18c.md#micro-kernel-使用动机)
+  - [micro kernel 内核面临挑战](./docs/drafts/lec.18c.md#micro-kernel-内核面临挑战)
+- [L4 micro kernel](./docs/drafts/lec.18c.md#l4-micro-kernel)
+  - [L4 的系统调用](./docs/drafts/lec.18c.md#l4-的系统调用)
+  - [L4提供的线程切换与 Pager](./docs/drafts/lec.18c.md#l4提供的线程切换与-pager)
+  - [Improving IPC by Kernel Design](./docs/drafts/lec.18c.md#improving-ipc-by-kernel-design)
+    - [基于 Unix Pipe 异步传输（较慢）](./docs/drafts/lec.18c.md#基于-unix-pipe-异步传输较慢)
+    - [L4 采用的 Synchronized 同步传输（简单快速）](./docs/drafts/lec.18c.md#l4-采用的-synchronized-同步传输简单快速)
+  - [Run Linux on Top of L4 Micro Kernel](./docs/drafts/lec.18c.md#run-linux-on-top-of-l4-micro-kernel)
+  - [L4 Linux 性能分析](./docs/drafts/lec.18c.md#l4-linux-性能分析)
