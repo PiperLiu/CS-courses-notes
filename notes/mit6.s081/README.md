@@ -28,6 +28,7 @@
   - [LEC 18 (rtm): OS Organization](#lec-18-rtm-os-organization)
   - [LEC 19 (rtm): Virtual Machines](#lec-19-rtm-virtual-machines)
   - [LEC 20 (fk): Kernels and HLL](#lec-20-fk-kernels-and-hll)
+  - [LEC 21 (rtm): Networking](#lec-21-rtm-networking)
 
 <!-- /code_chunk_output -->
 
@@ -651,3 +652,19 @@ nov 30
 
 - LEC 21 (rtm): [Networking](./docs/lec/l-net.txt) ([video](https://youtu.be/Fcjychg4Tvk))
 - Preparation: [Read Receive Livelock (1996)](./docs/lec/mogul96usenix.pdf)
+
+这节课很重要，收获很大，让你彻底理解网络分层、协议栈：[./docs/drafts/lec.21c.md](./docs/drafts/lec.21c.md)
+- [计算机网络概述](./docs/drafts/lec.21c.md#计算机网络概述)
+  - [基本网络场景：局域网、路由](./docs/drafts/lec.21c.md#基本网络场景局域网-路由)
+  - [二层网络 Ethernet](./docs/drafts/lec.21c.md#二层网络-ethernet)
+  - [二/三层地址转换 ARP](./docs/drafts/lec.21c.md#二三层地址转换-arp)
+  - [三层网络 Internet](./docs/drafts/lec.21c.md#三层网络-internet)
+  - [四层网络 UDP](./docs/drafts/lec.21c.md#四层网络-udp)
+- [运行在主机上的网络协议栈 Network Stack](./docs/drafts/lec.21c.md#运行在主机上的网络协议栈-network-stack)
+  - [简单的网络协议栈分层图](./docs/drafts/lec.21c.md#简单的网络协议栈分层图)
+  - [packet的控制流程是如何工作](./docs/drafts/lec.21c.md#packet的控制流程是如何工作)
+  - [当 packet 送到网卡时](./docs/drafts/lec.21c.md#当-packet-送到网卡时)
+  - [Ring Buffer](./docs/drafts/lec.21c.md#ring-buffer)
+- [Receive Livelock](./docs/drafts/lec.21c.md#receive-livelock)
+  - [中断的 Livelock](./docs/drafts/lec.21c.md#中断的-livelock)
+  - [如何解决 Livelock](./docs/drafts/lec.21c.md#如何解决-livelock)
