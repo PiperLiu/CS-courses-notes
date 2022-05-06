@@ -668,3 +668,11 @@ nov 30
 - [Receive Livelock](./docs/drafts/lec.21c.md#receive-livelock)
   - [中断的 Livelock](./docs/drafts/lec.21c.md#中断的-livelock)
   - [如何解决 Livelock](./docs/drafts/lec.21c.md#如何解决-livelock)
+
+把最后一个 lab 写了：[./docs/drafts/lec.21hw.md](./docs/drafts/lec.21hw.md)
+- [Lab: networking](./docs/drafts/lec.21hw.md#lab-networking-1)
+  - [阅读代码，一些知识点：大小端变量转换、 __attribute__((packed))](./docs/drafts/lec.21hw.md#阅读代码一些知识点大小端变量转换-__attribute__packed)
+  - [网络协议栈的实现](./docs/drafts/lec.21hw.md#网络协议栈的实现)
+  - [简历一个最简单的 socket 连接](./docs/drafts/lec.21hw.md#简历一个最简单的-socket-连接)
+  - [万物皆文件](./docs/drafts/lec.21hw.md#万物皆文件)
+  - [完成作业：向网卡传输数据，处理网卡中断](./docs/drafts/lec.21hw.md#完成作业向网卡传输数据处理网卡中断)
