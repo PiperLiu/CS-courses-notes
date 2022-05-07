@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- saved from url=(0048)http://nil.csail.mit.edu/6.824/2020/project.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="StyleSheet" href="./assets/style.css" type="text/css">
+<title>6.824 Project</title>
+</head>
+
+<body>
+<div align="center">
+<h2><a href="http://nil.csail.mit.edu/6.824/index.html">6.824</a> - Spring 2020</h2>
+</div>
+
+<div align="center">
+<h1>6.824 Project</h1>
+</div>
+
+
+<div align="center">
+
+<table border="0">
+<tbody><tr><td><b>Proposals due:</b></td>
+    <td>Mar 31 23:59</td></tr>
+<tr><td><b>Code and write-up due:</b></td>
+    <td>May 8 23:59</td></tr>
+<tr><td><b>Presentations:</b></td>
+    <td>May 12 in class</td></tr>
+</tbody></table>
+
+</div>
+
+<hr>
+
+<h2>Introduction</h2>
+
+<p>
+You can either do a final project based on your own ideas, or <a href="http://nil.csail.mit.edu/6.824/2020/labs/lab-shard.html">Lab 4</a>.
+
+</p><p>
+If you want to do a project, you must get our approval for your idea
+in advance. You must form a group of 2 or 3 6.824 students to
+collaborate on the project. At the end of the term you'll turn in your
+code and a short write-up describing the design and implementation of
+your project, and make a short in-class presentation about your work.
+We'll post the project write-ups and code on the course web site.
+
+</p><p>
+Your project should be something interesting and challenging that's
+closely related to 6.824 core topics, such as fault tolerance.
+The project must involve at least as much effort as Lab 4.
+Below
+you'll find some half-baked ideas that we think could turn into
+interesting projects, but we haven't given them too much thought.
+
+</p><p>
+</p><h2>Deliverables</h2>
+
+<p>
+There are four concrete steps to the final project, as follows:
+
+</p><ol>
+
+<li>
+Form a group and decide on the project you would like to work on.
+Feel free to use Piazza to find group members and discuss ideas.
+Course staff will be happy to discuss project ideas via e-mail or in
+person.
+
+</li><li>
+Flesh out the exact problem you
+will be addressing and how you will go about solving it.
+By the proposal deadline, you must
+submit a proposal (less than a page) describing: your <b>group members</b>
+list, <b>the problem</b> you want to address, <b>how you plan to address it</b>,
+and what are you proposing to <b>specifically design and implement</b>.
+Submit your proposal to
+<a href="https://6824.scripts.mit.edu/2020/handin.py/">https://6824.scripts.mit.edu/2020/handin.py/</a>.
+We'll tell you whether we approve, or not, and give you feedback.
+
+</li><li>
+Execute your project: design and build something neat!
+
+</li><li>
+Write a document describing the design and implementation of your project,
+and turn it in along with your project's code by the final deadline.
+The document should be about 3 pages of text that helps us understand what
+problem you solved, and what your code does.  You can either send the code to
+the staff list or provide a link to an repository (e.g., on GitHub) in your
+writeup.  The code and writeups will be posted online after the end of the
+semester.
+
+</li><li>
+Prepare a short in-class presentation about the work that you have
+done for your final project.  We will provide a projector that you can use to
+demonstrate your project.
+
+</li></ol>
+
+<p>
+</p><h2>Half-baked project ideas</h2>
+
+<p>
+You should feel free to propose your own project idea. If you'd like
+some starting points, here are some topics that might (or might not)
+be worth thinking about.
+
+</p><ul>
+
+<li> Re-implement any of the systems described in the papers that 6.824 lectured on.
+
+</li><li> Build a very high-performance Raft implementation, changing
+the design as needed.
+
+</li><li> Build a distributed, decentralized, fault-tolerant Reddit.
+
+</li><li> Build a system for making Node.js applications fault-tolerant,
+perhaps using some form of replicated execution.
+
+</li><li> Add cross-shard atomic transactions to Lab 4, using two-phase commit
+and/or snapshots.
+
+</li><li> Build a data-flow processing system in the style of Google FlumeJava
+or Spark or Naiad.
+
+</li><li> Build a system with asynchronous replication (like Dynamo or
+Ficus or Bayou). Perhaps add stronger consistency (as in COPS
+or Walter or Lynx).
+
+</li><li> Build a file synchronizer (like
+  <a href="http://www.cis.upenn.edu/~bcpierce/unison/">Unison</a> or
+  <a href="http://swtch.com/tra/">Tra</a>).
+
+</li><li> Build a coherent caching system for use by web sites (a bit
+like memcached), perhaps along the lines of
+<a href="http://drkp.net/papers/txcache-osdi10.pdf">TxCache</a>.
+
+</li><li> Build a distributed cooperative web cache, perhaps along
+the lines of
+<a href="https://www.usenix.org/legacy/events/iptps09/tech/full_papers/terrace/terrace_html/">Firecoral</a> or
+<a href="http://www.ccs.neu.edu/home/amislove/publications/Maygh-EuroSys.pdf">Maygh</a>.
+
+</li><li> Build a collaborative editor like EtherPad, using
+eventually-consistent or CRDT primitives.
+
+</li><li> Use a block-chain to build something other than a crypto-currency.
+
+</li><li> Build a fault-tolerant and/or sharded file service.
+
+</li><li> Build a
+<a href="http://www.cdf.toronto.edu/~csc469h/fall/handouts/nitzberg91.pdf">distributed shared memory</a> (DSM) system, to make it possible to run existing
+parallel code intended for a single multi-core machine, but on a cluster of 
+machines.
+
+</li><li> Build a distributed block store in the style of Amazon EBS or FAB.
+Maybe you can get standard operating systems
+to talk to you network virtual disk using iSCSI or
+Linux's NBD (network block device).
+
+</li><li> Build a geo-replicated storage system, like Dynamo or COPS,
+perhaps providing something useful and/or efficient in the the way 
+of transactions or consistency.
+
+</li><li> Use modern high-speed NIC features (e.g. RDMA or DPDK) to build a
+very high-speed service, perhaps with replication or transactions.
+
+</li><li> Use modern fast non-volatile storage (e.g. Intel Optane) to
+simplify the design of a fault-tolerant system.
+
+</li><li> Build a fault-tolerance framework that's easier than Raft to
+layer service code on top of.
+
+</li><li> Figure how to say something useful about whether applications
+really need strictly consistent storage, or what the cost in application
+complexity is of having to use storage with weak consistency.
+
+</li><li> Build a data-processing system that is good at both big data
+(like MapReduce and Spark) and on-line processing (like a key/value
+store or SQL database).
+
+</li></ul>
+
+
+</body></html>

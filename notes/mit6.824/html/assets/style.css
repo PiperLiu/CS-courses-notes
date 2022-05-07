@@ -1,0 +1,110 @@
+body { max-width: 45em; }
+body pre { overflow-x: auto; }
+
+body {
+	color: black;
+	background-color: white;
+	font-family: sans-serif;
+}
+
+.title {
+	text-align: center
+}
+.subtitle {
+	text-align: center;
+	font-style: italic;
+}
+.author {
+	text-align: center;
+}
+
+ul.hints, .note, .challenge, .todo, pre {
+	margin: 1em;
+	border: 1px dashed;
+	padding: 1em;
+}
+
+ul.hints { color: #50A02D; }
+	ul.hints li { margin-left: 1em; }
+	ul.hints li::before {
+		content: "Hint: ";
+		font-weight: bold;
+	}
+
+.important {
+  margin: 1em;
+  padding: 1em;
+  background-color: #990000;
+  color: #fff;
+}
+	.important::before {
+		content: "Important: ";
+    background-color: #550000;
+    width: 100%;
+    display: block;
+    margin: -1em -1em 1em -1em;
+    padding: 1em;
+		font-weight: bold;
+	}
+.note { color: #4682B4; }
+	.note::before {
+		content: "Note: ";
+		font-weight: bold;
+	}
+
+.challenge, .todo { border-style: solid; }
+.challenge::before, .todo::before {
+	float: right;
+	font-weight: bold;
+	color: white;
+	margin-right: -1em;
+	margin-top: -1em;
+	margin-bottom: .5em;
+	margin-left: 1em;
+	padding: .5em 1em;
+}
+.todo { color: #B22222; }
+	.todo::before {
+		content: "TASK";
+		background: #B22222;
+	}
+.challenge { color: #8B4513; }
+	.challenge::before {
+		content: "CHALLENGE";
+		background: #8B4513;
+	}
+
+
+tt, code {
+	font-family: monospace;
+	border-radius: 3px;
+	font-size: 110%;
+	color: #657b83;
+	background-color: #fdf6e3;
+	padding: 0 0.2em;
+	word-wrap: break-word;
+}
+
+pre {
+	font-size: 100%;
+	color: #839496;
+	background: #002b36;
+}
+
+.classic {
+color: black;
+}
+
+
+div.required .header {
+    font-weight: bold;
+}
+
+div.challenge .header {
+    font-style: italic;
+}
+
+div.required {
+    background-color: #eeeeff;
+}
+
