@@ -31,6 +31,7 @@
   - [LEC 21 (rtm): Networking](#lec-21-rtm-networking)
   - [LEC 22 (rtm): Meltdown](#lec-22-rtm-meltdown)
   - [LEC 23 (rtm): RCU](#lec-23-rtm-rcu)
+  - [LEC 24 (fk): Q&A](#lec-24-fk-qa)
 
 <!-- /code_chunk_output -->
 
@@ -725,3 +726,12 @@ dec 7
   - [RCU 性能简单讨论](./docs/drafts/lec.23c.md#rcu-性能简单讨论)
 - [RCU 总结与问答](./docs/drafts/lec.23c.md#rcu-总结与问答)
 
+#### LEC 24 (fk): Q&A
+
+dec 9
+
+- LEC 24 (fk): Q&A ([video](https://youtu.be/W9m6m0OGNB8))
+
+最后的内容，没什么可记录的。所有的 lab 都已经 bug-free 并且 make grade 满分。
+
+🎉 完结撒花！
