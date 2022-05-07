@@ -32,6 +32,7 @@
   - [LEC 22 (rtm): Meltdown](#lec-22-rtm-meltdown)
   - [LEC 23 (rtm): RCU](#lec-23-rtm-rcu)
   - [LEC 24 (fk): Q&A](#lec-24-fk-qa)
+- [🥪Lab 笔记索引](#lab-笔记索引)
 
 <!-- /code_chunk_output -->
 
@@ -51,8 +52,7 @@ B 站视频：
 实验：
 - 本课程用到 `xv6` 系统，我从 `GitHub` 上 `fork` 了一个：https://github.com/PiperLiu/xv6-riscv
 - 本课程进行实验的作业系统： `git clone git://g.csail.mit.edu/xv6-labs-2020`
-  - 我也放到 `GitHub` 上了（❗❗这个仓库很重要❗❗）：https://github.com/PiperLiu/xv6-labs-2020
-  - 网上有很多参考答案。实在没思路再去搜 GitHub xv6-labs 。作业很有趣。
+  - Lab 的心得笔记汇总可以参考： 
 
 参考：
 - [如何学好操作系统原理这门课？ - 菜饼不菜的回答 - 知乎](https://www.zhihu.com/question/22874344/answer/2091285378)
@@ -735,3 +735,20 @@ dec 9
 最后的内容，没什么可记录的。所有的 lab 都已经 bug-free 并且 make grade 满分。
 
 🎉 完结撒花！
+
+### 🥪Lab 笔记索引
+
+原地址： https://github.com/PiperLiu/xv6-labs-2020 （已经设为 private）
+
+具体笔记索引、 Lab 配置见： [./lab.md](./lab.md)
+- [Lab: Xv6 and Unix utilities](./docs/drafts/lec.01hw.md)
+- [Lab: system calls](./docs/drafts/lec.03hw.md)
+- [Lab: page tables](./docs/drafts/lec.04hw.md)
+- [Lab: traps](./docs/drafts/lec.07hw.md)
+- [Lab: xv6 lazy page allocation](./docs/drafts/lec.08hw.md)
+- [Lab: Copy-on-Write Fork for xv6](./docs/drafts/lec.09hw.md)
+- [Lab: Multithreading](./docs/drafts/lec.11hw.md)
+- [Lab: locks](./docs/drafts/lec.13hw.md)
+- [Lab: file system](./docs/drafts/lec.14hw.md)
+- [Lab: mmap](./docs/drafts/lec.17hw.md)
+- [Lab: networking](./docs/drafts/lec.21hw.md)
