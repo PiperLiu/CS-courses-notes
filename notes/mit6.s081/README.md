@@ -30,6 +30,7 @@
   - [LEC 20 (fk): Kernels and HLL](#lec-20-fk-kernels-and-hll)
   - [LEC 21 (rtm): Networking](#lec-21-rtm-networking)
   - [LEC 22 (rtm): Meltdown](#lec-22-rtm-meltdown)
+  - [LEC 23 (rtm): RCU](#lec-23-rtm-rcu)
 
 <!-- /code_chunk_output -->
 
@@ -699,3 +700,28 @@ dec 2
 - [Meltdown Attack and Fix](./docs/drafts/lec.22c.md#meltdown-attack-and-fix)
   - [Meltdown, including Flush+Reload](./docs/drafts/lec.22c.md#meltdown-including-flushreload)
   - [Meltdown Fix](./docs/drafts/lec.22c.md#meltdown-fix)
+
+#### LEC 23 (rtm): RCU
+
+dec 7
+
+- LEC 23 (rtm): [RCU notes](./docs/lec/l-rcu.txt), [2018 slides](./docs/lec/l-rcu.pdf) ([video](https://youtu.be/KUwyCGMTeq8))
+- Preparation: Read [RCU paper (2013)](./docs/lec/rcu-decade-later.pdf), [FAQ](./docs/lec/rcu-faq.txt)
+
+把课听了：[./docs/drafts/lec.23c.md](./docs/drafts/lec.23c.md)
+
+- [引言：使用锁带来的问题](./docs/drafts/lec.23c.md#引言使用锁带来的问题)
+  - [自旋锁 spinlock 不能让人满意](./docs/drafts/lec.23c.md#自旋锁-spinlock-不能让人满意)
+  - [大量的场景只有读，因此自旋锁不合理](./docs/drafts/lec.23c.md#大量的场景只有读因此自旋锁不合理)
+- [读写锁 Read-Write Lock](./docs/drafts/lec.23c.md#读写锁-read-write-lock)
+  - [读写锁简单描述](./docs/drafts/lec.23c.md#读写锁简单描述)
+  - [读写锁会带来的问题](./docs/drafts/lec.23c.md#读写锁会带来的问题)
+- [RCU, Read Copy Update](./docs/drafts/lec.23c.md#rcu-read-copy-update)
+  - [RCU 实现基本讨论（规范写者行为，读者不加锁）](./docs/drafts/lec.23c.md#rcu-实现基本讨论规范写者行为读者不加锁)
+  - [RCU 修改写者行为：committing write （对数据结构有基本要求）](./docs/drafts/lec.23c.md#rcu-修改写者行为committing-write-对数据结构有基本要求)
+  - [RCU实现：Memory barrier](./docs/drafts/lec.23c.md#rcu实现memory-barrier)
+  - [RCU实现：读写规则](./docs/drafts/lec.23c.md#rcu实现读写规则)
+  - [RCU 代码示例](./docs/drafts/lec.23c.md#rcu-代码示例)
+  - [RCU 性能简单讨论](./docs/drafts/lec.23c.md#rcu-性能简单讨论)
+- [RCU 总结与问答](./docs/drafts/lec.23c.md#rcu-总结与问答)
+

@@ -1,0 +1,140 @@
+FAQ for "RCU Usage In the Linux Kernel: One Decade Later", by
+McKenney, Boyd-Wickizer, and Walpole, 2012.
+
+Q: How is it possible that RCU increases performance when
+synchronize_rcu() can take as long as a few milliseconds?
+
+A: RCU can only improve parallel performance for data that is mostly
+read, and rarely written. That is, it should be used when the benefit
+of allowing many readers to avoid the cost of locking outweighs the
+cost of occasional writers spending a long time in synchronize_rcu().
+
+Q: What's the difference between synchronize_rcu() and call_rcu()?
+
+A: synchronize_rcu() doesn't return until all cores have gone through
+at least one context switch. call_rcu(f,x) returns immediately, after
+adding <f,x> to a list of callbacks. The callback -- f(x) -- is called
+after all cores have gone through at least one context switch.
+
+call_rcu() is nice because it doesn't delay the writer. It can be
+dangerous if called a lot, though, because the list it appends to
+might grow very long. And the amount of unfreed memory referred to the
+by call_rcu() list might be large (i.e. it might cause the kernel to
+run out of memory).
+
+Q: What do rcu_read_lock() and rcu_read_unlock() do?
+
+Q: Basically nothing. rcu_read_lock() prevents timer interrupts from
+forcing a pre-emptive context switch on the current CPU, and
+rcu_read_unlock() enables pre-emptive context switches. This
+enable/disable is very cheap (as in Figure 2).
+
+Q: How do rcu_assign_pointer() and rcu_dereference() work?
+
+A: They are C macros that insert memory barrier compiler directives.
+rcu_assign_pointer(a,p) expands into something like:
+
+  __sync_synchronize();
+  *a = p;
+
+and rcu_dereference(p) into something like:
+
+inline
+rcu_dereference(p)
+{
+  temp = p;
+  __sync_synchronize();
+  return temp;
+}
+
+__sync_synchronize() itself tells the compiler not to move any memory
+references past it, and also causes the compiler to emit whatever
+machine instructions are needed to prevent the machine from moving
+loads/stores (a fence instruction on the RISC-V).
+
+Q: How does RCU prevent two writers from interfering with each other?
+
+A: It doesn't. Writers need to make their own arrangements to avoid
+interfering, typically spin-locks.
+
+Q: Is RCU likely to be more bug-prone than locking?
+
+A: That may well be the case. It is a price the Linux developers are
+often willing to pay to get higher multi-core performance for
+read-heavy data. Here's a list of common problems that arise due to
+RCU: https://www.kernel.org/doc/Documentation/RCU/checklist.txt
+
+Q: What does the paper mean when it suggests that RCU can be used
+instead of reference counts?
+
+A: I think what the paper means by reference counting is deciding
+whether any threads are actively using the object, e.g. have a
+transient pointer to an object. The goal is to delay freeing an object
+until all threads have stopped using it. "Garbage collection" might be
+a better term here than "reference counting", since the paper's RCU
+doesn't actually count references.
+
+For objects that have long-term references to them, for example xv6's
+struct file, one still needs to maintain explicit reference counts.
+
+Q: What is an NMI?
+
+A: An NMI is an interrupt; it stands for non-maskable interrupt. NMIs
+can be caused by hardware errors, by timers used to drive CPU
+profiling or debugging, and by watchdog timers to catch a hung
+operating system. NMIs cannot be disabled.
+
+Q: Could RCU readers see old data, even after it has been replaced by
+new data?
+
+A: If a writer has just replaced data with a new version, a reader may
+still subsequently see the old data. And if a reader looks twice at
+the data, it may see that the data has changed. This makes RCU
+different from ordinary locking. Programmers who use RCU need to
+convince themselves that this lack of freshness and atomicity is OK.
+
+For the examples I have been able to think of, a little staleness is
+not a problem. One factor is that RCU readers don't write the
+RCU-protected data. So you cannot run into trouble with lost updates,
+e.g. a thread that increments a counter, but reads a stale old value,
+and thus writes an incorrect new value. That's a read/write access,
+not read, so you couldn't use RCU anyway.
+
+For what it's worth, the window of time in which a reader may see old
+data is relatively short (nanoseconds or microseconds).
+
+Q: Why doesn't xv6 use RCU?
+
+A: xv6 uses spinlocks because they are powerful and general and
+probably the most commonly used mutual exclusion scheme. In addition
+it's hard to sensibly apply optimizations like RCU to xv6, because
+it's difficult to judge their performance effect under qemu.
+
+Q: How does synchronize_rcu() work?
+
+A: Have a look at Section 4 of this paper for an efficient implementation:
+
+    http://www2.rdrop.com/users/paulmck/RCU/rclockpdcsproof.pdf
+
+The basic idea is that each CPU keeps a count of how many context
+switches it has performed. synchronize_rcu() periodically checks these
+counters.
+
+Q: How can RCU be effective even though rcu_read_lock() doesn't
+actually seem to do anything to lock out writers?
+
+A: Mostly RCU is a set of rules that writers must follow that ensure
+that the data structure can always be safely read, even while it's in
+the middle of being changed. These are rules that programmers must
+follow, not functions to be called. The place that RCU provides the
+most useful code is synchronize_rcu().
+
+Q: For what kinds of shared data would you NOT want to use RCU?
+
+A: If writes are common; if you need to hold pointers across context
+switches; if you need to update objects in place; if the data
+structure can't be updated with a single committing pointer write; if
+synchronize_rcu() (which can block) would need to be called at
+interrupt time. More generally, RCU needs to be used in a system in
+which context switches are frequent, and RCU can learn about them;
+this is easy in the kernel, but harder in user space.
