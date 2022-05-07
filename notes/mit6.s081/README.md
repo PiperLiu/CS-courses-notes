@@ -29,6 +29,7 @@
   - [LEC 19 (rtm): Virtual Machines](#lec-19-rtm-virtual-machines)
   - [LEC 20 (fk): Kernels and HLL](#lec-20-fk-kernels-and-hll)
   - [LEC 21 (rtm): Networking](#lec-21-rtm-networking)
+  - [LEC 22 (rtm): Meltdown](#lec-22-rtm-meltdown)
 
 <!-- /code_chunk_output -->
 
@@ -676,3 +677,25 @@ nov 30
   - [简历一个最简单的 socket 连接](./docs/drafts/lec.21hw.md#简历一个最简单的-socket-连接)
   - [万物皆文件](./docs/drafts/lec.21hw.md#万物皆文件)
   - [完成作业：向网卡传输数据，处理网卡中断](./docs/drafts/lec.21hw.md#完成作业向网卡传输数据处理网卡中断)
+
+#### LEC 22 (rtm): Meltdown
+
+dec 2
+
+- LEC 22 (rtm): [Meltdown](./docs/lec/l-meltdown.txt) ([video](https://youtu.be/WpKVr3p5rjE))
+- Preparation: Read [Meltdown (2018)](./docs/lec/meltdown.pdf)
+
+把课听了：[./docs/drafts/lec.22c.md](./docs/drafts/lec.22c.md)
+- [Meltdown 发生的背景](./docs/drafts/lec.22c.md#meltdown-发生的背景)
+  - [一个极简的 meltdown 例子](./docs/drafts/lec.22c.md#一个极简的-meltdown-例子)
+- [可能导致 Meltdown 成功的 CPU 特性](./docs/drafts/lec.22c.md#可能导致-meltdown-成功的-cpu-特性)
+  - [Speculative execution 预测执行](./docs/drafts/lec.22c.md#speculative-execution-预测执行)
+    - [预测执行例子（branch prediction 分支预测）](./docs/drafts/lec.22c.md#预测执行例子branch-prediction-分支预测)
+    - [为什么 Meltdown 能在分支预测生效](./docs/drafts/lec.22c.md#为什么-meltdown-能在分支预测生效)
+  - [CPU caches](./docs/drafts/lec.22c.md#cpu-caches)
+    - [L1 cache 和 L2 cache](./docs/drafts/lec.22c.md#l1-cache-和-l2-cache)
+    - [现代 CPU cache](./docs/drafts/lec.22c.md#现代-cpu-cache)
+    - [Flush and Reload 用 Cache 做 Meltdown](./docs/drafts/lec.22c.md#flush-and-reload-用-cache-做-meltdown)
+- [Meltdown Attack and Fix](./docs/drafts/lec.22c.md#meltdown-attack-and-fix)
+  - [Meltdown, including Flush+Reload](./docs/drafts/lec.22c.md#meltdown-including-flushreload)
+  - [Meltdown Fix](./docs/drafts/lec.22c.md#meltdown-fix)

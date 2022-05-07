@@ -1,0 +1,229 @@
+6.S081 2020 Lecture 22: Meltdown
+
+Why this paper?
+  Security is a critical O/S goal
+  The kernel's main strategy: isolation
+    User/supervisor mode, page tables, defensive system calls, &c
+  It's worth looking at examples of how things go wrong
+
+Meltdown
+  a surprising and disturbing attack on user/kernel isolation
+  one of a number of recent "micro-architectural" attacks
+    exploiting hidden implementation details of CPUs
+  fixable, but people fear an open-ended supply of related surprises
+
+Here's the core of the attack:
+  char buf[8192]
+  r1 = <a kernel virtual address>
+  r2 = *r1
+  r2 = r2 & 1
+  r2 = r2 * 4096
+  r3 = buf[r2]
+
+To be executed from user code.
+
+Will r2 end up holding data from the kernel?
+
+Assumes the kernel is mapped in user page table, with PTE_U clear.
+  this was near universal until these attacks were discovered.
+  kernel in upper half (high bit set), user in lower half (starting at zero).
+  mapping both user and kernel makes system calls significantly faster.
+  the point: *r1 is meaningful, even if forbidden.
+
+So how can this code possibly be useful to an attacker?
+  The answer has to do with a bunch of mostly-hidden CPU implementation details.
+  Speculative execution, and caches.
+
+First, speculative execution.
+  This is not yet about security.
+  Imagine this ordinary code.
+  This is C-like code; "r0" &c are registers, and "*r0" is a memory reference.
+
+  r0 = <something>
+  r1 = valid    // r1 is a register; valid is in RAM
+  if(r1 == 1){
+    r2 = *r0
+    r3 = r2 + 1
+  } else {
+    r3 = 0
+  }
+
+  The "r1 = valid" may have to load from RAM, taking 100s of cycles.
+  The "if(r1 == 1)" needs that data.
+  It would be too bad if the CPU had to pause until the RAM fetch completed.
+  Instead, the CPU predicts which way the branch is likely to go,
+    and continues executing.
+  This is called "speculation".
+  So the CPU may execute the "r2 = *r0",
+    and then the "r3 = r2 + 1".
+
+What if the CPU mis-predicts a branch, e.g. r1 == 0?
+  It flushes the results of the incorrect speculation.
+  Specifically, the CPU reverts the content of r2 and r3.
+  And re-starts execution, in the "else" branch.
+
+Speculative execution is a huge win for performance, since it
+  lets the CPU obtain a lot of parallelism -- overlap of
+  long instructions (divide, memory load, &c) with subsequent
+  instructions.
+
+What if the CPU speculatively executes the first part of the
+  branch, and r0 holds an illegal pointer?
+  If valid == 1, the "r2 = *r0" should raise an exception.
+  If valid == 0, the "r2 = *r0" should not raise an
+    exception, even though executed speculatively.
+
+The CPU "retires" instructions only after it is sure they
+  won't need to be canceled due to mis-speculation.
+  And the CPU retires instructions in order, only after all
+    previous instructions have retired, since only then does it
+    know that no previous instruction faulted.
+Thus a fault by an instruction that was speculatively
+  executed may not occur until a while after the instruction finishes.
+
+Speculation is, in principle, invisible -- part of the CPU implemention,
+  but not part of the specification.
+  That is, speculation is intended to increase performance without
+    changing the results that programs compute -- to be transparent.
+Some jargon:
+  "Architectural features" -- things in the CPU manual, visible to programmers.
+  "Micro-architectural" -- not in the manual, intended to be invisible.
+
+Another micro-architectural feature: CPU caches.
+  core
+  L1: va | data | perms
+  TLB
+  L2: pa | data
+  RAM
+If a load misses, data is fetched, and put into the cache.
+L1 ("level one") cache is virtually indexed, for speed.
+  A system call leaves kernel data in L1 cache, after return to user space.
+  (Assuming page table has both user and kernel mappings)
+Each L1 entry probably contains a copy of the PTE permission bits.
+On L1 miss: TLB lookup, L2 lookup with phys addr.
+Times:
+  L1 hit -- a few cycles.
+  L2 hit -- a dozen or two cycles.
+  RAM -- 300 cycles.
+  A cycle is 1/clockrate, e.g 0.5 nanosecond.
+
+Why is it safe to have both kernel and user data in the cache?
+  Can user programs read kernel data directly out of the cache?
+
+In real life, micro-architecture is not invisible.
+  It affects how long instructions and programs take.
+  It's of intense interest to people who write performance-critical code.
+  And to compiler writers.
+  Intel &c publish optimization guides, usually vague about details.
+
+A useful trick: sense whether something is cached.
+  This is the paper's Flush+Reload.
+  You want to know if function f() uses the memory at a address X.
+  1) ensure that memory at X is not cached.
+     Intel CPUs have a clflush instructions.
+     Or you could load enough junk memory to force everything else out of the cache.
+  2) call f()
+  3) Record the time.
+     Modern CPUs let you read a cycle counter.
+     For Intel CPUs, it's the rdtsc instruction.
+  4) load a byte from address X
+     (you need memory fences to ensure the load really happens)
+  5) Record the time again.
+  6) If the difference in times is < (say) 50, the load in #4 hit,
+     which means f() must have used memory at address X.
+     Otherwise not.
+
+Back to Meltdown -- this time with more detail:
+
+  char buf[8192]
+
+  // the Flush of Flush+Reload
+  clflush buf[0]
+  clflush buf[4096]
+
+  <some expensive instruction like divide>
+
+  r1 = <a kernel virtual address>
+  r2 = *r1
+  r2 = r2 & 1      // speculated
+  r2 = r2 * 4096   // speculated
+  r3 = buf[r2]     // speculated
+
+  <handle the page fault from "r2 = *r1">
+
+  // the Reload of Flush+Reload
+  a = rdtsc
+  r0 = buf[0]
+  b = rdtsc
+  r1 = buf[4096]
+  c = rdtsc
+  if b-a < c-b:
+    low bit was probably a 1
+
+That is, you can deduce the low bit of the kernel data based on which
+of two cache lines was loaded (buf[0] vs buf[4096]).
+  
+Point: the fault from "r2 = *r1" is delayed until the load retires,
+  which may take a while, giving time for the subsequent speculative
+  instructions to execute.
+
+Point: apparently the "r2 = *r1" does the load, even though it's
+  illegal, and puts the result into r2, though only temporarily since
+  reverted by the fault at retirement.
+
+Point: the "r3 = buf[r2]" loads some of buf[] into the cache,
+  even though change to r3 is canceled due to mis-speculation.
+  Since Intel views the cache content as hidden micro-architecture.
+
+The attack often doesn't work
+  Each XX in Listing 3/4 is a failure
+    Why do failures occur? Why so frequent?
+  Section 6.2 says 10 bytes/second if kernel data not cached
+    Retries help -- why?
+    1000s of retries may be needed -- why?
+  The conditions for success are not clear.
+  Perhaps reliable if kernel data is in L1, otherwise not.
+
+How could Meltdown be used in a real-world attack?
+  The attacker needs to run their code on the victim machine.
+  Timesharing: kernel may have other users' secrets, e.g. passwords, keys.
+    In I/O or network buffers, or maybe kernel maps off of phys mem.
+  Cloud: some container and VMM systems might be vulnerable,
+    so you could steal data from other cloud customers.
+  Your browser: it runs untrusted code in sandboxes, e.g. plug-ins,
+    maybe a plug-in can steal your password from your kernel.
+
+However, Meltdown is not known to have been used in any actual attack.
+
+What about defenses?
+
+A software fix:
+  Don't map the kernel in user page tables.
+    The paper calls this "KAISER"; Linux now calls it KPTI.
+  Requires a page table switch on each system call entry/exit.
+    This is how RISC-V xv6 works.
+  The page table switch can be slow -- it may require TLB flushes.
+    PCID can avoid TLB flush, though still some expense.
+  Most kernels adopted KAISER/KPTI soon after Meltdown was known.
+
+A hardware fix:
+  Only return permitted data from speculative loads!
+    If PTE_U is clear, return zero, not the actual data.
+  This probably has little or no cost since apparently each L1
+    cache line contains a copy of the PTE_U bit from the PTE.
+  AMD CPUs apparently worked like this all along.
+  The latest Intel CPUs seem to do this (called RDCL_NO).
+
+These defenses are deployed and are believed to work; but:
+  It was disturbing that page protections turned out to not be solid!
+  More micro-architectural surprises have been emerging.
+  Is the underlying issue just fixable bugs? Or an error in strategy?
+  Stay tuned, this is still playing out.
+
+References:
+https://googleprojectzero.blogspot.com/2018/01/reading-privileged-memory-with-side.html
+https://cyber.wtf/2017/07/28/negative-result-reading-kernel-memory-from-user-mode/
+https://eprint.iacr.org/2013/448.pdf
+https://gruss.cc/files/kaiser.pdf
+https://en.wikipedia.org/wiki/Kernel_page-table_isolation
+https://spectrum.ieee.org/computing/hardware/how-the-spectre-and-meltdown-hacks-really-worked
