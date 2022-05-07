@@ -52,7 +52,7 @@ B 站视频：
 实验：
 - 本课程用到 `xv6` 系统，我从 `GitHub` 上 `fork` 了一个：https://github.com/PiperLiu/xv6-riscv
 - 本课程进行实验的作业系统： `git clone git://g.csail.mit.edu/xv6-labs-2020`
-  - Lab 的心得笔记汇总可以参考： 
+  - Lab 的心得笔记汇总可以参考： [./lab.md](./lab.md)
 
 参考：
 - [如何学好操作系统原理这门课？ - 菜饼不菜的回答 - 知乎](https://www.zhihu.com/question/22874344/answer/2091285378)
@@ -62,7 +62,7 @@ B 站视频：
 
 - 教材（主要用作预习）：[xv6: a simple, Unix-like teaching operating system](./docs/lec/book-riscv-rev1.pdf)
 - 其他的资源比如课堂资料、作业要求在[docs/assignment/](./docs/assignment/)和[docs/lec/](./docs/lec/)中
-- 实验说明：<a href="./docs/6.S081 _ Fall 2020.html">6.S081 _ Fall 2020.html</a>
+- 实验说明：<a href="./docs/assignment/6.S081 _ Fall 2020.html">6.S081 _ Fall 2020.html</a>
 
 ### 🍱课程索引
 
