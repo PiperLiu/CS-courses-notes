@@ -13,7 +13,8 @@ import (
 //
 // Serial crawler
 //
-
+// 串行爬取
+// 为什么直接传入一个 map ？因为 map 本身就是一个指针
 func Serial(url string, fetcher Fetcher, fetched map[string]bool) {
 	if fetched[url] {
 		return
@@ -32,13 +33,14 @@ func Serial(url string, fetcher Fetcher, fetched map[string]bool) {
 //
 // Concurrent crawler with shared state and Mutex
 //
-
+// 使用共享的 state 和互斥锁来做
 type fetchState struct {
 	mu      sync.Mutex
 	fetched map[string]bool
 }
 
 func ConcurrentMutex(url string, fetcher Fetcher, f *fetchState) {
+	// 这里的封装同样是把 mutex 和数据封装在一个 struct 里
 	f.mu.Lock()
 	already := f.fetched[url]
 	f.fetched[url] = true
@@ -52,6 +54,10 @@ func ConcurrentMutex(url string, fetcher Fetcher, f *fetchState) {
 	if err != nil {
 		return
 	}
+	// 这里对 WaitGroup 的应用堪称经典
+	// 对于每个新任务，我先 done.Add(1)
+	// 完成了再 done.done
+	// 这样做到等待每个任务完成
 	var done sync.WaitGroup
 	for _, u := range urls {
 		done.Add(1)
@@ -78,7 +84,7 @@ func makeState() *fetchState {
 //
 // Concurrent crawler with channels
 //
-
+// 使用 channel 来做， master 持续接收 worker 传来的 url ，并在自己的作用域内维护 map
 func worker(url string, ch chan []string, fetcher Fetcher) {
 	urls, err := fetcher.Fetch(url)
 	if err != nil {
@@ -91,16 +97,18 @@ func worker(url string, ch chan []string, fetcher Fetcher) {
 func master(ch chan []string, fetcher Fetcher) {
 	n := 1
 	fetched := make(map[string]bool)
-	for urls := range ch {
+	for urls := range ch {  // urls 为 ch 传进来的 urls
 		for _, u := range urls {
 			if fetched[u] == false {
 				fetched[u] = true
-				n += 1
+				n += 1  // 如果有新 url ，那么 n += 1
 				go worker(u, ch, fetcher)
 			}
 		}
-		n -= 1
-		if n == 0 {
+		n -= 1  // 已经给 1 个 url 分配过 channel 了
+		if n == 0 {  // 本 urls 中所有的新 url 已经分配过 worker
+			// 不必等待每个 worker fetcher 完再结束
+			// 如果确定没有新 urls 了，那么跳出结束 ch 即可
 			break
 		}
 	}
@@ -129,6 +137,7 @@ func main() {
 	ConcurrentChannel("http://golang.org/", fetcher)
 }
 
+// 下面是一些假数据
 //
 // Fetcher
 //

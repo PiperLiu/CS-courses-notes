@@ -76,6 +76,13 @@ feb 6
 
 课就不听了，把两个程序看懂似乎才是重点（课上也讲这两个代码）。语言这个东西还是知道思想和原理，然后便用边查最好。
 
+在 [./lec/crawler.go](./lec/crawler.go) 中，举了串行爬取、锁实现并行爬取、通道并行爬取三个例子，有这些要点：
+- 在 `lock` 后立即 `defer unlock` 让程序不易出错，读起来也更美观
+- `sync.WaitGroup` 的经典使用：有任务我就先 `wg.Add(1)` ，每个任务开始时 `defer wg.done(1)`
+- `master-worked` 模式配合 `channel` 的经典使用
+
+在 [./lec/kv.go](./lec/kv.go) 中，主要是对 `net/rpc` 做了经典实现。
+
 ### 🥏Lab 笔记索引
 
 关于实验的环境配置见这里：[./drafts/lab00.md](./drafts/lab00.md)
