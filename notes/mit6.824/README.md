@@ -11,6 +11,7 @@
   - [LEC 1: Introduction](#lec-1-introduction)
   - [LEC 2: RPC and Threads](#lec-2-rpc-and-threads)
 - [🥏Lab 笔记索引](#lab-笔记索引)
+  - [Lab 1: MapReduce](#lab-1-mapreduce)
 
 <!-- /code_chunk_output -->
 
@@ -86,3 +87,15 @@ feb 6
 ### 🥏Lab 笔记索引
 
 关于实验的环境配置见这里：[./drafts/lab00.md](./drafts/lab00.md)
+
+#### Lab 1: MapReduce
+
+[./drafts/lab01.md](./drafts/lab01.md)
+- [所有的 test 都过了](./drafts/lab01.md#所有的-test-都过了)
+- [大体思路](./drafts/lab01.md#大体思路)
+- [与论文的区别](./drafts/lab01.md#与论文的区别)
+- [一些其他收获](./drafts/lab01.md#一些其他收获)
+  - [go: compile to so file AND load so file](./drafts/lab01.md#go-compile-to-so-file-and-load-so-file)
+  - [防止文件操作冲突，先写到 temp/xxx 文件中，写完再拷贝](./drafts/lab01.md#防止文件操作冲突先写到-tempxxx-文件中写完再拷贝)
+  - [Map+Reduce 总体给我的感觉就是分布式 groupby ？](./drafts/lab01.md#mapreduce-总体给我的感觉就是分布式-groupby-)
+  - [Scala 中 groupMap 与 groupMapReduce](./drafts/lab01.md#scala-中-groupmap-与-groupmapreduce)
