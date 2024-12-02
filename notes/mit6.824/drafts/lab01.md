@@ -142,7 +142,9 @@ intermediate = map(lambda x: Map(x['filename'], x['contents']), meta_data)
 # 而是也会根据 hash 把 keys 分组，然后 load ，然后排序， reduce
 intermediate = chain.from_iterable(intermediate)
 intermediate = list(intermediate)
-for key, key_values in groupby(  # 注意这里需要 sorted
+for key, key_values in groupby(  # 注意这里需要 sorted,
+        # https://docs.python.org/3/library/itertools.html
+        # groupby 需要 sort 才能全部合并 key
         sorted(intermediate, key=lambda x: x[0]),
         lambda x: x[0]):
     values = [x[1] for x in key_values]

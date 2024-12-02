@@ -10,6 +10,7 @@
 - [🎾课程索引](#课程索引)
   - [LEC 1: Introduction](#lec-1-introduction)
   - [LEC 2: RPC and Threads](#lec-2-rpc-and-threads)
+  - [LEC 3: GFS](#lec-3-gfs)
 - [🥏Lab 笔记索引](#lab-笔记索引)
   - [Lab 1: MapReduce](#lab-1-mapreduce)
 
@@ -40,7 +41,7 @@ B 站视频：
 
 - LEC 1: [Introduction](./lec/l01.txt), [video](http://nil.csail.mit.edu/6.824/2020/video/1.html)
 - Preparation: [Read MapReduce (2004)](./lec/mapreduce.pdf)
-- <a href="./html/Assigned: Lab 1: MapReduce">Assigned: Lab 1: MapReduce</a>
+- <a href="./html/6.824 Lab 1_ MapReduce.html">Assigned: Lab 1: MapReduce</a>
 
 本节课的笔记：[./drafts/lec01.md](./drafts/lec01.md)
 - [分布式系统的驱动力和挑战 Drivens and Challenges](./drafts/lec01.md#分布式系统的驱动力和挑战-drivens-and-challenges)
@@ -60,8 +61,6 @@ B 站视频：
   - [关于 MapReduce 的问答](./drafts/lec01.md#关于-mapreduce-的问答)
 
 #### LEC 2: RPC and Threads
-
-feb 6
 
 - LEC 2: [RPC and Threads](./lec/l-rpc.txt), [crawler.go](./lec/crawler.go), [kv.go](./lec/kv.go), [video](http://nil.csail.mit.edu/6.824/2020/video/2.html)
 - Preparation: Do [Online Go tutorial](http://tour.golang.org/) ([FAQ](tour-faq.txt))
@@ -83,6 +82,14 @@ feb 6
 - `master-worked` 模式配合 `channel` 的经典使用
 
 在 [./lec/kv.go](./lec/kv.go) 中，主要是对 `net/rpc` 做了经典实现。
+
+#### LEC 3: GFS
+
+- LEC 3: [GFS](http://nil.csail.mit.edu/6.824/2020/notes/l-gfs.txt), [video](http://nil.csail.mit.edu/6.824/2020/video/3.html)
+- Preparation: Read [GFS (2003)](http://nil.csail.mit.edu/6.824/2020/papers/gfs.pdf) ([FAQ](http://nil.csail.mit.edu/6.824/2020/papers/gfs-faq.txt))
+- <a href="./html/6.824 Lab 2_ Raft.html">Assigned: Lab 2: Raft</a>
+
+本节课的笔记：[./drafts/lec03.md](./drafts/lec03.md)
 
 ### 🥏Lab 笔记索引
 
