@@ -1,4 +1,4 @@
-# LEC 1: Introductions
+# LEC 3: GFS
 
 课堂实录可参考 [肖宏辉大佬的MIT6.824分布式系统课程中文翻译](https://www.zhihu.com/column/c_1273718607160393728) 的笔记。
 
@@ -8,6 +8,11 @@
 
 - [预习内容](#预习内容)
 - [WHY HARD 要克服什么挑战，面临什么取舍](#why-hard-要克服什么挑战面临什么取舍)
+- [Google File System](#google-file-system)
+- [GFS 读文件](#gfs-读文件)
+- [GFS 写文件](#gfs-写文件)
+- [GFS 一致性](#gfs-一致性)
+- [额外阅读：GFS、Tectonic、JuiceFS](#额外阅读gfs-tectonic-juicefs)
 
 <!-- /code_chunk_output -->
 
@@ -49,3 +54,61 @@
 若有数据冗余 REPL -> 可能会带来数据不一致的问题 Inconsistency
 若想实现一致性 Consistency -> 则导致了 Low Performance
 ```
+
+## Google File System
+
+Big, Fast, Global, Sharding, Automatic recovery
+
+Single data center, Internal use, Big sequential access （并非随机访问）
+
+> 尽管实际中可以拿多台机器作为Master节点，但是GFS中Master是Active-Standby模式，所以只有一个Master节点在工作。Master节点保存了文件名和存储位置的对应关系。除此之外，还有大量的Chunk服务器，可能会有数百个，每一个Chunk服务器上都有1-2块磁盘。
+
+Master存管理数据，Chunk存数据。
+
+防止数据丢失，Master会在磁盘构建checkpoint。
+
+## GFS 读文件
+
+要读哪个文件，问 Master ，获取 ChunkID 。
+
+> 第一步是，应用程序想读取某个特定文件的某个特定的偏移位置上的某段特定长度的数据，比如说第1000到第2000个字节的数据。所以，应用程序将文件名，长度和起始位置发送给Master节点。Master节点会从其file表单中查询文件名并找到包含这个数据段的Chunk。
+
+> 客户端也许可以算出来是哪个Chunk，但是客户端不知道Chunk在哪个服务器上。为了获取服务器信息，客户端需要与Master交互。
+
+## GFS 写文件
+
+明确一下“版本号”：
+- 版本号只在Master节点认为Chunk没有Primary时才会增加。在一个正常的流程中，如果对于一个Chunk来说，已经存在了Primary，那么Master节点会记住已经有一个Primary和一些Secondary，Master不会重新选择Primary，也不会增加版本号。它只会告诉客户端说这是Primary，并不会变更版本号。
+- 所有的Secondary都有相同的版本号。版本号只会在Master指定一个新Primary时才会改变。通常只有在原Primary发生故障了，才会指定一个新的Primary。所以，副本（参与写操作的Primary和Secondary）都有相同的版本号，你没法通过版本号来判断它们是否一样，或许它们就是不一样的（取决于数据追加成功与否）。
+
+首先讨论了：
+- 对于同一份数据， Master 如何确认 Chunk 最新的版本号
+- Master 告诉他认为是 Primary Chunk 的服务器，你是 Primary ，并且在接下来 60s 都是（租约）
+
+> Primary告诉所有的副本去执行数据追加操作，某些成功了，某些没成功。如果某些副本没有成功执行，Primary会回复客户端说执行失败。之后客户端会认为数据没有追加成功。但是实际上，部分副本还是成功将数据追加了。所以现在，一个Chunk的部分副本成功完成了数据追加，而另一部分没有成功，这种状态是可接受的，没有什么需要恢复，这就是GFS的工作方式。
+
+> 如果写文件失败之后，一个客户端读取相同的Chunk，客户端可能可以读到追加的数据，也可能读不到，取决于客户端读的是Chunk的哪个副本。
+
+**所以，客户端并不一定接受到最准确的数据，除非客户端明确要求自己接受到最准确的数据：** 当Primary回复“no”给客户端时，客户端知道写入失败了，之后客户端的GFS库会重新发起追加数据的请求，直到最后成功追加数据。成功了之后，追加的数据会在所有的副本中相同位置存在。在那之前，追加的数据只会在部分副本中存在。（但其实也不一定能做到准确）
+
+## GFS 一致性
+
+弱一致。
+
+![](./images/2024120401.png)
+
+这里，若 B 没写，写 C 应根据偏移量写，而非并入 A 后面。
+
+GFS 要做到强一致性还有很多需要改进的。我不想在此多加讨论，之后做 raft 时再考虑。
+
+## 额外阅读：GFS、Tectonic、JuiceFS
+
+浅析三款大规模分布式文件系统架构设计：https://juicefs.com/zh-cn/blog/engineering/large-scale-distributed-filesystem-comparison
+
+JuiceFS 用过，支持 POSIX 接口，好用。
+
+看到 JuiceFS 的 github repo 一下想到了 GFS ，有相似的地方。粗浅地理解为： JuiceFS 用 Redis 管理元数据；对象存储 Object Storage 用的亚马逊 S3 存储文件数据，基本对应 GFS 的 chunk 。
+
+Tectonic 是 Meta 的 EB 级别数据分布式存储，因此抽象出了三个层次： Name layer 是与文件的名字或者目录结构有关的元数据，File layer 是跟当前文件本身的一些属性相关的数据，Block layer 是每一个数据块在 Chunk Store 位置的元数据。
+
+> 这里记录下文章中写的 GFS 的意义：GFS 证明了我们可以用相对廉价的通用计算机，来组建一个足够强大、可扩展、可靠的分布式存储。Google 当时在设计 GFS 时做了很多取舍，它舍弃掉了很多传统单机文件系统的特性，保留了对于当时 Google 搜索引擎场景需要的一些分布式存储的需求。
