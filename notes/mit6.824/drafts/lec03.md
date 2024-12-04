@@ -112,3 +112,8 @@ JuiceFS 用过，支持 POSIX 接口，好用。
 Tectonic 是 Meta 的 EB 级别数据分布式存储，因此抽象出了三个层次： Name layer 是与文件的名字或者目录结构有关的元数据，File layer 是跟当前文件本身的一些属性相关的数据，Block layer 是每一个数据块在 Chunk Store 位置的元数据。
 
 > 这里记录下文章中写的 GFS 的意义：GFS 证明了我们可以用相对廉价的通用计算机，来组建一个足够强大、可扩展、可靠的分布式存储。Google 当时在设计 GFS 时做了很多取舍，它舍弃掉了很多传统单机文件系统的特性，保留了对于当时 Google 搜索引擎场景需要的一些分布式存储的需求。
+
+此外，这里记录一些 GFS 很棒的阅读资料：
+- [Introduction to the Google File System (GFS)](https://brabalawuka.cc/posts/study/gfs/)
+- [解读Google分布式文件系统GFS（合集）](https://www.bilibili.com/video/BV1fT411c7y6/)
+- [从 GFS 失败的架构设计来看一致性的重要性](https://mp.weixin.qq.com/s/GuJ6VqZJy3ONaVOWvQT9kg)
