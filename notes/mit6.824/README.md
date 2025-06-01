@@ -85,11 +85,18 @@ B 站视频：
 
 #### LEC 3: GFS
 
-- LEC 3: [GFS](http://nil.csail.mit.edu/6.824/2020/notes/l-gfs.txt), [video](http://nil.csail.mit.edu/6.824/2020/video/3.html)
-- Preparation: Read [GFS (2003)](http://nil.csail.mit.edu/6.824/2020/papers/gfs.pdf) ([FAQ](http://nil.csail.mit.edu/6.824/2020/papers/gfs-faq.txt))
+- LEC 3: [GFS](./lec/l-gfs.txt), [video](http://nil.csail.mit.edu/6.824/2020/video/3.html)
+- Preparation: Read [GFS (2003)](./lec/gfs.pdf) ([FAQ](./lec/gfs-faq.txt))
 - <a href="./html/6.824 Lab 2_ Raft.html">Assigned: Lab 2: Raft</a>
 
 本节课的笔记：[./drafts/lec03.md](./drafts/lec03.md)
+
+#### LEC 4: Primary-Backup Replication
+
+- LEC 4: [Primary-Backup Replication](./lec/l-vm-ft.txt), [video](http://nil.csail.mit.edu/6.824/2020/video/4.html)
+- Preparation: Read [Fault-Tolerant Virtual Machines (2010)](./lec/vm-ft.pdf) ([FAQ](./lec/vm-ft-faq.txt))
+
+本节课的笔记：[./drafts/lec04.md](./drafts/lec04.md)
 
 ### 🥏Lab 笔记索引
 
