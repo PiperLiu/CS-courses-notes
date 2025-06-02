@@ -11,6 +11,8 @@
   - [LEC 1: Introduction](#lec-1-introduction)
   - [LEC 2: RPC and Threads](#lec-2-rpc-and-threads)
   - [LEC 3: GFS](#lec-3-gfs)
+  - [LEC 4: Primary-Backup Replication](#lec-4-primary-backup-replication)
+  - [LEC 5: Go, Threads, and Raft, video, code samples](#lec-5-go-threads-and-raft-video-code-samples)
 - [🥏Lab 笔记索引](#lab-笔记索引)
   - [Lab 1: MapReduce](#lab-1-mapreduce)
 
@@ -97,6 +99,13 @@ B 站视频：
 - Preparation: Read [Fault-Tolerant Virtual Machines (2010)](./lec/vm-ft.pdf) ([FAQ](./lec/vm-ft-faq.txt))
 
 本节课的笔记：[./drafts/lec04.md](./drafts/lec04.md)
+
+#### LEC 5: Go, Threads, and Raft, video, code samples
+
+- LEC 5: [Go, Threads, and Raft](./lec/l-go-concurrency.txt), [video](http://nil.csail.mit.edu/6.824/2020/video/5.html), [code samples](./lec/go-concurrency/)
+- Preparation: [Read The Go Memory Model](https://go.dev/ref/mem)
+
+本节课的笔记：[./drafts/lec05.md](./drafts/lec05.md)
 
 ### 🥏Lab 笔记索引
 

@@ -31,7 +31,7 @@ https://notebooklm.google.com/notebook/94e7862f-b0b3-4dcf-97c7-abda275eb82b/audi
 微信链接： https://mp.weixin.qq.com/s/jMUhQIrLH64TKdmdzq2DYg
 
 给我留下的较深的印象：
-1. VMware FT 的主备复制实现方式很底层，但为了解决不一致性问题（比如为了模拟主服务器的中断、网络情况）引入的 log channel 太细致， 反而造成了极其高昂的成本。
+1. VMware FT 的主备复制实现方式很底层，但为了解决不一致性问题（比如为了模拟主服务器的中断、读取 CPU ID、读取时间）引入的 log channel 保证强一致性，但也引入了额外的延迟（至少落后一个非确定性事件）。甚至对于读取时间这类指令，需要额外注入 CPU 指令让其读取到定制的值，这对 CPU 又提出了额外的功能要求。
 2. 传输状态变化，而非完整的数据到备服务器。
 
 ## Gemini 2.5 Pro 生成 VMware FT 容错技术详解：原理、挑战与实践

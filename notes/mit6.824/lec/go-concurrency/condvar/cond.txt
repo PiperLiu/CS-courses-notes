@@ -1,0 +1,13 @@
+mu.Lock()
+// do something that might affect the condition
+cond.Broadcast()
+mu.Unlock()
+
+----
+
+mu.Lock()
+while condition == false {
+	cond.Wait()
+}
+// now condition is true, and we have the lock
+mu.Unlock()
