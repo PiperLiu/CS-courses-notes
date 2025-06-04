@@ -13,6 +13,7 @@
   - [LEC 3: GFS](#lec-3-gfs)
   - [LEC 4: Primary-Backup Replication](#lec-4-primary-backup-replication)
   - [LEC 5: Go, Threads, and Raft, video, code samples](#lec-5-go-threads-and-raft-video-code-samples)
+  - [LEC 6: Fault Tolerance: Raft (1)](#lec-6-fault-tolerance-raft-1)
 - [🥏Lab 笔记索引](#lab-笔记索引)
   - [Lab 1: MapReduce](#lab-1-mapreduce)
 
@@ -106,6 +107,13 @@ B 站视频：
 - Preparation: [Read The Go Memory Model](https://go.dev/ref/mem)
 
 本节课的笔记：[./drafts/lec05.md](./drafts/lec05.md)
+
+#### LEC 6: Fault Tolerance: Raft (1)
+
+- LEC 6: [Fault Tolerance: Raft (1)](./lec/l-raft.txt), [video](http://nil.csail.mit.edu/6.824/2020/video/6.html)
+- Preparation: [Read Raft (extended) (2014), to end of Section 5](./lec/raft-extended.pdf) ([FAQ](./lec/raft-faq.txt))
+
+本节课的笔记：[./drafts/lec06.md](./drafts/lec06.md)
 
 ### 🥏Lab 笔记索引
 
