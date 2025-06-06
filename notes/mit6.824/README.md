@@ -15,6 +15,7 @@
   - [LEC 5: Go, Threads, and Raft, video, code samples](#lec-5-go-threads-and-raft-video-code-samples)
   - [LEC 6: Fault Tolerance: Raft (1)](#lec-6-fault-tolerance-raft-1)
   - [LEC 7: Fault Tolerance: Raft (2)](#lec-7-fault-tolerance-raft-2)
+  - [LEC 8: Zookeeper](#lec-8-zookeeper)
 - [🥏Lab 笔记索引](#lab-笔记索引)
   - [Lab 1: MapReduce](#lab-1-mapreduce)
 
@@ -122,6 +123,13 @@ B 站视频：
 - Preparation: [Read Raft (extended) (2014), Section 7 to end (but not Section 6)](./lec/raft-extended.pdf) ([FAQ](./lec/raft2-faq.txt))
 
 本节课的笔记：[./drafts/lec07.md](./drafts/lec07.md)
+
+#### LEC 8: Zookeeper
+
+- LEC 8: [Zookeeper](./lec/l-zookeeper.txt), [video](http://nil.csail.mit.edu/6.824/2020/video/8.html)
+- Preparation: Read [ZooKeeper (2010)](./lec/zookeeper.pdf) ([FAQ](./lec/zookeeper-faq.txt)) (Question)
+
+本节课的笔记：[./drafts/lec08.md](./drafts/lec08.md)
 
 ### 🥏Lab 笔记索引
 
