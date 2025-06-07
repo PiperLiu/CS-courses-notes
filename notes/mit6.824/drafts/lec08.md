@@ -5,7 +5,7 @@
 <!-- code_chunk_output -->
 
 - [NotebookLM 生成的双人播客](#notebooklm-生成的双人播客)
-- [Gemini 2.5 Pro 生成的 Raft 论文解析](#gemini-25-pro-生成的-raft-论文解析)
+- [Gemini 2.5 Pro 生成的 ZooKeeper 的设计精髓、工作原理和实际应用](#gemini-25-pro-生成的-zookeeper-的设计精髓-工作原理和实际应用)
   - [ZooKeeper 是什么？为什么要造这个轮子？](#zookeeper-是什么为什么要造这个轮子)
   - [核心设计：像文件系统一样简单](#核心设计像文件系统一样简单)
   - [核心机制：Watch 事件通知](#核心机制watch-事件通知)
@@ -44,9 +44,7 @@ https://notebooklm.google.com/notebook/92c085a7-b32e-46a7-8a78-8449152c9f1e/audi
 2. 分布式锁的实现中，客户端 A 获取 lock-1 ， B 获取 lock-2 ， C 获取 lock-3 ，这里是 C watch lock-2 、 B watch lock-1 ，来避免羊群效应
 3. 安装 ZooKeeper 竟然需要 JVM ，让我有些吃惊，同时也惊叹于 java 在分布式系统中的生态位
 
-## Gemini 2.5 Pro 生成的 Raft 论文解析
-
-**ZooKeeper 的设计精髓、工作原理和实际应用**
+## Gemini 2.5 Pro 生成的 ZooKeeper 的设计精髓、工作原理和实际应用
 
 ### ZooKeeper 是什么？为什么要造这个轮子？
 

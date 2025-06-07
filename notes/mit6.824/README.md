@@ -16,6 +16,7 @@
   - [LEC 6: Fault Tolerance: Raft (1)](#lec-6-fault-tolerance-raft-1)
   - [LEC 7: Fault Tolerance: Raft (2)](#lec-7-fault-tolerance-raft-2)
   - [LEC 8: Zookeeper](#lec-8-zookeeper)
+  - [LEC 9: More Replication, CRAQ](#lec-9-more-replication-craq)
 - [🥏Lab 笔记索引](#lab-笔记索引)
   - [Lab 1: MapReduce](#lab-1-mapreduce)
 
@@ -130,6 +131,14 @@ B 站视频：
 - Preparation: Read [ZooKeeper (2010)](./lec/zookeeper.pdf) ([FAQ](./lec/zookeeper-faq.txt)) (Question)
 
 本节课的笔记：[./drafts/lec08.md](./drafts/lec08.md)
+
+#### LEC 9: More Replication, CRAQ
+
+- LEC 9: [More Replication, CRAQ](./lec/l-craq.txt), [video](http://nil.csail.mit.edu/6.824/2020/video/9.html)
+- Preparation: Read [CRAQ (2009)](./lec/craq.pdf) ([FAQ](./lec/craq-faq.txt))
+- <a href="./html/6.824 Lab 3_ Fault-tolerant Key_Value Service.html">Assigned: Lab 3: KV Raft</a>
+
+本节课程的笔记：[./drafts/lec09.md](./drafts/lec09.md)
 
 ### 🥏Lab 笔记索引
 
