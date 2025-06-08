@@ -140,6 +140,13 @@ B 站视频：
 
 本节课程的笔记：[./drafts/lec09.md](./drafts/lec09.md)
 
+#### LEC 10: Cloud Replicated DB, Aurora
+
+- LEC 10: [Cloud Replicated DB, Aurora](./lec/l-aurora.txt), [video](http://nil.csail.mit.edu/6.824/2020/video/10.html)
+- Preparation: Read [Aurora (2017)](./lec/aurora.pdf) ([FAQ](./lec/aurora-faq.txt))
+
+本节课的笔记：[./drafts/lec10.md](./drafts/lec10.md)
+
 ### 🥏Lab 笔记索引
 
 关于实验的环境配置见这里：[./drafts/lab00.md](./drafts/lab00.md)
