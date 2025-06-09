@@ -17,6 +17,8 @@
   - [LEC 7: Fault Tolerance: Raft (2)](#lec-7-fault-tolerance-raft-2)
   - [LEC 8: Zookeeper](#lec-8-zookeeper)
   - [LEC 9: More Replication, CRAQ](#lec-9-more-replication-craq)
+  - [LEC 10: Cloud Replicated DB, Aurora](#lec-10-cloud-replicated-db-aurora)
+  - [LEC 11: Cache Consistency: Frangipani](#lec-11-cache-consistency-frangipani)
 - [🥏Lab 笔记索引](#lab-笔记索引)
   - [Lab 1: MapReduce](#lab-1-mapreduce)
 
@@ -146,6 +148,13 @@ B 站视频：
 - Preparation: Read [Aurora (2017)](./lec/aurora.pdf) ([FAQ](./lec/aurora-faq.txt))
 
 本节课的笔记：[./drafts/lec10.md](./drafts/lec10.md)
+
+#### LEC 11: Cache Consistency: Frangipani
+
+- LEC 11: [Cache Consistency: Frangipani](./lec/l-frangipani.txt), [video](http://nil.csail.mit.edu/6.824/2020/video/11.html)
+- Preparation: Read [Frangipani](./lec/thekkath-frangipani.pdf) ([FAQ](./lec/frangipani-faq.txt))
+
+本节课的笔记：[./drafts/lec11.md](./drafts/lec11.md)
 
 ### 🥏Lab 笔记索引
 
