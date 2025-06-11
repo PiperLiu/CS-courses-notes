@@ -20,6 +20,7 @@
   - [LEC 10: Cloud Replicated DB, Aurora](#lec-10-cloud-replicated-db-aurora)
   - [LEC 11: Cache Consistency: Frangipani](#lec-11-cache-consistency-frangipani)
   - [LEC 12: Distributed Transactions](#lec-12-distributed-transactions)
+  - [LEC 13: Spanner](#lec-13-spanner)
 - [🥏Lab 笔记索引](#lab-笔记索引)
   - [Lab 1: MapReduce](#lab-1-mapreduce)
 
@@ -163,6 +164,13 @@ B 站视频：
 - Preparation: Read [6.033 Chapter 9](https://ocw.mit.edu/courses/res-6-004-principles-of-computer-system-design-an-introduction-spring-2009/pages/online-textbook/), [just 9.1.5, 9.1.6, 9.5.2, 9.5.3, 9.6.3](./lec/atomicity_open_5_0.pdf) ([FAQ](./lec/chapter9-faq.txt))
 
 本节课的笔记：[./drafts/lec12.md](./drafts/lec12.md)
+
+#### LEC 13: Spanner
+
+- LEC 13: [Spanner](./lec/l-spanner.txt), [video](http://nil.csail.mit.edu/6.824/2020/video/13.html)
+- Preparation: Read [Spanner (2012)](./lec/spanner.pdf) ([FAQ](./lec/spanner-faq.txt))
+
+本节课的笔记：[./drafts/lec13.md](./drafts/lec13.md)
 
 ### 🥏Lab 笔记索引
 
