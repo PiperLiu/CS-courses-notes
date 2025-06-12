@@ -21,6 +21,7 @@
   - [LEC 11: Cache Consistency: Frangipani](#lec-11-cache-consistency-frangipani)
   - [LEC 12: Distributed Transactions](#lec-12-distributed-transactions)
   - [LEC 13: Spanner](#lec-13-spanner)
+  - [LEC 14: Optimistic Concurrency Control](#lec-14-optimistic-concurrency-control)
 - [🥏Lab 笔记索引](#lab-笔记索引)
   - [Lab 1: MapReduce](#lab-1-mapreduce)
 
@@ -171,6 +172,13 @@ B 站视频：
 - Preparation: Read [Spanner (2012)](./lec/spanner.pdf) ([FAQ](./lec/spanner-faq.txt))
 
 本节课的笔记：[./drafts/lec13.md](./drafts/lec13.md)
+
+#### LEC 14: Optimistic Concurrency Control
+
+- LEC 14: [Optimistic Concurrency Control](./lec/l-farm.txt), [video](http://nil.csail.mit.edu/6.824/2020/video/14.html)
+- Preparation: [Read FaRM (2015)](./lec/farm-2015.pdf) ([FAQ](./lec/farm-faq.txt))
+
+本节课的笔记：[./drafts/lec14.md](./drafts/lec14.md)
 
 ### 🥏Lab 笔记索引
 
