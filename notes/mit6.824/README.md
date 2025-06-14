@@ -23,6 +23,7 @@
   - [LEC 13: Spanner](#lec-13-spanner)
   - [LEC 14: Optimistic Concurrency Control](#lec-14-optimistic-concurrency-control)
   - [LEC 15: Big Data: Spark](#lec-15-big-data-spark)
+  - [LEC 16: Cache Consistency: Memcached at Facebook](#lec-16-cache-consistency-memcached-at-facebook)
 - [🥏Lab 笔记索引](#lab-笔记索引)
   - [Lab 1: MapReduce](#lab-1-mapreduce)
 
@@ -187,6 +188,13 @@ B 站视频：
 - Preparation: Read [Spark (2012)](./lec/zaharia-spark.pdf) ([FAQ](./lec/spark-faq.txt))
 
 本节课的笔记：[./drafts/lec15.md](./drafts/lec15.md)
+
+#### LEC 16: Cache Consistency: Memcached at Facebook
+
+- LEC 16: [Cache Consistency: Memcached at Facebook](./lec/l-cops.txt), [video](http://nil.csail.mit.edu/6.824/2020/video/17.html)
+- Preparation: Read [Memcached at Facebook (2013)](./lec/memcache-fb.pdf) ([FAQ](./lec/memcache-faq.txt))
+
+本节课的笔记：[./drafts/lec16.md](./drafts/lec16.md)
 
 ### 🥏Lab 笔记索引
 
