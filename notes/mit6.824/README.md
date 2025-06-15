@@ -24,6 +24,7 @@
   - [LEC 14: Optimistic Concurrency Control](#lec-14-optimistic-concurrency-control)
   - [LEC 15: Big Data: Spark](#lec-15-big-data-spark)
   - [LEC 16: Cache Consistency: Memcached at Facebook](#lec-16-cache-consistency-memcached-at-facebook)
+  - [LEC 17: Causal Consistency, COPS](#lec-17-causal-consistency-cops)
 - [🥏Lab 笔记索引](#lab-笔记索引)
   - [Lab 1: MapReduce](#lab-1-mapreduce)
 
@@ -191,10 +192,17 @@ B 站视频：
 
 #### LEC 16: Cache Consistency: Memcached at Facebook
 
-- LEC 16: [Cache Consistency: Memcached at Facebook](./lec/l-cops.txt), [video](http://nil.csail.mit.edu/6.824/2020/video/17.html)
+- LEC 16: [Cache Consistency: Memcached at Facebook](./lec/l-memcached.txt), [video](http://nil.csail.mit.edu/6.824/2020/video/17.html)
 - Preparation: Read [Memcached at Facebook (2013)](./lec/memcache-fb.pdf) ([FAQ](./lec/memcache-faq.txt))
 
 本节课的笔记：[./drafts/lec16.md](./drafts/lec16.md)
+
+#### LEC 17: Causal Consistency, COPS
+
+- LEC 17: [Causal Consistency, COPS](./lec/l-cops.txt), [video](http://nil.csail.mit.edu/6.824/2020/video/17.html)
+- Preparation: Read [COPS (2011)](./lec/cops.pdf)
+
+本节课的笔记：[./drafts/lec17.md](./drafts/lec17.md)
 
 ### 🥏Lab 笔记索引
 
