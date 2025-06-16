@@ -25,6 +25,7 @@
   - [LEC 15: Big Data: Spark](#lec-15-big-data-spark)
   - [LEC 16: Cache Consistency: Memcached at Facebook](#lec-16-cache-consistency-memcached-at-facebook)
   - [LEC 17: Causal Consistency, COPS](#lec-17-causal-consistency-cops)
+  - [LEC 18: Fork Consistency, Certificate Transparency](#lec-18-fork-consistency-certificate-transparency)
 - [🥏Lab 笔记索引](#lab-笔记索引)
   - [Lab 1: MapReduce](#lab-1-mapreduce)
 
@@ -203,6 +204,13 @@ B 站视频：
 - Preparation: Read [COPS (2011)](./lec/cops.pdf)
 
 本节课的笔记：[./drafts/lec17.md](./drafts/lec17.md)
+
+#### LEC 18: Fork Consistency, Certificate Transparency
+
+- LEC 18: [Fork Consistency, Certificate Transparency](./lec/l-ct.txt), [video](http://nil.csail.mit.edu/6.824/2020/video/18.html)
+- Preparation: Read [Certificate Transparency](https://certificate.transparency.dev/), [Also This](https://www.certificate-transparency.org/how-ct-works), [And This](https://research.swtch.com/tlog), but skip the Tiles sections and the appendices. ([FAQ](./lec/ct-faq.txt))
+
+本节课的笔记：[./drafts/lec18.md](./drafts/lec18.md)
 
 ### 🥏Lab 笔记索引
 
