@@ -1,0 +1,392 @@
+6.824 2020 Final Exam
+
+*** Transactions and Serializability
+
+This is a 120-minute exam. Please write down any assumptions you make. You are
+allowed to consult 6.824 papers, notes, and lab code. If you have questions,
+please ask them on Piazza in a private post to the staff. Please don't discuss
+the exam with anyone.
+
+Alyssa has built a storage system that provides its clients with
+transactions. Alyssa won't tell us how her system works, but she does
+guarantee that the transactions are serializable. Following Section
+9.1.6 of the reading for Lecture 12, serializable means that, if you
+run a bunch of concurrent transactions and they produce some results
+(output and updated database records), there exists some serial order
+of those transactions that would, if followed, yield the same results.
+
+You start three concurrent transactions at about the same time:
+
+T1:
+  begin()
+  put(y, 2)
+  end()
+
+T2:
+  begin()
+  put(x, 99)
+  put(y, 99)
+  put(z, 99)
+  end()
+
+T3:
+  begin()
+  tmpx = get(x)
+  tmpy = get(y)
+  tmpz = get(z)
+  print tmpx, tmpy, tmpz
+  end()
+
+x, y, and z are identifiers of different database records. All three
+start out with value 0. put() and get() write and read database
+records, and begin() and end() indicate the start and finish of a
+transaction. There is no activity in the system other than these three
+transactions, and no failures occur.
+
+If T3 prints 99, 2, 99, is that a serializable result? Explain why or
+why not.
+
+Answer: Yes, it is a serializable result. The serial order that yields
+that result is T2, T1, T3.
+
+---
+
+If T3 prints 0, 2, 99, is that a serializable result? Explain why or
+why not.
+
+Answer: No, it is not a serializable result. One way to demonstrate
+this is to try all six possible serial orders, and observe that none
+of them yield this result. Another is to observe that T3 saw x=0, so
+T3 must appear before T2 in any equivalent serial order; and T3 saw
+z=99, so T3 must appear after T2; but both cannot be true.
+
+*** Two-Phase Commit
+
+Recall the Two-Phase Commit protocol for distributed transactions
+from Lecture 12 and Section 9.6.3 of the reading for Lecture 12.
+
+A common criticism of two-phase commit is that it causes workers to
+hold locks for a long time; for example, in Figure 9.37 (page 9-89),
+each worker must hold its locks while waiting to receive the COMMIT
+message.
+
+What would go wrong if each worker released its locks after replying
+to the PREPARE message?
+
+Answer: Suppose some worker W1 is part of transaction T1. When W1
+receives a PREPARE message, it doesn't yet know whether T1 will commit
+or abort. If W1 releases its locks after the PREPARE, and lets other
+transactions see values written by the not-yet-committed transaction
+T1, and T1 aborts, then those other transactions will use values that
+never existed. If W1 releases its locks but doesn't update values
+until T1 commits, then another transaction may aquire T1's locks and
+read some values as they existed before T1, and some as updated by T1,
+which is not generally serializable.
+
+*** Spanner
+
+Refer to the paper "Spanner: Google's Globally-Distributed Database,"
+by Corbett et al.
+
+The start of Section 4.1.2 says that all of a read/write
+transactions's writes are assigned the same timestamp (the timestamp
+assigned to the Paxos write that commits the transaction).
+
+Suppose, instead, that each write is assigned a timestamp equal to
+TT.now().latest at the time when the client transaction code
+calls the Spanner library function to modify the data.
+
+What aspect of Spanner would this break, and why?
+
+Answer: Read-only transactions would no longer provide
+serializability. Spanner executes read-only transactions as of a
+particular time-stamp. In Spanner as described by the paper, each
+read-write transaction's writes all occur at the same time-stamp, and
+thus are either all before or all after each read-only transaction. So
+time-stamp order determines the equivalent serial order. But if a
+read-write transaction's writes have different time-stamps, then a
+read-only transaction could have a time-stamp that's in the middle of
+the read-write transaction's writes, and thus see some but not all of
+the read-write transation's writes. In that case there will not
+generally be any equivalent serial order.
+
+*** FaRM
+
+Ben is using FaRM (see the paper "No compromises: distributed
+transactions with consistency, availability, and performance" by
+Dragojevic et al). Here is Ben's transaction code:
+
+  begin()
+  if x > y:
+    y = y + 1
+  else:
+    x = x + 1
+  end()
+
+x and y are objects stored in FaRM. begin() and end() mark the start
+and end of the transaction.
+
+
+Ben starts two instances of this transaction at exactly the same time
+on two different machines. The two transactions read x and y at exactly
+the same time, and send LOCK messages at exactly the same time. There
+is no other activity in the system, and no failures occur. x and y
+both start out with value zero.
+
+Explain what the outcome will be, and how the FaRM commit protocol
+(Figure 4) arrives at that outcome.
+
+Answer: The outcome is that FaRM will tell one transaction that it has
+committed, and the other that it has aborted. The resulting values
+will be x=1 and y=0. FaRM arrives at this outcome because the server
+for x will process the two LOCK messages in one order or the other,
+and grant the lock on x to only the first LOCK; the server will
+respond with a failure message to the second LOCK.
+
+(The scenario in the previous question would work despite this change:
+while both transactions' VALIDATE(x) would succeed, one of the
+transactions' LOCK(y) would fail, either due to y already being
+locked, or due to y's version number having changed.)
+
+
+---
+
+Ben thinks that some transactions might execute faster if he modified
+FaRM to run Figure 4's VALIDATE phase before the LOCK phase. It turns
+out that this change can cause incorrect results in some situations.
+Outline such a situation. Your answer can involve transactions other
+than the one shown above.
+
+Answer: Consider these two transactions:
+
+T1:
+  if x == 0:
+    y = 1
+
+T2:
+  if y == 0:
+    x = 1
+
+x and y start as zero. If T1 and T2 run at exactly the same time, and
+send VALIDATE first, then both VALIDATEs will succeed. Both LOCKs will
+succeed as well, since T1 and T2 lock different objects. So both
+transactions will commit, leaving x=1 and y=1. But that's not the
+result obtained by either serial order: T1 then T2 yields x=0 y=1, and
+T2 then T1 yields x=1 y=0. So Ben's change will break serializability
+in some situations.
+
+
+*** Spark
+
+Ben is using Spark to compute PageRank on a huge database of web
+links. He's using PageRank code much like that shown in Section 3.2.2
+of "Resilient Distributed Datasets: A Fault-Tolerant Abstraction for
+In-Memory Cluster Computing," by Zaharia et al.
+
+Ben's PageRank job takes hours to run, and he wants to find out which
+parts of the job take the most time. He inserts code that gets the
+wall-clock time before and after each line of the PageRank shown in
+Section 3.2.2, and prints the difference (i.e. prints how long that
+line took to execute). He sees that each line in the "for" loop in
+Section 3.2.2 takes only a fraction of a second to execute, and that
+the whole loop itself takes less than a second, even though the entire
+Spark job takes hours. Explain why the for loop takes so much less
+time than the whole job.
+
+Answer: The for loop contains only transformations, not actions. Spark
+doesn't start the computation until a call to an action. Calls to
+transformations merely build up a description of a lineage graph,
+which takes very little time.
+
+---
+
+Ben thinks that telling Spark to cache the "ranks" RDD may make his
+PageRank job complete in less time, since ranks is used in each
+iteration of the "for" loop. He adds a call to "ranks.persist()" after
+each of the two assignments to ranks. However, he finds that his
+PageRank job takes the same amount of time to complete despite this
+change. Explain.
+
+Answer: Each iteration of the for loop generates a distinct new ranks
+RDD. Thus each ranks RDD is only used once. Thus there's no advantage
+in caching it.
+
+*** Memcache / Facebook
+
+Ben runs a small web site. He has a bunch of web servers, a single
+memcached server, and a single MySQL DB. The web servers store data
+persistently in the MySQL DB, and cache database records in memcached.
+Thus Ben's web servers act as clients to the memcached and MySQL
+servers.
+
+Though Ben has read "Scaling Memcache at Facebook," by Nishtala et al,
+he ignores all the ideas in that paper. For example, Ben's setup has
+nothing like Figure 6's invalidates or McSqueal, and no leases.
+
+Ben has programmed his web servers to use memcached and MySQL as
+follows. When a web server needs a data item, it first tries to read
+it from memcached; if that read misses, the web server reads the data
+item from MySQL. However, his web servers do not insert data read from
+MySQL into memcached. Instead, when one of Ben's web servers writes
+data, it always inserts (or updates) the data in both memcached and
+MySQL.
+
+Here's pseudo-code describing how Ben's web server's use memcached and
+MySQL:
+
+  read(k):
+    v = get(k) // is the key/value in memcached?
+    if v is nil {
+      // miss -- not in memcached
+      v = fetch from DB
+    }
+    return v
+
+  write(k,v):
+    send k,v to DB
+    set(k,v) // insert the new key/value into memcached
+
+Ben reasons that, since every write updates both MySQL and memcached,
+the two will always agree except during the small window of time
+between the two lines of code in write(). Explain why Ben is wrong.
+
+Answer: Suppose clients C1 and C2 both write different values to key K
+at about the same time. If C1's write arrives at the DB before C2's
+write, but C1's write arrives at memcached *after* C2's write, then
+memcached will disagree with the DB. This disagreement will last until
+the next time a client writes K, which may be a long time.
+
+*** COPS
+
+You're using COPS (see "Don't Settle for Eventual: Scalable Causal
+Consistency for Wide-Area Storage with COPS," by Lloyd et al.). You
+have four data centers, and clients and a COPS Data Store Cluster at
+each data center.
+
+Four clients, each at a different data center, each start executing
+code that uses COPS at about the same time. Here's the code each
+client executes:
+
+Client C1:
+  put(x, 1)
+  put(y, 2)
+
+Client C2:
+  tmp_y = get(y)
+  put(z, 100 + tmp_y)
+
+Client C3:
+  tmp_x = get(x)
+  tmp_y = get(y)
+  tmp_z = get(z)
+  print "x=", tmp_x
+  print "y=", tmp_y
+  print "z=", tmp_z
+
+Client C4:
+  tmp_z = get(z)
+  tmp_y = get(y)
+  tmp_x = get(x)
+  print "x=", tmp_x
+  print "y=", tmp_y
+  print "z=", tmp_z
+
+Note that C3 and C4 read x, y, and z in opposite orders.
+
+All values start as zero. The clients start executing these code
+sequences at about the same time. The system uses COPS, not COPS-GT
+(that is, there are no transactions). There is no other activity in
+the system, just these four clients. There are no failures.
+
+Which of the following are possible outputs from C3? Mark all that apply.
+
+[ ] x=1 y=2 z=102
+[ ] x=1 y=0 z=102
+[ ] x=0 y=2 z=102
+[ ] x=1 y=2 z=0
+[ ] x=1 y=0 z=0
+[ ] x=0 y=2 z=0
+
+Answer: All of the above are possible.
+
+---
+
+Which are possible outputs from C4? Mark all that apply.
+
+[ ] x=1 y=2 z=102
+[ ] x=1 y=0 z=102
+[ ] x=0 y=2 z=102
+[ ] x=1 y=2 z=0
+[ ] x=1 y=0 z=0
+[ ] x=0 y=2 z=0
+
+Answer: 
+x=1 y=2 z=102
+x=1 y=2 z=0
+x=1 y=0 z=0
+
+*** Lab 3
+
+Explain what would go wrong if clients sent Lab 3 Get() RPCs to
+followers, and followers responded with the values in their replica of
+the data (without talking to the leader, and without adding anything
+to the log).
+
+Answer:
+
+Clients could observe stale reads if they contacted a follower that hadn't seen
+the latest Put()/Append().
+
+----
+
+Alyssa wonders whether one could use Spanner's TrueTime (the API in
+Table 1 of the Spanner paper) to help design a correct version of Lab
+3 in which followers can respond to client Get() RPCs. Outline a
+design for this. You can assume that both clients and servers have
+TrueTime, and that the key/value service is continuously busy with
+both Put() and Get() operations.
+
+Answer:
+
+Have clients supply their local timestamp `req_ts = TT.now()` along with their
+Get() requests.
+
+On the KV server side, for all operations that go through the log (i.e. Put()
+and Append()), have the leader include a local timestamp `op_ts = TT.now()` in
+the Command put into the Raft log.
+
+To serve a Get() (on a leader or follower) with a timestamp `req_ts`, wait
+until the local state machine has processed an entry from the Raft log with
+timestamp `op_ts` such that `op_ts.earliest > req_ts.latest`, and then serve
+the Get() by reading from the local key/value map.
+
+*** 6.824
+
+Which papers should we omit in future 6.824 years, because they are
+not useful or are too hard to understand?
+
+[ ] 6.033 two-phase commit   XXXXXX
+[ ] Spanner 
+[ ] FaRM                     XXXXXX
+[ ] Spark                    XX
+[ ] Memcached at Facebook    XX
+[ ] COPS                     XXXXXXXXXXX
+[ ] Certificate Transparency XXXXXXXXXXXXX
+[ ] Bitcoin                  X
+[ ] BlockStack               XXXXXXXXXXXXXXXXXXX
+[ ] AnalogicFS               XXXXXXXXXXXXXX
+
+---
+
+Which papers did you find most useful?
+
+[ ] 6.033 two-phase commit   XXXXXXXXXXXXXXXXXX
+[ ] Spanner                  XXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+[ ] FaRM                     XXXXXXXXXXXXXXXXXXX
+[ ] Spark                    XXXXXXXXXXXXXXXXXXXXXXXX
+[ ] Memcached at Facebook    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+[ ] COPS                     XXXXXXXXXXXX
+[ ] Certificate Transparency XXXXXXXXXXXX
+[ ] Bitcoin                  XXXXXXXXXXXXXXXXX
+[ ] BlockStack               XXXX
+[ ] AnalogicFS               XXXX
