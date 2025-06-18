@@ -27,6 +27,7 @@
   - [LEC 17: Causal Consistency, COPS](#lec-17-causal-consistency-cops)
   - [LEC 18: Fork Consistency, Certificate Transparency](#lec-18-fork-consistency-certificate-transparency)
   - [LEC 19: Peer-to-peer: Bitcoin](#lec-19-peer-to-peer-bitcoin)
+  - [LEC 20: Blockstack](#lec-20-blockstack)
 - [🥏Lab 笔记索引](#lab-笔记索引)
   - [Lab 1: MapReduce](#lab-1-mapreduce)
 
@@ -219,6 +220,13 @@ B 站视频：
 - Preparation: Read [Bitcoin (2008)](./lec/bitcoin.pdf), and [summary](https://michaelnielsen.org/ddi/how-the-bitcoin-protocol-actually-works/) ([FAQ](./lec/bitcoin-faq.txt))
 
 本节课的笔记：[./drafts/lec19.md](./drafts/lec19.md)
+
+#### LEC 20: Blockstack
+
+- LEC 20: [Blockstack](./lec/l-blockstack.txt), [video](http://nil.csail.mit.edu/6.824/2020/video/20.html)
+- Preparation: Read [BlockStack (2017)](./lec/blockstack-2017.pdf) ([FAQ](./lec/blockstack-faq.txt))
+
+本节课的笔记：[./drafts/lec20.md](./drafts/lec20.md)
 
 ### 🥏Lab 笔记索引
 
