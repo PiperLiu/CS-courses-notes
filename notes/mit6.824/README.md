@@ -28,6 +28,7 @@
   - [LEC 18: Fork Consistency, Certificate Transparency](#lec-18-fork-consistency-certificate-transparency)
   - [LEC 19: Peer-to-peer: Bitcoin](#lec-19-peer-to-peer-bitcoin)
   - [LEC 20: Blockstack](#lec-20-blockstack)
+  - [LEC 21: Project demos](#lec-21-project-demos)
 - [🥏Lab 笔记索引](#lab-笔记索引)
   - [Lab 1: MapReduce](#lab-1-mapreduce)
 
@@ -58,7 +59,7 @@ B 站视频：
 
 - LEC 1: [Introduction](./lec/l01.txt), [video](http://nil.csail.mit.edu/6.824/2020/video/1.html)
 - Preparation: [Read MapReduce (2004)](./lec/mapreduce.pdf)
-- <a href="./html/6.824 Lab 1_ MapReduce.html">Assigned: Lab 1: MapReduce</a>
+- Assigned: <a href="./html/6.824 Lab 1_ MapReduce.html">Lab 1: MapReduce</a>
 
 本节课的笔记：[./drafts/lec01.md](./drafts/lec01.md)
 - [分布式系统的驱动力和挑战 Drivens and Challenges](./drafts/lec01.md#分布式系统的驱动力和挑战-drivens-and-challenges)
@@ -104,7 +105,7 @@ B 站视频：
 
 - LEC 3: [GFS](./lec/l-gfs.txt), [video](http://nil.csail.mit.edu/6.824/2020/video/3.html)
 - Preparation: Read [GFS (2003)](./lec/gfs.pdf) ([FAQ](./lec/gfs-faq.txt))
-- <a href="./html/6.824 Lab 2_ Raft.html">Assigned: Lab 2: Raft</a>
+- Assigned: <a href="./html/6.824 Lab 2_ Raft.html">Lab 2: Raft</a>
 
 本节课的笔记：[./drafts/lec03.md](./drafts/lec03.md)
 
@@ -147,7 +148,7 @@ B 站视频：
 
 - LEC 9: [More Replication, CRAQ](./lec/l-craq.txt), [video](http://nil.csail.mit.edu/6.824/2020/video/9.html)
 - Preparation: Read [CRAQ (2009)](./lec/craq.pdf) ([FAQ](./lec/craq-faq.txt))
-- <a href="./html/6.824 Lab 3_ Fault-tolerant Key_Value Service.html">Assigned: Lab 3: KV Raft</a>
+- Assigned: <a href="./html/6.824 Lab 3_ Fault-tolerant Key_Value Service.html">Lab 3: KV Raft</a>
 
 本节课程的笔记：[./drafts/lec09.md](./drafts/lec09.md)
 
@@ -169,6 +170,7 @@ B 站视频：
 
 - LEC 12: [Distributed Transactions](./lec/l-2pc.txt), [video](http://nil.csail.mit.edu/6.824/2020/video/12.html)
 - Preparation: Read [6.033 Chapter 9](https://ocw.mit.edu/courses/res-6-004-principles-of-computer-system-design-an-introduction-spring-2009/pages/online-textbook/), [just 9.1.5, 9.1.6, 9.5.2, 9.5.3, 9.6.3](./lec/atomicity_open_5_0.pdf) ([FAQ](./lec/chapter9-faq.txt))
+- Assigned: <a href="./html/6.824 Lab 4_ Sharded Key_Value Service.html">Lab 4: Sharded KV</a>
 
 本节课的笔记：[./drafts/lec12.md](./drafts/lec12.md)
 
@@ -227,6 +229,13 @@ B 站视频：
 - Preparation: Read [BlockStack (2017)](./lec/blockstack-2017.pdf) ([FAQ](./lec/blockstack-faq.txt))
 
 本节课的笔记：[./drafts/lec20.md](./drafts/lec20.md)
+
+#### LEC 21: Project demos
+
+- Preparation: Read [AnalogicFS experience paper](./lec/katabi-analogicfs.pdf) ([FAQ](./lec/analogicfs-faq.txt))
+- 这里额外记录下当年的考试内容：[Q1](./lec/Q1.txt), [Q2](./lec/Q2.txt)
+
+本节课的笔记：[./drafts/lec21.md](./drafts/lec21.md)
 
 ### 🥏Lab 笔记索引
 
