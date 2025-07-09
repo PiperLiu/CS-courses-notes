@@ -48,7 +48,7 @@
 ## 与论文的区别
 
 大概读了下论文，最大的区别在于：
-- 论文中 Master 还记录了需要 Reduce 文件 list ，但是我是机遇文件命名规则在 Worker 中 glob 的
+- 论文中 Master 还记录了需要 Reduce 文件 list ，但是我是基于文件命名规则在 Worker 中 glob 的
 
 ## 一些其他收获
 

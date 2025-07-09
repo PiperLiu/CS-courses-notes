@@ -10,6 +10,7 @@
 - [根据 Lab 1 文档安装 Go 1.13](#根据-lab-1-文档安装-go-113)
 - [下载并编译 Lab](#下载并编译-lab)
 - [go 1.13 with gopls@v0.8.0](#go-113-with-goplsv080)
+- [除了 wsl2 和 docker ，也可以基于 orbstack](#除了-wsl2-和-docker-也可以基于-orbstack)
 
 <!-- /code_chunk_output -->
 
@@ -41,6 +42,9 @@ $ wget -qO- https://dl.google.com/go/go1.13.6.linux-amd64.tar.gz | sudo tar xz -
 ```bash
 docker pull amd64/ubuntu:22.04
 docker run -it --name mit6.824lab -v -d /Users/piperliu/Github/:/root/dev amd64/ubuntu:22.04 bash
+
+# or
+docker run -it --name mit6.824lab --platform linux/amd64 -v /Users/piperliu/Github/:/root/dev ubuntu:22.04 bash
 
 在 VS Code 中 Attach
 apt-get update
@@ -92,3 +96,12 @@ GO111MODULE=on GOPROXY=https://goproxy.io go get github.com/go-delve/delve/cmd/d
 ```
 
 如上是我在 GitHub 的 release 页面中找到的支持 1.13 版本的 工具。
+
+## 除了 wsl2 和 docker ，也可以基于 orbstack
+
+```bash
+piperliu@go-x86:/Users/piperliu/Github/PiperLiu/mit6.824-lab-2020$ uname -a
+Linux go-x86 6.14.9-orbstack-gd9e87d038362 #131 SMP Tue Jun  3 07:51:59 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux
+piperliu@go-x86:/Users/piperliu/Github/PiperLiu/mit6.824-lab-2020$ gvm use go1.13
+Now using version go1.13
+```
