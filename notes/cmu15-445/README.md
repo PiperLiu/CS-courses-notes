@@ -7,6 +7,7 @@
 - [课程资料](#课程资料)
 - [课程索引](#课程索引)
   - [Course Introduction and the Relational Model](#course-introduction-and-the-relational-model)
+  - [Advanced SQL](#advanced-sql)
 
 <!-- /code_chunk_output -->
 
@@ -14,6 +15,22 @@
 
 - https://15445.courses.cs.cmu.edu/fall2019/
 - https://www.youtube.com/playlist?list=PLSE8ODhjZXjbohkNBWQs_otTrBTrjyohi
+
+教材：
+
+```latex
+@book{silberschatz2019database,
+  title     = {Database System Concepts},
+  author    = {Silberschatz, Avi and Korth, Henry F. and Sudarshan, S.},
+  edition   = {7th},
+  publisher = {McGraw‑Hill},
+  year      = {2019},
+  month     = feb,
+  isbn      = {9780078022159},
+  url       = {https://db-book.com/},
+  note      = {“Face The Real World of Database Systems Fully Equipped”}
+}
+```
 
 ### 课程索引
 
@@ -37,3 +54,26 @@ AI 播客
   * **关系代数** 是用于检索和操作关系中元组的一组 **基本操作** ，它构成了数据库查询执行的基石。这些基本操作包括 **选择（过滤元组）、投影（选择属性）、并集、交集、差集、乘积和连接** 。关系代数属于 **过程性语言** ，它定义了查询的 **高级步骤和执行顺序** 。
   * 您指出的“先where再join可能更高效”是一个非常重要的观察点： **关系代数操作的顺序对查询性能有着显著影响** 。例如，在执行大表连接操作之前先通过“选择”过滤掉大量不相关的数据，可以极大减少后续连接操作的数据量，从而提升效率。
   * 与此不同， **SQL作为非过程性语言，只关注您期望的最终结果** 。DBMS内部的 **查询优化器** 则负责解析SQL查询，并 **智能地选择最有效率的关系代数操作顺序和执行计划** ，这一过程对用户是 **透明** 的，无需手动干预。
+
+#### Advanced SQL
+
+- [./fall2019/notes/02-advancedsql.pdf](./fall2019/notes/02-advancedsql.pdf)
+- [./fall2019/slides/02-advancedsql.pdf](./fall2019/slides/02-advancedsql.pdf)
+
+AI 播客
+- https://notebooklm.google.com/notebook/7b5a6556-0b21-420e-9ce1-a3e2a7d60e4b?artifactId=d1677e00-7d4f-4ea3-9757-efdc06b365cf
+- https://notebooklm.google.com/notebook/7b5a6556-0b21-420e-9ce1-a3e2a7d60e4b?artifactId=e677abcf-8411-4360-b8a1-caf688dc3380
+- https://mp.weixin.qq.com/s/ZjsctKC-lue_VL0qIL1u_g
+
+笔记：工作中用 Clickhouse DQL 比较多，正好总结了一些较为高级方便的用法。这里我列举出来，用 Gemini 2.5 Pro 润了色 [./drafts/lec02.md](./drafts/lec02.md) 。
+- [公用表表达式 (Common Table Expressions, CTE)](./drafts/lec02.md#公用表表达式-common-table-expressions-cte)
+  - [作为常量或参数源](./drafts/lec02.md#作为常量或参数源)
+  - [简化子查询与逻辑分层](./drafts/lec02.md#简化子查询与逻辑分层)
+- [`GROUP BY` 的高级聚合](./drafts/lec02.md#group-by-的高级聚合)
+  - [获取“最值”所在行的其他列：`argMax` / `argMin`](./drafts/lec02.md#获取最值所在行的其他列argmax--argmin)
+  - [条件聚合](./drafts/lec02.md#条件聚合)
+  - [多维聚合：`GROUPING SETS`、`ROLLUP`、`CUBE`](./drafts/lec02.md#多维聚合grouping-sets-rollup-cube)
+- [窗口函数 (Window Functions)](./drafts/lec02.md#窗口函数-window-functions)
+  - [排序与排名：`ROW_NUMBER`, `RANK`, `DENSE_RANK`](./drafts/lec02.md#排序与排名row_number-rank-dense_rank)
+  - [累计与移动聚合](./drafts/lec02.md#累计与移动聚合)
+- [总结](./drafts/lec02.md#总结)
