@@ -10,6 +10,7 @@
   - [Advanced SQL](#advanced-sql)
   - [Database Storage I](#database-storage-i)
   - [Database Storage II](#database-storage-ii)
+  - [Buffer Pools](#buffer-pools)
 
 <!-- /code_chunk_output -->
 
@@ -200,3 +201,21 @@ AI 播客
       * 为了重新组合元组，通常采用 **定长偏移量** （Fixed-length offsets）的方式，即为每一列中的每个值设定固定长度，通过算术计算快速定位；另一种方式是 **嵌入元组 ID** （Embedded Tuple Ids），为每个值存储其对应的元组 ID，但这种方式会增加存储开销。大多数 DBMS 都使用定长偏移量。
     * **适用场景** ： **最适合 OLAP 工作负载** ，因为 OLAP 查询通常是只读的，并且对表的某个子集属性执行大规模扫描。
   * **核心结论** ： **OLTP 适合行式存储** (Row Store)，而 **OLAP 适合列式存储** (Column Store)。在现实世界中，一些系统会尝试混合使用这两种模型，或者通过流式传输数据将 OLTP 和 OLAP 系统分开部署，例如，前端 OLTP 系统（如 MySQL）负责新数据，后端数据仓库（如 Vertica/Clickhouse）负责分析。
+
+#### Buffer Pools
+
+Readings: Chapter 10.5-10.8
+Project Released: Buffer Pool Manager
+
+AI 播客
+- https://notebooklm.google.com/notebook/2d504cc7-90d5-4d72-99a4-e1544a77d46c?artifactId=1d6c8deb-de50-4b78-81a7-038883d38aa5
+- https://mp.weixin.qq.com/s/8Y7eYNDRXlkAcv01jkEteg
+
+笔记： [./drafts/lec05.md](./drafts/lec05.md)
+- [缓冲池（Buffer Pool）与帧（Frame）](./drafts/lec05.md#缓冲池buffer-pool与帧frame)
+- [缓冲池元数据（Meta-data）](./drafts/lec05.md#缓冲池元数据meta-data)
+- [并发控制：锁（Locks）与栓锁（Latches）](./drafts/lec05.md#并发控制锁locks与栓锁latches)
+- [缓冲池优化手段](./drafts/lec05.md#缓冲池优化手段)
+- [页面替换策略（Replacement Policies）](./drafts/lec05.md#页面替换策略replacement-policies)
+- [脏页（Dirty Pages）处理与后台写入](./drafts/lec05.md#脏页dirty-pages处理与后台写入)
+- [PostgresQL 与操作系统页面缓存的利用](./drafts/lec05.md#postgresql-与操作系统页面缓存的利用)
