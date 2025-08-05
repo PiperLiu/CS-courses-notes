@@ -12,6 +12,7 @@
   - [Database Storage II](#database-storage-ii)
   - [Buffer Pools](#buffer-pools)
   - [Hash Tables](#hash-tables)
+  - [Trees Indexes I](#trees-indexes-i)
 
 <!-- /code_chunk_output -->
 
@@ -264,3 +265,17 @@ AI 播客
       * 查询时，首先使用第一个哈希函数。如果映射到的槽位在分裂指针 **之上** （即已被分裂），则需要使用第二个哈希函数来找到实际位置。
     * **优点** ：将 **调整大小的操作局部化** 到分裂指针所指向的桶，避免了对整个哈希表进行全局加锁，从而减少了并发瓶颈。
     * **代价** ：由于分裂的桶不一定是溢出的桶，这可能导致 **临时出现更多的溢出链** ；删除操作很复杂，可能涉及分裂指针的逆向移动和内存回收。
+
+#### Trees Indexes I
+
+Readings: Chapter 11.1-11.4
+
+AI 播客
+- https://notebooklm.google.com/notebook/15f1863b-aaf2-4226-ae42-dad2e69608df?artifactId=5f788af8-e36f-4b8a-9163-0cbb5e2ba791
+- https://mp.weixin.qq.com/s/SnSoEZ8HKYGfDnaGoCr0bA
+
+笔记： [./drafts/lec07.md](./drafts/lec07.md)
+- [B+ 树的核心特性](./drafts/lec07.md#b-树的核心特性)
+- [插入与删除操作](./drafts/lec07.md#插入与删除操作)
+- [B+ 树的设计考量](./drafts/lec07.md#b-树的设计考量)
+- [B+ 树的优化技术](./drafts/lec07.md#b-树的优化技术)
