@@ -13,6 +13,7 @@
   - [Buffer Pools](#buffer-pools)
   - [Hash Tables](#hash-tables)
   - [Trees Indexes I](#trees-indexes-i)
+  - [Trees Indexes II](#trees-indexes-ii)
 
 <!-- /code_chunk_output -->
 
@@ -209,6 +210,9 @@ AI 播客
 Readings: Chapter 10.5-10.8
 Project Released: Buffer Pool Manager
 
+- [./fall2019/notes/05-bufferpool.pdf](./fall2019/notes/05-bufferpool.pdf)
+- [./fall2019/slides/05-bufferpool.pdf](./fall2019/slides/05-bufferpool.pdf)
+
 AI 播客
 - https://notebooklm.google.com/notebook/2d504cc7-90d5-4d72-99a4-e1544a77d46c?artifactId=1d6c8deb-de50-4b78-81a7-038883d38aa5
 - https://mp.weixin.qq.com/s/8Y7eYNDRXlkAcv01jkEteg
@@ -226,6 +230,9 @@ AI 播客
 
 Readings: Chapter 11.6-11.7
 Homework Released: Indexes
+
+- [./fall2019/notes/06-hashtables.pdf](./fall2019/notes/06-hashtables.pdf)
+- [./fall2019/slides/06-hashtables.pdf](./fall2019/slides/06-hashtables.pdf)
 
 AI 播客
 - https://notebooklm.google.com/notebook/df5e3f61-7c79-43cf-8e8e-42116c89b7b9?artifactId=33e11224-1827-4d10-bb1e-2ac718234f35
@@ -270,6 +277,9 @@ AI 播客
 
 Readings: Chapter 11.1-11.4
 
+- [./fall2019/notes/07-trees1.pdf](./fall2019/notes/07-trees1.pdf)
+- [./fall2019/slides/07-trees1.pdf](./fall2019/slides/07-trees1.pdf)
+
 AI 播客
 - https://notebooklm.google.com/notebook/15f1863b-aaf2-4226-ae42-dad2e69608df?artifactId=5f788af8-e36f-4b8a-9163-0cbb5e2ba791
 - https://mp.weixin.qq.com/s/SnSoEZ8HKYGfDnaGoCr0bA
@@ -279,3 +289,67 @@ AI 播客
 - [插入与删除操作](./drafts/lec07.md#插入与删除操作)
 - [B+ 树的设计考量](./drafts/lec07.md#b-树的设计考量)
 - [B+ 树的优化技术](./drafts/lec07.md#b-树的优化技术)
+
+#### Trees Indexes II
+
+Readings: Chapter 11.1-11.4
+
+- [./fall2019/notes/08-trees2.pdf](./fall2019/notes/08-trees2.pdf)
+- [./fall2019/slides/08-trees2.pdf](./fall2019/slides/08-trees2.pdf)
+
+AI 播客
+- https://notebooklm.google.com/notebook/fff02ff9-3a21-48a7-8412-f1b80c744174?artifactId=2eae936d-a3be-482a-be52-74a90ea90388
+- https://mp.weixin.qq.com/s/zhRuh4rs63XfWgBNjcRTnA
+
+**B+ 树如何处理重复键？** B+ 树有两种主要方法处理重复键，以确保索引的效率和正确性：
+1. **追加记录ID (Append Record Id)**
+  * 这种方法通过在每个键后面追加对应的元组的 **唯一记录ID** （通常是页面ID和偏移量），使每个键在索引中变得独一无二。
+  * **优势** ：在B+树中，即使键被追加了记录ID，数据库管理系统（DBMS）仍然可以进行 **部分键查找** ，仅使用原始属性值进行搜索，然后沿着叶子节点扫描以找到所有匹配项。
+  * **缺点** ：这种方法会 **增加索引的大小** ，因为每个键都包含了额外的记录ID信息。
+2. **使用溢出叶子节点 (Overflow Leaf Nodes)**
+  * 这种方法允许叶子节点“溢出”到额外的 **溢出页面** 或 **溢出节点** 中，这些溢出页面专门存储重复的键。这些溢出页面会垂直地链接到主叶子节点。
+  * **优势** ：这种方法 **不会存储任何冗余信息** 来使键唯一。
+  * **缺点** ：它增加了索引的 **复杂性** ，因为在扫描叶子节点时需要额外逻辑来跟随溢出页面，尤其是在反向扫描时。
+
+**聚簇索引 (Table Clustering)**
+* 表聚簇是指DBMS使用索引来 **强制表本身元组的物理排序顺序** 。
+* 在PostgreSQL等系统中，这是一个 **一次性操作** 。这意味着表在首次聚簇后会根据索引排序，但随着后续的修改（插入、更新、删除），元组的物理顺序可能会再次变得无序。
+* 然而，在MySQL、SQL Server和Oracle等其他系统中，你可以声明一个表是聚簇表，这样 **无论插入顺序如何，底层物理存储都将保持排序** 。
+* **优势** ：对于某些查询，这允许DBMS直接在表数据上执行 **二分查找** ，而无需通过索引本身，从而提高性能。在MySQL中，主键索引的叶子节点实际上就是元组本身，使得沿着叶子节点扫描就等同于对表的顺序扫描。
+
+**字典树 / Radix (Tries / Radix Trees)**
+* **字典树 (Trie)** 是一种树形数据结构，它不存储键的完整副本，而是存储键的 **数字或原子子集** （如单个字节或位）。键的值通过从根到叶子的路径隐式表示，并且不需要像B+树那样进行重新平衡操作。
+* **基数树 (Radix Tree)** 是字典树的一种 **特化形式** ，它省略了所有只有一个子节点的节点（即进行了 **垂直压缩** ）。基数树有时也被称为 **Patricia树** 。
+* **特性**
+  * 它们的形状仅取决于 **键空间的分布和长度** ，而不取决于现有键或插入顺序，因此是确定性的。
+  * 所有操作的复杂性是 **O(k)** ，其中k是键的长度。这意味着，如果在查找过程中发现前缀不匹配，可以立即停止，而无需遍历到底层。
+  * 基数树在 **点查询** 方面通常比B+树更快，但在 **顺序扫描** 方面可能较慢。
+* **键的字节序和编码技巧**
+  * 并非所有属性类型都能直接分解为基数树所需的 **二进制可比数字** 。
+  * 例如，无符号整数可能需要翻转字节序（对于小端系统），带符号整数需要调整二进制补码，浮点数需要先分类再作为无符号整数处理。复合键需要对每个属性分别进行转换。这些都需要特殊的编码技巧来确保按字节比较的正确性。
+
+**倒排索引解决 B+ 树解决不了的问题（文本查询）**
+* 传统的B+树和哈希索引擅长处理“点查询”（精确匹配）和“范围查询”，例如查找邮政编码或日期范围内的记录。
+* 然而，它们 **不适用于关键词搜索** ，例如在大量文本中查找包含特定词语的文档，或执行`LIKE '%word%'`这样的模式匹配。这是因为B+树需要对整个键进行精确或范围查找，而不能查找键内部分子元素。
+* **倒排索引 (Inverted Index)** 专门用于解决这个问题。它存储了 **单词到包含这些单词的记录的映射** 。
+* **需要考虑的因素**
+  * **存储内容 (What to Store)** ：最简单的形式是存储单词本身并映射到记录ID。但也可以包含 **词频、位置信息以及其他元数据** ，以便支持更复杂的查询。
+  * **更新时机 (When to Update)** ：频繁更新倒排索引成本很高。因此，许多DBMS会维护辅助数据结构来 **分批暂存更新** ，然后定期批量更新索引。
+* **支持的查询类型** ：倒排索引能够支持 **短语搜索** （查找包含特定顺序词语的记录）、 **邻近搜索** （查找两个词语在指定距离内出现的记录）以及 **通配符搜索** （匹配复杂模式）。
+* 许多主流DBMS都原生支持倒排索引，也有专门的全文搜索数据库系统（如Elasticsearch）。
+
+**高级索引技术：部分索引 (Partial Indexes)**
+* **部分索引** 是指仅在表的 **子集** 上创建索引。通过在 `CREATE INDEX` 命令中添加 `WHERE` 子句来实现，指定哪些元组应该包含在索引中。
+* **优势** ：这种方法可以 **减小索引的大小** ，降低维护成本，并减少不必要数据对缓冲池（Buffer Pool）的污染。
+* **常见用例** ：按日期范围分区索引，例如为每个月或每年创建单独的索引。
+
+**避免回表 (Avoiding Table Lookups / Index-Only Scans)**
+* “避免回表”是指查询所需的所有数据都可以在索引中直接找到，而无需再去访问实际的表（堆）中的元组。这可以显著减少磁盘I/O和提高查询性能。
+* **覆盖索引 (Covering Indexes)** ：如果处理查询所需的所有字段都可以在索引中找到，那么DBMS就不需要检索原始元组。这是DBMS **自动判断** 和利用的特性。
+* **索引包含列 (Index Include Columns)** ：这是一种允许在索引中嵌入 **额外列** 的技术，这些额外列虽然不作为搜索键的一部分，但会存储在索引的叶子节点中。这使得即使查询需要这些非搜索键的列，也能实现索引唯一扫描。PostgreSQL 11和SQL Server支持此功能。
+
+**函数表达式索引 (Functional/Expression Indexes)**
+* **函数表达式索引** 允许你将 **函数或表达式的输出** 作为键来构建索引，而不是直接使用原始列的值。
+* **示例** ：如果经常需要查询某个日期时间字段是星期几，可以创建一个索引在 `EXTRACT(dow FROM login_timestamp)` 的结果上，这样查询时DBMS就可以直接利用这个索引。
+* **关键** ：DBMS的查询优化器必须能够识别哪些查询可以使用这种基于表达式的索引。
+*  要注意的是，用于创建表达式索引的函数必须是 **不可变** 的（即给定相同的输入，每次调用都会产生相同的输出，不会因外部状态而改变）。
