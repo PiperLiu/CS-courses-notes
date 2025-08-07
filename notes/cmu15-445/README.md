@@ -14,6 +14,7 @@
   - [Hash Tables](#hash-tables)
   - [Trees Indexes I](#trees-indexes-i)
   - [Trees Indexes II](#trees-indexes-ii)
+  - [Index Concurrency Control](#index-concurrency-control)
 
 <!-- /code_chunk_output -->
 
@@ -353,3 +354,26 @@ AI 播客
 * **示例** ：如果经常需要查询某个日期时间字段是星期几，可以创建一个索引在 `EXTRACT(dow FROM login_timestamp)` 的结果上，这样查询时DBMS就可以直接利用这个索引。
 * **关键** ：DBMS的查询优化器必须能够识别哪些查询可以使用这种基于表达式的索引。
 *  要注意的是，用于创建表达式索引的函数必须是 **不可变** 的（即给定相同的输入，每次调用都会产生相同的输出，不会因外部状态而改变）。
+
+#### Index Concurrency Control
+
+Readings: Chapter 15.10
+
+- [./fall2019/notes/09-indexconcurrency.pdf](./fall2019/notes/09-indexconcurrency.pdf)
+- [./fall2019/slides/09-indexconcurrency.pdf](./fall2019/slides/09-indexconcurrency.pdf)
+
+AI 播客
+- https://notebooklm.google.com/notebook/002fd889-062d-4a65-998b-dfad555d6b8a?artifactId=d95acd78-e21d-48ab-8f9a-f6677b229cb0
+- https://mp.weixin.qq.com/s/R9H_fcTzvP1U5Y61wYRk3g
+
+笔记： [./drafts/lec09.md](./drafts/lec09.md)
+- [锁 (Locks) 与锁存 (Latches) 的区别](./drafts/lec09.md#锁-locks-与锁存-latches-的区别)
+- [锁存的实现方式](./drafts/lec09.md#锁存的实现方式)
+- [哈希表 (Hash Table) 的锁存](./drafts/lec09.md#哈希表-hash-table-的锁存)
+- [B+树 (B+Tree) 的锁存](./drafts/lec09.md#b树-btree-的锁存)
+  - [锁存爬行 (Latch Crabbing) 的基本思想](./drafts/lec09.md#锁存爬行-latch-crabbing-的基本思想)
+  - [根节点争用 (Root Contention) 问题](./drafts/lec09.md#根节点争用-root-contention-问题)
+  - [乐观锁存 (Optimistic Latching)](./drafts/lec09.md#乐观锁存-optimistic-latching)
+  - [叶节点遍历 (Leaf Node Scans) 与死锁](./drafts/lec09.md#叶节点遍历-leaf-node-scans-与死锁)
+  - [延迟父节点更新 (Delayed Parent Updates) / Blink-Tree 优化](./drafts/lec09.md#延迟父节点更新-delayed-parent-updates--blink-tree-优化)
+- [总结](./drafts/lec09.md#总结)
