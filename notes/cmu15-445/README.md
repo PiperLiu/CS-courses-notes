@@ -15,6 +15,7 @@
   - [Trees Indexes I](#trees-indexes-i)
   - [Trees Indexes II](#trees-indexes-ii)
   - [Index Concurrency Control](#index-concurrency-control)
+  - [Sorting + Aggregations](#sorting--aggregations)
 
 <!-- /code_chunk_output -->
 
@@ -377,3 +378,22 @@ AI 播客
   - [叶节点遍历 (Leaf Node Scans) 与死锁](./drafts/lec09.md#叶节点遍历-leaf-node-scans-与死锁)
   - [延迟父节点更新 (Delayed Parent Updates) / Blink-Tree 优化](./drafts/lec09.md#延迟父节点更新-delayed-parent-updates--blink-tree-优化)
 - [总结](./drafts/lec09.md#总结)
+
+#### Sorting + Aggregations
+
+Readings: Chapter 12.4-12.5
+Homework Released: Join Algorithms
+Project Released: Hash Index
+
+- [./fall2019/notes/10-sorting.pdf](./fall2019/notes/10-sorting.pdf)
+- [./fall2019/slides/10-sorting.pdf](./fall2019/slides/10-sorting.pdf)
+
+AI 播客
+- https://notebooklm.google.com/notebook/656b25ca-8622-4c7e-967f-be90cf923167?artifactId=344893d0-af96-4b23-9eec-c8c90d5b780b
+- https://mp.weixin.qq.com/s/z139nUf5Aq2NwUdRzfxKtA
+
+笔记： [./drafts/lec10.md](./drafts/lec10.md)
+- [内存不足时的大数据排序：外部归并排序 (External Merge Sort)](./drafts/lec10.md#内存不足时的大数据排序外部归并排序-external-merge-sort)
+- [聚合操作 (Aggregations)](./drafts/lec10.md#聚合操作-aggregations)
+  - [基于排序的聚合 (Sorting Aggregation)](./drafts/lec10.md#基于排序的聚合-sorting-aggregation)
+  - [基于哈希的聚合 (Hashing Aggregate)](./drafts/lec10.md#基于哈希的聚合-hashing-aggregate)
