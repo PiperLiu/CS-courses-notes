@@ -16,6 +16,7 @@
   - [Trees Indexes II](#trees-indexes-ii)
   - [Index Concurrency Control](#index-concurrency-control)
   - [Sorting + Aggregations](#sorting--aggregations)
+  - [Joins Algorithms](#joins-algorithms)
 
 <!-- /code_chunk_output -->
 
@@ -397,3 +398,25 @@ AI 播客
 - [聚合操作 (Aggregations)](./drafts/lec10.md#聚合操作-aggregations)
   - [基于排序的聚合 (Sorting Aggregation)](./drafts/lec10.md#基于排序的聚合-sorting-aggregation)
   - [基于哈希的聚合 (Hashing Aggregate)](./drafts/lec10.md#基于哈希的聚合-hashing-aggregate)
+
+#### Joins Algorithms
+
+Readings: Chapter 12.4-12.6
+
+- [./fall2019/notes/11-joins.pdf](./fall2019/notes/11-joins.pdf)
+- [./fall2019/slides/11-joins.pdf](./fall2019/slides/11-joins.pdf)
+
+AI 播客
+- https://notebooklm.google.com/notebook/066a6598-db27-45a4-9065-615e4c3c0790?artifactId=5a12d9ae-b3b9-4e8b-af99-f239e129fdd0
+- https://mp.weixin.qq.com/s/rjmQdkDp7JUhCRKfWdDtaQ
+
+笔记： [./drafts/lec11.md](./drafts/lec11.md)
+- [连接操作的核心概念](./drafts/lec11.md#连接操作的核心概念)
+  - [连接的评估基准：I/O 成本](./drafts/lec11.md#连接的评估基准io-成本)
+  - [外层表与内层表的选择：为何“小表驱动大表”？](./drafts/lec11.md#外层表与内层表的选择为何小表驱动大表)
+  - [连接的输出方式：物化 vs. 记录 ID](./drafts/lec11.md#连接的输出方式物化-vs-记录-id)
+- [三大主流连接算法](./drafts/lec11.md#三大主流连接算法)
+  - [嵌套循环连接 (Nested Loop Join)](./drafts/lec11.md#嵌套循环连接-nested-loop-join)
+  - [排序合并连接 (Sort-Merge Join)](./drafts/lec11.md#排序合并连接-sort-merge-join)
+  - [哈希连接 (Hash Join)](./drafts/lec11.md#哈希连接-hash-join)
+- [算法选择与总结](./drafts/lec11.md#算法选择与总结)
