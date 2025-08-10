@@ -17,6 +17,7 @@
   - [Index Concurrency Control](#index-concurrency-control)
   - [Sorting + Aggregations](#sorting--aggregations)
   - [Joins Algorithms](#joins-algorithms)
+  - [Query Execution I](#query-execution-i)
 
 <!-- /code_chunk_output -->
 
@@ -420,3 +421,24 @@ AI 播客
   - [排序合并连接 (Sort-Merge Join)](./drafts/lec11.md#排序合并连接-sort-merge-join)
   - [哈希连接 (Hash Join)](./drafts/lec11.md#哈希连接-hash-join)
 - [算法选择与总结](./drafts/lec11.md#算法选择与总结)
+
+#### Query Execution I
+
+Readings: Chapter 12.1-12.3, 12.7
+
+- [./fall2019/notes/12-queryexecution1.pdf](./fall2019/notes/12-queryexecution1.pdf)
+- [./fall2019/slides/12-queryexecution1.pdf](./fall2019/slides/12-queryexecution1.pdf)
+
+AI 播客
+- https://notebooklm.google.com/notebook/5bce03f8-2b86-49ff-91a0-266074dd95cf?artifactId=e71c6d0d-ba18-4d0b-a71c-11ceeecf4e2d
+- https://mp.weixin.qq.com/s/JoGxftYgh_V3nDz3jfoYGg
+
+笔记： [./drafts/lec12.md](./drafts/lec12.md)
+- [查询计划处理模型](./drafts/lec12.md#查询计划处理模型)
+  - [迭代模型（Iterator Model）](./drafts/lec12.md#迭代模型iterator-model)
+  - [物化模型（Materialization Model）](./drafts/lec12.md#物化模型materialization-model)
+  - [向量化模型（Vectorized / Batch Model）](./drafts/lec12.md#向量化模型vectorized--batch-model)
+- [数据访问方法（Access Methods）](./drafts/lec12.md#数据访问方法access-methods)
+  - [顺序扫描（Sequential Scan）](./drafts/lec12.md#顺序扫描sequential-scan)
+  - [索引扫描（Index Scan）](./drafts/lec12.md#索引扫描index-scan)
+- [表达式评估（Expression Evaluation）](./drafts/lec12.md#表达式评估expression-evaluation)
