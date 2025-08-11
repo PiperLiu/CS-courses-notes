@@ -442,3 +442,24 @@ AI 播客
   - [顺序扫描（Sequential Scan）](./drafts/lec12.md#顺序扫描sequential-scan)
   - [索引扫描（Index Scan）](./drafts/lec12.md#索引扫描index-scan)
 - [表达式评估（Expression Evaluation）](./drafts/lec12.md#表达式评估expression-evaluation)
+
+#### Query Execution II
+
+Readings: Chapter 18
+
+- [./fall2019/notes/13-queryexecution2.pdf](./fall2019/notes/13-queryexecution2.pdf)
+- [./fall2019/slides/13-queryexecution2.pdf](./fall2019/slides/13-queryexecution2.pdf)
+
+AI 播客
+- https://notebooklm.google.com/notebook/c206f7d4-9195-46cf-bf32-d0a360835ca8?artifactId=fcea16ea-da34-4ed8-9385-b9b889481397
+- https://mp.weixin.qq.com/s/Cd2_f-JLIylNABN1l7gl5w
+
+笔记： [./drafts/lec13.md](./drafts/lec13.md)
+- [查询计划处理模型](./drafts/lec13.md#查询计划处理模型)
+  - [迭代模型（Iterator Model）](./drafts/lec13.md#迭代模型iterator-model)
+  - [物化模型（Materialization Model）](./drafts/lec13.md#物化模型materialization-model)
+  - [向量化模型（Vectorized / Batch Model）](./drafts/lec13.md#向量化模型vectorized--batch-model)
+- [数据访问方法（Access Methods）](./drafts/lec13.md#数据访问方法access-methods)
+  - [顺序扫描（Sequential Scan）](./drafts/lec13.md#顺序扫描sequential-scan)
+  - [索引扫描（Index Scan）](./drafts/lec13.md#索引扫描index-scan)
+- [表达式评估（Expression Evaluation）](./drafts/lec13.md#表达式评估expression-evaluation)
