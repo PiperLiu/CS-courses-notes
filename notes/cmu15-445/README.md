@@ -18,6 +18,8 @@
   - [Sorting + Aggregations](#sorting--aggregations)
   - [Joins Algorithms](#joins-algorithms)
   - [Query Execution I](#query-execution-i)
+  - [Query Execution II](#query-execution-ii)
+  - [Query Planning & Optimization I](#query-planning--optimization-i)
 
 <!-- /code_chunk_output -->
 
@@ -463,3 +465,25 @@ AI 播客
   - [顺序扫描（Sequential Scan）](./drafts/lec13.md#顺序扫描sequential-scan)
   - [索引扫描（Index Scan）](./drafts/lec13.md#索引扫描index-scan)
 - [表达式评估（Expression Evaluation）](./drafts/lec13.md#表达式评估expression-evaluation)
+
+#### Query Planning & Optimization I
+
+Readings: Chapter 13
+
+- [./fall2019/notes/14-optimization1.pdf](./fall2019/notes/14-optimization1.pdf)
+- [./fall2019/slides/14-optimization1.pdf](./fall2019/slides/14-optimization1.pdf)
+
+AI 播客
+- https://notebooklm.google.com/notebook/4846443a-876c-42c6-8b28-a0b275419b98?artifactId=059466ed-01b4-4370-9cba-0f241d1d01b0
+- https://mp.weixin.qq.com/s/1K9Kr0-b7V5I5wuk0HzkiA
+
+笔记： [./drafts/lec14.md](./drafts/lec14.md)
+- [查询优化概述](./drafts/lec14.md#查询优化概述)
+- [查询优化的两种主要方法](./drafts/lec14.md#查询优化的两种主要方法)
+- [静态规则与查询重写](./drafts/lec14.md#静态规则与查询重写)
+  - [谓词下推 (Predicate Pushdown)](./drafts/lec14.md#谓词下推-predicate-pushdown)
+  - [投影下推 (Projection Pushdown)](./drafts/lec14.md#投影下推-projection-pushdown)
+  - [表达式简化与重写 (Expression Simplification and Rewriting)](./drafts/lec14.md#表达式简化与重写-expression-simplification-and-rewriting)
+- [复杂查询与基于成本的搜索](./drafts/lec14.md#复杂查询与基于成本的搜索)
+  - [成本模型 (Cost Model)](./drafts/lec14.md#成本模型-cost-model)
+  - [统计信息 (Statistics Information)](./drafts/lec14.md#统计信息-statistics-information)
