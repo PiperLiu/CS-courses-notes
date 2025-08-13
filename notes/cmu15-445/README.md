@@ -20,6 +20,7 @@
   - [Query Execution I](#query-execution-i)
   - [Query Execution II](#query-execution-ii)
   - [Query Planning & Optimization I](#query-planning--optimization-i)
+  - [Query Planning & Optimization II](#query-planning--optimization-ii)
 
 <!-- /code_chunk_output -->
 
@@ -487,3 +488,35 @@ AI 播客
 - [复杂查询与基于成本的搜索](./drafts/lec14.md#复杂查询与基于成本的搜索)
   - [成本模型 (Cost Model)](./drafts/lec14.md#成本模型-cost-model)
   - [统计信息 (Statistics Information)](./drafts/lec14.md#统计信息-statistics-information)
+
+#### Query Planning & Optimization II
+
+Readings: Chapter 13
+Project Released: Query Execution
+
+- [./fall2019/notes/15-optimization2.pdf](./fall2019/notes/15-optimization2.pdf)
+- [./fall2019/slides/15-optimization2.pdf](./fall2019/slides/15-optimization2.pdf)
+
+AI 播客
+- https://notebooklm.google.com/notebook/f6aa882b-6ead-4942-a027-9cb087711bca?artifactId=bc3543f6-87ae-466e-ac5a-f0b4375b9243
+- https://mp.weixin.qq.com/s/vyLjH2p78hjypaiIKtf0wA
+
+笔记： [./drafts/lec15.md](./drafts/lec15.md)
+- [查询优化的必要性：为何要估算成本？](./drafts/lec15.md#查询优化的必要性为何要估算成本)
+- [估算信息来源：数据库内部统计信息](./drafts/lec15.md#估算信息来源数据库内部统计信息)
+- [核心概念：选择率 (Selectivity)](./drafts/lec15.md#核心概念选择率-selectivity)
+- [优化器的估算假设与挑战](./drafts/lec15.md#优化器的估算假设与挑战)
+  - [假设1：数据均匀分布 (Uniform Data)](./drafts/lec15.md#假设1数据均匀分布-uniform-data)
+  - [假设2：谓词独立 (Independent Predicates)](./drafts/lec15.md#假设2谓词独立-independent-predicates)
+  - [假设3：包含原则 (Inclusion Principle)](./drafts/lec15.md#假设3包含原则-inclusion-principle)
+- [数据库如何弥补估算误差？](./drafts/lec15.md#数据库如何弥补估算误差)
+  - [直方图 (Histograms)](./drafts/lec15.md#直方图-histograms)
+  - [采样 (Sampling)](./drafts/lec15.md#采样-sampling)
+- [数据库如何找到最优计划？](./drafts/lec15.md#数据库如何找到最优计划)
+  - [单表查询优化](./drafts/lec15.md#单表查询优化)
+  - [多表连接优化](./drafts/lec15.md#多表连接优化)
+  - [混合优化策略（以 Postgres 为例）](./drafts/lec15.md#混合优化策略以-postgres-为例)
+- [嵌套子查询 (Nested Sub-queries) 的优化](./drafts/lec15.md#嵌套子查询-nested-sub-queries-的优化)
+  - [重写/去相关/扁平化 (Rewrite/De-correlate/Flatten)](./drafts/lec15.md#重写去相关扁平化-rewritede-correlateflatten)
+  - [分解 (Decomposition)](./drafts/lec15.md#分解-decomposition)
+- [总结](./drafts/lec15.md#总结)
