@@ -21,6 +21,7 @@
   - [Query Execution II](#query-execution-ii)
   - [Query Planning & Optimization I](#query-planning--optimization-i)
   - [Query Planning & Optimization II](#query-planning--optimization-ii)
+  - [Concurrency Control Theory](#concurrency-control-theory)
 
 <!-- /code_chunk_output -->
 
@@ -520,3 +521,28 @@ AI 播客
   - [重写/去相关/扁平化 (Rewrite/De-correlate/Flatten)](./drafts/lec15.md#重写去相关扁平化-rewritede-correlateflatten)
   - [分解 (Decomposition)](./drafts/lec15.md#分解-decomposition)
 - [总结](./drafts/lec15.md#总结)
+
+#### Concurrency Control Theory
+
+Readings: Chapter 14
+
+- [./fall2019/notes/16-concurrencycontrol.pdf](./fall2019/notes/16-concurrencycontrol.pdf)
+- [./fall2019/slides/16-concurrencycontrol.pdf](./fall2019/slides/16-concurrencycontrol.pdf)
+
+AI 播客
+- https://notebooklm.google.com/notebook/0c024b96-f9ee-49d6-8233-6080fd70e7a1?artifactId=5d15241d-93a7-47b9-b9b6-74aae3937d56
+- https://mp.weixin.qq.com/s/FdQlgt4A9hSX5_qfdkQ0mA
+
+笔记： [./drafts/lec16.md](./drafts/lec16.md)
+- [数据库的并发控制与恢复机制：为什么要有？解决什么场景的问题？](./drafts/lec16.md#数据库的并发控制与恢复机制为什么要有解决什么场景的问题)
+- [事务是什么？](./drafts/lec16.md#事务是什么)
+- [ACID 代表什么？](./drafts/lec16.md#acid-代表什么)
+  - [A (Atomicity) - 原子性： "All or Nothing" (要么全做，要么全不做)](./drafts/lec16.md#a-atomicity---原子性-all-or-nothing-要么全做要么全不做)
+  - [C (Consistency) - 一致性： "It looks correct to me..." (看起来是对的)](./drafts/lec16.md#c-consistency---一致性-it-looks-correct-to-me-看起来是对的)
+  - [I (Isolation) - 隔离性： "As if Alone" (如同单独运行)](./drafts/lec16.md#i-isolation---隔离性-as-if-alone-如同单独运行)
+  - [D (Durability) - 持久性： "Survive Failures" (能够抵御故障)](./drafts/lec16.md#d-durability---持久性-survive-failures-能够抵御故障)
+- [如何确保调度是正确的？让并行事务效果是串行执行的一样](./drafts/lec16.md#如何确保调度是正确的让并行事务效果是串行执行的一样)
+  - [可串行化两种类型](./drafts/lec16.md#可串行化两种类型)
+- [两种并发控制协议思想/方法详细介绍](./drafts/lec16.md#两种并发控制协议思想方法详细介绍)
+  - [悲观并发控制（Pessimistic Concurrency Control）](./drafts/lec16.md#悲观并发控制pessimistic-concurrency-control)
+  - [乐观并发控制（Optimistic Concurrency Control）](./drafts/lec16.md#乐观并发控制optimistic-concurrency-control)
