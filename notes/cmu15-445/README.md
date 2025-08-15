@@ -22,6 +22,7 @@
   - [Query Planning & Optimization I](#query-planning--optimization-i)
   - [Query Planning & Optimization II](#query-planning--optimization-ii)
   - [Concurrency Control Theory](#concurrency-control-theory)
+- [Two-Phase Locking Concurrency Control](#two-phase-locking-concurrency-control)
 
 <!-- /code_chunk_output -->
 
@@ -546,3 +547,29 @@ AI 播客
 - [两种并发控制协议思想/方法详细介绍](./drafts/lec16.md#两种并发控制协议思想方法详细介绍)
   - [悲观并发控制（Pessimistic Concurrency Control）](./drafts/lec16.md#悲观并发控制pessimistic-concurrency-control)
   - [乐观并发控制（Optimistic Concurrency Control）](./drafts/lec16.md#乐观并发控制optimistic-concurrency-control)
+
+### Two-Phase Locking Concurrency Control
+
+Readings: Chapter 15.1-15.3, 15.9
+
+- [./fall2019/notes/17-twophaselocking.pdf](./fall2019/notes/17-twophaselocking.pdf)
+- [./fall2019/slides/17-twophaselocking.pdf](./fall2019/slides/17-twophaselocking.pdf)
+
+AI 播客
+- https://notebooklm.google.com/notebook/ddd65367-cd16-4a23-a21c-6b4307d7ee51?artifactId=97e63628-f638-43af-94b3-ca43dc25fa14
+- https://mp.weixin.qq.com/s/9bai278oiFrZsmbJJA5m6w
+
+笔记： [./drafts/lec17.md](./drafts/lec17.md)
+- [问题的起点：为什么不能“随用随放”锁？](./drafts/lec17.md#问题的起点为什么不能随用随放锁)
+- [两阶段锁（2PL）的核心思想](./drafts/lec17.md#两阶段锁2pl的核心思想)
+  - [锁的类型](./drafts/lec17.md#锁的类型)
+  - [两个阶段（The Two Phases）](./drafts/lec17.md#两个阶段the-two-phases)
+  - [两阶段锁例子](./drafts/lec17.md#两阶段锁例子)
+- [2PL 的挑战与演进：从理论到实践](./drafts/lec17.md#2pl-的挑战与演进从理论到实践)
+  - [挑战一：级联终止](./drafts/lec17.md#挑战一级联终止)
+    - [解决方案：严格与强严格 2PL](./drafts/lec17.md#解决方案严格与强严格-2pl)
+  - [挑战二：死锁（Deadlock）](./drafts/lec17.md#挑战二死锁deadlock)
+    - [策略一：死锁检测（Deadlock Detection）](./drafts/lec17.md#策略一死锁检测deadlock-detection)
+    - [策略二：死锁预防（Deadlock Prevention）](./drafts/lec17.md#策略二死锁预防deadlock-prevention)
+- [2PL 的实际应用：多粒度与意向锁](./drafts/lec17.md#2pl-的实际应用多粒度与意向锁)
+- [结论：2PL 在现代数据库中的地位](./drafts/lec17.md#结论2pl-在现代数据库中的地位)
