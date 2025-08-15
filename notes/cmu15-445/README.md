@@ -22,7 +22,8 @@
   - [Query Planning & Optimization I](#query-planning--optimization-i)
   - [Query Planning & Optimization II](#query-planning--optimization-ii)
   - [Concurrency Control Theory](#concurrency-control-theory)
-- [Two-Phase Locking Concurrency Control](#two-phase-locking-concurrency-control)
+  - [Two-Phase Locking Concurrency Control](#two-phase-locking-concurrency-control)
+  - [Timestamp Ordering Concurrency Control](#timestamp-ordering-concurrency-control)
 
 <!-- /code_chunk_output -->
 
@@ -548,7 +549,7 @@ AI 播客
   - [悲观并发控制（Pessimistic Concurrency Control）](./drafts/lec16.md#悲观并发控制pessimistic-concurrency-control)
   - [乐观并发控制（Optimistic Concurrency Control）](./drafts/lec16.md#乐观并发控制optimistic-concurrency-control)
 
-### Two-Phase Locking Concurrency Control
+#### Two-Phase Locking Concurrency Control
 
 Readings: Chapter 15.1-15.3, 15.9
 
@@ -573,3 +574,30 @@ AI 播客
     - [策略二：死锁预防（Deadlock Prevention）](./drafts/lec17.md#策略二死锁预防deadlock-prevention)
 - [2PL 的实际应用：多粒度与意向锁](./drafts/lec17.md#2pl-的实际应用多粒度与意向锁)
 - [结论：2PL 在现代数据库中的地位](./drafts/lec17.md#结论2pl-在现代数据库中的地位)
+
+#### Timestamp Ordering Concurrency Control
+
+Readings: Chapter 15.4-15.5
+Homework Released: Concurrency Control
+
+- [./fall2019/notes/18-timestampordering.pdf](./fall2019/notes/18-timestampordering.pdf)
+- [./fall2019/slides/18-timestampordering.pdf](./fall2019/slides/18-timestampordering.pdf)
+
+AI 播客
+- https://notebooklm.google.com/notebook/fe792c96-4d60-4897-ba17-4e54ffaef19f?artifactId=a00e3ffe-6ab0-40e0-a156-a0bb7389eff6
+- https://mp.weixin.qq.com/s/wpaZ3FhxRkeK2Y90DzA1TA
+
+笔记： [./drafts/lec18.md](./drafts/lec18.md)
+- [时间戳排序 (Timestamp Ordering, T/O)](./drafts/lec18.md#时间戳排序-timestamp-ordering-to)
+  - [时间戳的源泉](./drafts/lec18.md#时间戳的源泉)
+  - [基本时间戳排序协议 (Basic T/O)](./drafts/lec18.md#基本时间戳排序协议-basic-to)
+    - [读操作规则](./drafts/lec18.md#读操作规则)
+    - [写操作规则](./drafts/lec18.md#写操作规则)
+  - [优化：托马斯写入规则 (Thomas Write Rule)](./drafts/lec18.md#优化托马斯写入规则-thomas-write-rule)
+  - [Basic T/O 的挑战](./drafts/lec18.md#basic-to-的挑战)
+- [乐观并发控制 (OCC)：终极的乐观主义者](./drafts/lec18.md#乐观并发控制-occ终极的乐观主义者)
+- [OCC 的适用场景与瓶颈](./drafts/lec18.md#occ-的适用场景与瓶颈)
+- [寻求平衡：分区时间戳排序 (Partition-based T/O)](./drafts/lec18.md#寻求平衡分区时间戳排序-partition-based-to)
+  - [分区 T/O 的优势与挑战](./drafts/lec18.md#分区-to-的优势与挑战)
+- [所有协议的共同难题：幻读 (The Phantom Problem)](./drafts/lec18.md#所有协议的共同难题幻读-the-phantom-problem)
+- [结论：没有银弹，只有取舍](./drafts/lec18.md#结论没有银弹只有取舍)
