@@ -24,6 +24,7 @@
   - [Concurrency Control Theory](#concurrency-control-theory)
   - [Two-Phase Locking Concurrency Control](#two-phase-locking-concurrency-control)
   - [Timestamp Ordering Concurrency Control](#timestamp-ordering-concurrency-control)
+  - [Multi-Version Concurrency Control](#multi-version-concurrency-control)
 
 <!-- /code_chunk_output -->
 
@@ -601,3 +602,30 @@ AI 播客
   - [分区 T/O 的优势与挑战](./drafts/lec18.md#分区-to-的优势与挑战)
 - [所有协议的共同难题：幻读 (The Phantom Problem)](./drafts/lec18.md#所有协议的共同难题幻读-the-phantom-problem)
 - [结论：没有银弹，只有取舍](./drafts/lec18.md#结论没有银弹只有取舍)
+
+#### Multi-Version Concurrency Control
+
+Readings: Chapter 15.6-15.7
+
+- [./fall2019/notes/19-multiversioning.pdf](./fall2019/notes/19-multiversioning.pdf)
+- [./fall2019/slides/19-multiversioning.pdf](./fall2019/slides/19-multiversioning.pdf)
+
+AI 播客
+- https://notebooklm.google.com/notebook/64e8bf8f-d1ff-4020-8ddd-2f1d5fd4b39b?artifactId=719bacf4-db9e-4b5e-93b2-69a79abb76d8
+- https://mp.weixin.qq.com/s/K6vvdsDjbrftbZcGHatbRQ
+
+笔记： [./drafts/lec19.md](./drafts/lec19.md)
+- [核心思想：MVCC 是什么？](./drafts/lec19.md#核心思想mvcc-是什么)
+- [历史回眸：一个经久不衰的理念](./drafts/lec19.md#历史回眸一个经久不衰的理念)
+- [MVCC 的两大杀手级优势](./drafts/lec19.md#mvcc-的两大杀手级优势)
+  - [极致高效的只读事务](./drafts/lec19.md#极致高效的只读事务)
+  - [强大的“时间旅行”查询能力](./drafts/lec19.md#强大的时间旅行查询能力)
+- [深入实现：MVCC 的四大核心设计决策](./drafts/lec19.md#深入实现mvcc-的四大核心设计决策)
+  - [并发控制协议 (Concurrency Control Protocol)](./drafts/lec19.md#并发控制协议-concurrency-control-protocol)
+  - [版本存储 (Version Storage)](./drafts/lec19.md#版本存储-version-storage)
+    - [仅追加存储 (Append-Only Storage)](./drafts/lec19.md#仅追加存储-append-only-storage)
+    - [时间旅行存储 (Time-Travel Storage)](./drafts/lec19.md#时间旅行存储-time-travel-storage)
+    - [Delta 存储 (Delta Storage)](./drafts/lec19.md#delta-存储-delta-storage)
+  - [垃圾回收 (Garbage Collection)](./drafts/lec19.md#垃圾回收-garbage-collection)
+  - [索引管理 (Index Management)](./drafts/lec19.md#索引管理-index-management)
+- [总结](./drafts/lec19.md#总结)
