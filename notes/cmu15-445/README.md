@@ -25,6 +25,7 @@
   - [Two-Phase Locking Concurrency Control](#two-phase-locking-concurrency-control)
   - [Timestamp Ordering Concurrency Control](#timestamp-ordering-concurrency-control)
   - [Multi-Version Concurrency Control](#multi-version-concurrency-control)
+  - [Logging Protocols + Schemes](#logging-protocols--schemes)
 
 <!-- /code_chunk_output -->
 
@@ -629,3 +630,30 @@ AI 播客
   - [垃圾回收 (Garbage Collection)](./drafts/lec19.md#垃圾回收-garbage-collection)
   - [索引管理 (Index Management)](./drafts/lec19.md#索引管理-index-management)
 - [总结](./drafts/lec19.md#总结)
+
+#### Logging Protocols + Schemes
+
+Readings: Chapter 16.1-16.7
+
+- [./fall2019/notes/20-logging.pdf](./fall2019/notes/20-logging.pdf)
+- [./fall2019/slides/20-logging.pdf](./fall2019/slides/20-logging.pdf)
+
+AI 播客
+- https://notebooklm.google.com/notebook/a0f10f86-b3ed-4598-8968-4b47b971c1b7?artifactId=84c2390e-c01c-4820-8b60-28f4fa8e72c9
+- https://mp.weixin.qq.com/s/16AeBMzCIYnoXV1DDNh-Pw
+
+笔记： [./drafts/lec20.md](./drafts/lec20.md)
+- [核心矛盾：性能与安全的博弈](./drafts/lec20.md#核心矛盾性能与安全的博弈)
+- [恢复的两大基石：Undo 与 Redo](./drafts/lec20.md#恢复的两大基石undo-与-redo)
+- [关键决策：缓冲池管理策略](./drafts/lec20.md#关键决策缓冲池管理策略)
+  - [策略一：STEAL vs. NO-STEAL (是否允许“窃取”)](./drafts/lec20.md#策略一steal-vs-no-steal-是否允许窃取)
+  - [策略二：FORCE vs. NO-FORCE (是否强制落盘)](./drafts/lec20.md#策略二force-vs-no-force-是否强制落盘)
+  - [策略组合与权衡](./drafts/lec20.md#策略组合与权衡)
+- [早期尝试：影子分页 (Shadow Paging)](./drafts/lec20.md#早期尝试影子分页-shadow-paging)
+- [现代标准：预写日志 (Write-Ahead Logging, WAL)](./drafts/lec20.md#现代标准预写日志-write-ahead-logging-wal)
+  - [WAL 的黄金法则](./drafts/lec20.md#wal-的黄金法则)
+  - [WAL 的巨大优势：化随机 I/O 为顺序 I/O](./drafts/lec20.md#wal-的巨大优势化随机-io-为顺序-io)
+  - [性能优化：组提交 (Group Commit)](./drafts/lec20.md#性能优化组提交-group-commit)
+- [日志的内部：记录的粒度](./drafts/lec20.md#日志的内部记录的粒度)
+- [控制日志增长：检查点 (Checkpoints)](./drafts/lec20.md#控制日志增长检查点-checkpoints)
+- [总结](./drafts/lec20.md#总结)
