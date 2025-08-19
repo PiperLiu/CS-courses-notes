@@ -26,6 +26,7 @@
   - [Timestamp Ordering Concurrency Control](#timestamp-ordering-concurrency-control)
   - [Multi-Version Concurrency Control](#multi-version-concurrency-control)
   - [Logging Protocols + Schemes](#logging-protocols--schemes)
+  - [Crash Recovery Algorithms](#crash-recovery-algorithms)
 
 <!-- /code_chunk_output -->
 
@@ -657,3 +658,27 @@ AI 播客
 - [日志的内部：记录的粒度](./drafts/lec20.md#日志的内部记录的粒度)
 - [控制日志增长：检查点 (Checkpoints)](./drafts/lec20.md#控制日志增长检查点-checkpoints)
 - [总结](./drafts/lec20.md#总结)
+
+#### Crash Recovery Algorithms
+
+Readings: Chapter 16.1-16.8
+
+- [./fall2019/notes/21-recovery.pdf](./fall2019/notes/21-recovery.pdf)
+- [./fall2019/slides/21-recovery.pdf](./fall2019/slides/21-recovery.pdf)
+
+AI 播客
+- https://notebooklm.google.com/notebook/597aa574-14fb-49f0-af65-5a75766491d6?artifactId=60079042-b099-4190-a5e5-8b5512853193
+- https://mp.weixin.qq.com/s/VGBktJpVHOvUd3UcgVpa9Q
+
+笔记： [./drafts/lec21.md](./drafts/lec21.md)
+- [一切的前提：高并发的缓冲池策略](./drafts/lec21.md#一切的前提高并发的缓冲池策略)
+- [ARIES 的三大核心思想](./drafts/lec21.md#aries-的三大核心思想)
+- [ARIES 的“语言”：日志与 LSN](./drafts/lec21.md#aries-的语言日志与-lsn)
+  - [日志序列号（Log Sequence Number - LSN）](./drafts/lec21.md#日志序列号log-sequence-number---lsn)
+  - [事务的生命周期日志](./drafts/lec21.md#事务的生命周期日志)
+- [检查点（Checkpointing）：为快速恢复铺路](./drafts/lec21.md#检查点checkpointing为快速恢复铺路)
+- [王者归来：ARIES 的三阶段恢复协议](./drafts/lec21.md#王者归来aries-的三阶段恢复协议)
+  - [阶段一：分析（Analysis）](./drafts/lec21.md#阶段一分析analysis)
+  - [阶段二：重做（Redo）](./drafts/lec21.md#阶段二重做redo)
+  - [阶段三：撤销（Undo）](./drafts/lec21.md#阶段三撤销undo)
+- [总结](./drafts/lec21.md#总结)
