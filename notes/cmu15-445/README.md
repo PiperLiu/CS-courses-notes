@@ -28,6 +28,7 @@
   - [Logging Protocols + Schemes](#logging-protocols--schemes)
   - [Crash Recovery Algorithms](#crash-recovery-algorithms)
   - [Introduction to Distributed Databases](#introduction-to-distributed-databases)
+  - [Distributed OLTP Database Systems](#distributed-oltp-database-systems)
 
 <!-- /code_chunk_output -->
 
@@ -709,3 +710,46 @@ AI 播客
   - [为什么如此困难？](./drafts/lec22.md#为什么如此困难)
 - [总结](./drafts/lec22.md#总结)
 - [拓展： MySQL 分区方案](./drafts/lec22.md#拓展-mysql-分区方案)
+
+#### Distributed OLTP Database Systems
+
+Readings: Chapter 17.3-17.5, 19.1-19.6
+
+- [./fall2019/slides/23-distributedoltp.pdf](./fall2019/slides/23-distributedoltp.pdf)
+
+AI 播客
+- https://notebooklm.google.com/notebook/b27cd055-7d73-465e-9ff7-478e8a9ed2b7?artifactId=7fd1a987-ab2b-4ee1-b929-79e47785f00a
+- https://mp.weixin.qq.com/s/Rl80qmXE-N_E-18j_8plEg
+
+笔记： [./drafts/lec23.md](./drafts/lec23.md)
+- [为什么我们离不开事务（Transaction）？](./drafts/lec23.md#为什么我们离不开事务transaction)
+- [用二阶段提交（2PC）实现分布式原子性](./drafts/lec23.md#用二阶段提交2pc实现分布式原子性)
+  - [阶段一：准备阶段（投票阶段）](./drafts/lec23.md#阶段一准备阶段投票阶段)
+  - [阶段二：提交阶段（决策阶段）](./drafts/lec23.md#阶段二提交阶段决策阶段)
+  - [2PC 的致命缺陷：阻塞](./drafts/lec23.md#2pc-的致命缺陷阻塞)
+- [从 Paxos 共识到 Raft 的普及](./drafts/lec23.md#从-paxos-共识到-raft-的普及)
+- [高可用的基石：数据复制策略](./drafts/lec23.md#高可用的基石数据复制策略)
+- [CAP 定理的权衡艺术](./drafts/lec23.md#cap-定理的权衡艺术)
+- [深度拓展（一）：MySQL 内部的“二阶段提交”—— redo log 与 binlog 的双重奏](./drafts/lec23.md#深度拓展一mysql-内部的二阶段提交-redo-log-与-binlog-的双重奏)
+  - [为何需要这个内部 2PC？](./drafts/lec23.md#为何需要这个内部-2pc)
+  - [MySQL 的解决方案：内部 2PC](./drafts/lec23.md#mysql-的解决方案内部-2pc)
+- [深度拓展（二）：现代高并发架构 —— MySQL、Raft 与分片的“三位一体”](./drafts/lec23.md#深度拓展二现代高并发架构--mysql-raft-与分片的三位一体)
+  - [架构蓝图：共识算法赋能的 MySQL 集群](./drafts/lec23.md#架构蓝图共识算法赋能的-mysql-集群)
+  - [工作流程与高并发应对](./drafts/lec23.md#工作流程与高并发应对)
+- [分布式事务解析（一）：为何分布式事务不可避免？](./drafts/lec23.md#分布式事务解析一为何分布式事务不可避免)
+  - [场景一：微服务拆分（业务维度）](./drafts/lec23.md#场景一微服务拆分业务维度)
+  - [场景二：数据分片/分库分表（数据维度）](./drafts/lec23.md#场景二数据分片分库分表数据维度)
+  - [场景三：异构系统数据同步](./drafts/lec23.md#场景三异构系统数据同步)
+- [分布式事务解析（二）：解决方案从“刚性”到“柔性”的权衡](./drafts/lec23.md#分布式事务解析二解决方案从刚性到柔性的权衡)
+  - [阵营一：刚性事务（追求强一致性）](./drafts/lec23.md#阵营一刚性事务追求强一致性)
+    - [三阶段提交（3PC）相比 2PC 做了哪些改进？](./drafts/lec23.md#三阶段提交3pc相比-2pc-做了哪些改进)
+  - [阵营二：柔性事务（追求最终一致性）](./drafts/lec23.md#阵营二柔性事务追求最终一致性)
+    - [代表一：TCC (Try-Confirm-Cancel)](./drafts/lec23.md#代表一tcc-try-confirm-cancel)
+    - [代表二：SAGA 模式](./drafts/lec23.md#代表二saga-模式)
+      - [编排式 SAGA（Centralized Orchestrator）](./drafts/lec23.md#编排式-sagacentralized-orchestrator)
+      - [协同式 SAGA（Event-driven Choreography）](./drafts/lec23.md#协同式-sagaevent-driven-choreography)
+    - [代表三：基于可靠消息的最终一致性 (Transactional Outbox)](./drafts/lec23.md#代表三基于可靠消息的最终一致性-transactional-outbox)
+- [分布式事务解析（三）：如何在具体场景中做技术选型？](./drafts/lec23.md#分布式事务解析三如何在具体场景中做技术选型)
+  - [分析业务场景，明确一致性要求](./drafts/lec23.md#分析业务场景明确一致性要求)
+  - [方案选型与组合](./drafts/lec23.md#方案选型与组合)
+- [结语](./drafts/lec23.md#结语)
