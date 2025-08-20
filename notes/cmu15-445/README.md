@@ -27,6 +27,7 @@
   - [Multi-Version Concurrency Control](#multi-version-concurrency-control)
   - [Logging Protocols + Schemes](#logging-protocols--schemes)
   - [Crash Recovery Algorithms](#crash-recovery-algorithms)
+  - [Introduction to Distributed Databases](#introduction-to-distributed-databases)
 
 <!-- /code_chunk_output -->
 
@@ -682,3 +683,29 @@ AI 播客
   - [阶段二：重做（Redo）](./drafts/lec21.md#阶段二重做redo)
   - [阶段三：撤销（Undo）](./drafts/lec21.md#阶段三撤销undo)
 - [总结](./drafts/lec21.md#总结)
+
+#### Introduction to Distributed Databases
+
+Readings: Chapter 17.3-17.5, 19.1-19.6
+Homework Released: Distributed Databases
+
+- [./fall2019/notes/22-distributed.pdf](./fall2019/notes/22-distributed.pdf)
+- [./fall2019/slides/22-distributed.pdf](./fall2019/slides/22-distributed.pdf)
+
+AI 播客
+- https://notebooklm.google.com/notebook/03c8324b-a918-44e2-8e29-b986e5f53860?artifactId=bf86a8fe-5460-4ab0-b189-b559e96cdd8e
+- https://mp.weixin.qq.com/s/5i_nd00hxS0JdmQx_qdbww
+
+笔记： [./drafts/lec22.md](./drafts/lec22.md)
+- [正本清源：并行数据库 vs. 分布式数据库](./drafts/lec22.md#正本清源并行数据库-vs-分布式数据库)
+- [两大基石：分布式系统架构](./drafts/lec22.md#两大基石分布式系统架构)
+  - [共享磁盘 (Shared Disk)](./drafts/lec22.md#共享磁盘-shared-disk)
+  - [共享无关 (Shared Nothing)](./drafts/lec22.md#共享无关-shared-nothing)
+- [数据该放哪？分区、透明性与一致性哈希](./drafts/lec22.md#数据该放哪分区-透明性与一致性哈希)
+  - [数据分区 (Partitioning / Sharding)](./drafts/lec22.md#数据分区-partitioning--sharding)
+  - [一致性哈希：优雅地解决扩容难题](./drafts/lec22.md#一致性哈希优雅地解决扩容难题)
+  - [数据透明性 (Data Transparency)](./drafts/lec22.md#数据透明性-data-transparency)
+- [终极挑战：分布式事务](./drafts/lec22.md#终极挑战分布式事务)
+  - [为什么如此困难？](./drafts/lec22.md#为什么如此困难)
+- [总结](./drafts/lec22.md#总结)
+- [拓展： MySQL 分区方案](./drafts/lec22.md#拓展-mysql-分区方案)
