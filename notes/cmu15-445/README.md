@@ -29,6 +29,7 @@
   - [Crash Recovery Algorithms](#crash-recovery-algorithms)
   - [Introduction to Distributed Databases](#introduction-to-distributed-databases)
   - [Distributed OLTP Database Systems](#distributed-oltp-database-systems)
+  - [Distributed OLAP Database Systems](#distributed-olap-database-systems)
 
 <!-- /code_chunk_output -->
 
@@ -753,3 +754,28 @@ AI 播客
   - [分析业务场景，明确一致性要求](./drafts/lec23.md#分析业务场景明确一致性要求)
   - [方案选型与组合](./drafts/lec23.md#方案选型与组合)
 - [结语](./drafts/lec23.md#结语)
+
+#### Distributed OLAP Database Systems
+
+Readings: Chapter 19.7-19.9
+
+- [./fall2019/slides/24-distributedolap.pdf](./fall2019/slides/24-distributedolap.pdf)
+
+AI 播客
+- https://notebooklm.google.com/notebook/94dc1121-cf8b-4943-bd09-e076a348fc57?artifactId=1c2b6412-8f36-4507-8680-8dfde9c1b9f9
+- https://mp.weixin.qq.com/s/JbC1jWZmPd3A57hdO8ek1g
+
+笔记： [./drafts/lec24.md](./drafts/lec24.md)
+- [为何需要 OLAP 与 ETL？](./drafts/lec24.md#为何需要-olap-与-etl)
+- [星型模式与雪花型模式](./drafts/lec24.md#星型模式与雪花型模式)
+  - [星型模式 (Star Schema)](./drafts/lec24.md#星型模式-star-schema)
+  - [雪花型模式 (Snowflake Schema)](./drafts/lec24.md#雪花型模式-snowflake-schema)
+- [分布式执行：将计算推向数据](./drafts/lec24.md#分布式执行将计算推向数据)
+- [性能至上：为何 OLAP 查询通常“不容错”？](./drafts/lec24.md#性能至上为何-olap-查询通常不容错)
+- [核心难题：分布式联结（Join）的四大策略](./drafts/lec24.md#核心难题分布式联结join的四大策略)
+  - [场景 1: 复制表联结 (Replicated Join) - 最佳情况](./drafts/lec24.md#场景-1-复制表联结-replicated-join---最佳情况)
+  - [场景 2: 共置联结 (Co-located Join) - 理想情况](./drafts/lec24.md#场景-2-共置联结-co-located-join---理想情况)
+  - [场景 3: 广播联结 (Broadcast Join)](./drafts/lec24.md#场景-3-广播联结-broadcast-join)
+  - [场景 4: 重分区/洗牌联结 (Shuffle Join) - 最差情况](./drafts/lec24.md#场景-4-重分区洗牌联结-shuffle-join---最差情况)
+- [云时代的演进：云原生、无服务器与开放格式](./drafts/lec24.md#云时代的演进云原生-无服务器与开放格式)
+- [总结](./drafts/lec24.md#总结)
