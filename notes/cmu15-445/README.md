@@ -30,6 +30,7 @@
   - [Introduction to Distributed Databases](#introduction-to-distributed-databases)
   - [Distributed OLTP Database Systems](#distributed-oltp-database-systems)
   - [Distributed OLAP Database Systems](#distributed-olap-database-systems)
+  - [Guest Speaker: Shasank Chavan (Oracle In-Memory Databases)](#guest-speaker-shasank-chavan-oracle-in-memory-databases)
 
 <!-- /code_chunk_output -->
 
@@ -779,3 +780,22 @@ AI 播客
   - [场景 4: 重分区/洗牌联结 (Shuffle Join) - 最差情况](./drafts/lec24.md#场景-4-重分区洗牌联结-shuffle-join---最差情况)
 - [云时代的演进：云原生、无服务器与开放格式](./drafts/lec24.md#云时代的演进云原生-无服务器与开放格式)
 - [总结](./drafts/lec24.md#总结)
+
+#### Guest Speaker: Shasank Chavan (Oracle In-Memory Databases)
+
+- [./fall2019/slides/25-oracle.pdf](./fall2019/slides/25-oracle.pdf)
+
+AI 播客
+- https://notebooklm.google.com/notebook/d4e4f59b-39e6-4276-b1ec-617ea4076502?artifactId=3de663c5-5da5-452b-a73c-460dac2e8980
+- https://mp.weixin.qq.com/s/_FxfIEQitri9ud-NzIMZPQ
+
+笔记： [./drafts/lec25.md](./drafts/lec25.md)
+- [需求：实时企业的速度渴求](./drafts/lec25.md#需求实时企业的速度渴求)
+- [创新的基石：飞速发展的硬件趋势](./drafts/lec25.md#创新的基石飞速发展的硬件趋势)
+- [核心架构：两全其美的“双格式”设计](./drafts/lec25.md#核心架构两全其美的双格式设计)
+- [关键挑战：如何维持数据实时一致？](./drafts/lec25.md#关键挑战如何维持数据实时一致)
+- [性能引擎：每秒数十亿行的向量化分析](./drafts/lec25.md#性能引擎每秒数十亿行的向量化分析)
+- [超越内存：与 Exadata 集成，容量无限扩展](./drafts/lec25.md#超越内存与-exadata-集成容量无限扩展)
+- [迈向未来：自驱动的智能自动化](./drafts/lec25.md#迈向未来自驱动的智能自动化)
+- [终极愿景：一站式的融合分析平台](./drafts/lec25.md#终极愿景一站式的融合分析平台)
+- [结论](./drafts/lec25.md#结论)
