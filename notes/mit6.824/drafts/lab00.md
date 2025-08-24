@@ -10,6 +10,7 @@
 - [根据 Lab 1 文档安装 Go 1.13](#根据-lab-1-文档安装-go-113)
 - [下载并编译 Lab](#下载并编译-lab)
 - [go 1.13 with gopls@v0.8.0](#go-113-with-goplsv080)
+- [转为 go mod 模式](#转为-go-mod-模式)
 - [除了 wsl2 和 docker ，也可以基于 orbstack](#除了-wsl2-和-docker-也可以基于-orbstack)
 
 <!-- /code_chunk_output -->
@@ -90,12 +91,38 @@ ACT 8
 需要安装特定版本的 gopls 来适配 go 1.13 。
 
 ```bash
-GO111MODULE=on GOPROXY=https://goproxy.io go get golang.org/x/tools/gopls@v0.8.0
-GO111MODULE=on GOPROXY=https://goproxy.io go get honnef.co/go/tools/cmd/staticcheck@2019.2.3
-GO111MODULE=on GOPROXY=https://goproxy.io go get github.com/go-delve/delve/cmd/dlv@v1.6.0
+GO111MODULE=on GOPROXY=https://goproxy.io go get -u golang.org/x/tools/gopls@v0.8.0
+GO111MODULE=on GOPROXY=https://goproxy.io go get -u honnef.co/go/tools/cmd/staticcheck@2019.2.3
+GO111MODULE=on GOPROXY=https://goproxy.io go get -u github.com/go-delve/delve/cmd/dlv@v1.6.0
 ```
 
 如上是我在 GitHub 的 release 页面中找到的支持 1.13 版本的 工具。
+
+VSCode 的插件应该使用 https://github.com/golang/vscode-go/releases/tag/v0.22.0 ：
+- 支持 gopls ，旧版本要求使用 gocode ，会比较麻烦。
+
+记得根据 `go env` 的输出设置 vscode `"gopath"` 和 `"goroot"` 。
+
+## 转为 go mod 模式
+
+由于存在一些 `import "../labgob"` 这类代码，与 module mode 存在冲突。这里我们还是适配 go.mod 来适配更方便一些。
+
+```bash
+cd <my/dev/dir>/mit6.824-lab-2020
+go mod init github.com/PiperLiu/mit6.824-lab-2020
+```
+
+然后我将代码中的所有 `import` 全部做如下替换：
+
+```bash
+import "../labrpc" -> import "github.com/PiperLiu/mit6.824-lab-2020/src/labrpc"
+
+import (
+    "../labrpc" -> "github.com/PiperLiu/mit6.824-lab-2020/src/labrpc"
+)
+```
+
+对于 `src/main` 中的部分还是存在一些冲突，可暂时不用去管。
 
 ## 除了 wsl2 和 docker ，也可以基于 orbstack
 

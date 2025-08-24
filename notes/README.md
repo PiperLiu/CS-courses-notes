@@ -40,10 +40,9 @@
 
 ### 关系型数据库
 
-[CMU 15-445: Database Systems]
-
-https://15445.courses.cs.cmu.edu/fall2019/
+[CMU 15-445: Database Systems](./cmu15-445/README.md)
 
 ### 计算机网络
 
 [CS144: Computer Network]
+

@@ -1,3 +1,4 @@
 *.exe
 /*.pptx
 *.DS_Store
+/tmp
