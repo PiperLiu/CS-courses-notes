@@ -31,6 +31,7 @@
   - [Distributed OLTP Database Systems](#distributed-oltp-database-systems)
   - [Distributed OLAP Database Systems](#distributed-olap-database-systems)
   - [Guest Speaker: Shasank Chavan (Oracle In-Memory Databases)](#guest-speaker-shasank-chavan-oracle-in-memory-databases)
+  - [Final Review + Systems Potpourri (fall2024)](#final-review--systems-potpourri-fall2024)
 
 <!-- /code_chunk_output -->
 
@@ -783,6 +784,8 @@ AI 播客
 
 #### Guest Speaker: Shasank Chavan (Oracle In-Memory Databases)
 
+Link: [Shasank Chavan](https://www.linkedin.com/in/shasank-chavan-61733027/) ([Oracle In-Memory Databases](https://www.oracle.com/database/in-memory/))
+
 - [./fall2019/slides/25-oracle.pdf](./fall2019/slides/25-oracle.pdf)
 
 AI 播客
@@ -799,3 +802,28 @@ AI 播客
 - [迈向未来：自驱动的智能自动化](./drafts/lec25.md#迈向未来自驱动的智能自动化)
 - [终极愿景：一站式的融合分析平台](./drafts/lec25.md#终极愿景一站式的融合分析平台)
 - [结论](./drafts/lec25.md#结论)
+
+#### Final Review + Systems Potpourri (fall2024)
+
+这里介绍一些其他数据库系统， 2019 年的已经没有什么参考性了，我们用 2024 年的课程资料。
+
+- [./fall2024/slides/25-potpourri.pdf](./fall2024/slides/25-potpourri.pdf)
+
+AI 播客
+- https://notebooklm.google.com/notebook/ccaf0a85-95d0-439e-b520-c70d29171fe0?artifactId=6780cf1c-1279-422e-81b1-173a8d226b2b
+- https://mp.weixin.qq.com/s/UcLFf2rOGgsLpOF45Ghriw
+
+笔记： [./drafts/lec26.md](./drafts/lec26.md)
+- [微观优化：与CPU“交朋友”](./drafts/lec26.md#微观优化与cpu交朋友)
+  - [分支预测的“诅咒”与无分支编程](./drafts/lec26.md#分支预测的诅咒与无分支编程)
+  - [向量化执行与SIMD：从“一次一个”到“一次一批”](./drafts/lec26.md#向量化执行与simd从一次一个到一次一批)
+- [宏观优化：消除解释的代价](./drafts/lec26.md#宏观优化消除解释的代价)
+- [现代分析型数据库优秀代表](./drafts/lec26.md#现代分析型数据库优秀代表)
+  - [Google BigQuery：弹性与容错的典范](./drafts/lec26.md#google-bigquery弹性与容错的典范)
+  - [Snowflake：云原生的先驱](./drafts/lec26.md#snowflake云原生的先驱)
+  - [Amazon Redshift：缓存与硬件加速的王者](./drafts/lec26.md#amazon-redshift缓存与硬件加速的王者)
+  - [Yellowbrick：操作系统的“憎恨者”](./drafts/lec26.md#yellowbrick操作系统的憎恨者)
+  - [Databricks Photon：为Spark注入C++之魂](./drafts/lec26.md#databricks-photon为spark注入c之魂)
+  - [DuckDB：分析领域的SQLite](./drafts/lec26.md#duckdb分析领域的sqlite)
+  - [TabDB：一个“天才般”的玩笑](./drafts/lec26.md#tabdb一个天才般的玩笑)
+- [总结](./drafts/lec26.md#总结)
