@@ -7,6 +7,7 @@
 - [课程资料](#课程资料)
 - [课程索引](#课程索引)
   - [Introduction to Computer Networking CS](#introduction-to-computer-networking-cs)
+  - [Transport Layer Protocol, Reliable Communication and End-to-End Principles](#transport-layer-protocol-reliable-communication-and-end-to-end-principles)
 
 <!-- /code_chunk_output -->
 
@@ -56,3 +57,46 @@ AI 播客
   - [演进案例：SIP 与 VoIP 的革命](./drafts/lec01.md#演进案例sip-与-voip-的革命)
   - [新兴趋势与未来挑战](./drafts/lec01.md#新兴趋势与未来挑战)
 - [结语](./drafts/lec01.md#结语)
+
+#### Transport Layer Protocol, Reliable Communication and End-to-End Principles
+
+AI 播客
+- https://notebooklm.google.com/notebook/443a3d00-cc85-45f4-b11a-0c4f5a473add?artifactId=e6926449-9310-46d8-975b-56b77c5c5832
+- https://mp.weixin.qq.com/s/3119vtmKAnRzOWERvSozRg
+
+笔记： [./drafts/lec02.md](./drafts/lec02.md)
+- [传输层的两大支柱：UDP 与 TCP](./drafts/lec02.md#传输层的两大支柱udp-与-tcp)
+  - [UDP：轻装上阵的“信使”](./drafts/lec02.md#udp轻装上阵的信使)
+  - [TCP：稳重可靠的“工程师”](./drafts/lec02.md#tcp稳重可靠的工程师)
+  - [ICMP：网络层的“侦察兵”](./drafts/lec02.md#icmp网络层的侦察兵)
+- [可靠性的基石：TCP 连接管理](./drafts/lec02.md#可靠性的基石tcp-连接管理)
+  - [三次握手：建立连接](./drafts/lec02.md#三次握手建立连接)
+  - [四次挥手：断开连接](./drafts/lec02.md#四次挥手断开连接)
+- [TCP 的智慧：流量、窗口与拥塞控制](./drafts/lec02.md#tcp-的智慧流量-窗口与拥塞控制)
+  - [流量控制：照顾接收方的感受](./drafts/lec02.md#流量控制照顾接收方的感受)
+  - [拥塞控制：照顾整个网络的感受](./drafts/lec02.md#拥塞控制照顾整个网络的感受)
+  - [总结：流量控制 vs. 拥塞控制](./drafts/lec02.md#总结流量控制-vs-拥塞控制)
+- [互联网的设计哲学：端到端原则](./drafts/lec02.md#互联网的设计哲学端到端原则)
+  - [弱端到端原则 (Weak End-to-End Principle)](./drafts/lec02.md#弱端到端原则-weak-end-to-end-principle)
+  - [强端到端原则 (Strong End-to-End Principle)](./drafts/lec02.md#强端到端原则-strong-end-to-end-principle)
+- [数据的“指纹”：错误检测机制](./drafts/lec02.md#数据的指纹错误检测机制)
+- [TCP 的生命周期：深入理解 TCP 状态机](./drafts/lec02.md#tcp-的生命周期深入理解-tcp-状态机)
+  - [宏观蓝图：TCP 状态转换图](./drafts/lec02.md#宏观蓝图tcp-状态转换图)
+  - [第一幕：连接建立（三次握手）](./drafts/lec02.md#第一幕连接建立三次握手)
+    - [被动方（服务器）的视角](./drafts/lec02.md#被动方服务器的视角)
+    - [主动方（客户端）的视角](./drafts/lec02.md#主动方客户端的视角)
+  - [第二幕：数据传输](./drafts/lec02.md#第二幕数据传输)
+    - [示例 — 被动方收到 `FIN` -> `CLOSE_WAIT`（服务器端常见情况）](./drafts/lec02.md#示例--被动方收到-fin---close_wait服务器端常见情况)
+    - [示例 — 主动方半关闭（client 发 `FIN` 后仍可读）：`FIN_WAIT_1` -> `FIN_WAIT_2` -> `TIME_WAIT`](./drafts/lec02.md#示例--主动方半关闭client-发-fin-后仍可读fin_wait_1---fin_wait_2---time_wait)
+  - [第三幕：连接关闭（四次挥手）](./drafts/lec02.md#第三幕连接关闭四次挥手)
+    - [主动关闭方（例如，客户端）的视角](./drafts/lec02.md#主动关闭方例如客户端的视角)
+    - [`TIME_WAIT`：优雅退场的艺术](./drafts/lec02.md#time_wait优雅退场的艺术)
+    - [被动关闭方（例如，服务器）的视角](./drafts/lec02.md#被动关闭方例如服务器的视角)
+    - [示例 — 同时关闭 -> `CLOSING`](./drafts/lec02.md#示例--同时关闭---closing)
+    - [示例 — RST（abortive close）：如何让连接立刻变为 `CLOSED`（“暴力关闭”）并产生 RST](./drafts/lec02.md#示例--rstabortive-close如何让连接立刻变为-closed暴力关闭并产生-rst)
+    - [示例 — `TIME_WAIT` 与端口重用：`SO_REUSEADDR` / `SO_REUSEPORT` 行为提示](./drafts/lec02.md#示例--time_wait-与端口重用so_reuseaddr--so_reuseport-行为提示)
+  - [特殊情况](./drafts/lec02.md#特殊情况)
+    - [`CLOSE_WAIT` 泄漏示例](./drafts/lec02.md#close_wait-泄漏示例)
+    - [`TIME_WAIT` 普遍存在](./drafts/lec02.md#time_wait-普遍存在)
+    - [如果 send 后收到 `SIGPIPE`](./drafts/lec02.md#如果-send-后收到-sigpipe)
+  - [小结：把 C 代码的行为映射回状态机](./drafts/lec02.md#小结把-c-代码的行为映射回状态机)
