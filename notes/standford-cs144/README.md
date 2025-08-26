@@ -8,6 +8,7 @@
 - [课程索引](#课程索引)
   - [Introduction to Computer Networking CS](#introduction-to-computer-networking-cs)
   - [Transport Layer Protocol, Reliable Communication and End-to-End Principles](#transport-layer-protocol-reliable-communication-and-end-to-end-principles)
+  - [Packet Switching](#packet-switching)
 
 <!-- /code_chunk_output -->
 
@@ -71,8 +72,10 @@ AI 播客
   - [ICMP：网络层的“侦察兵”](./drafts/lec02.md#icmp网络层的侦察兵)
 - [可靠性的基石：TCP 连接管理](./drafts/lec02.md#可靠性的基石tcp-连接管理)
   - [三次握手：建立连接](./drafts/lec02.md#三次握手建立连接)
+  - [ACK 的真正含义：确认、时钟、流控三合一](./drafts/lec02.md#ack-的真正含义确认-时钟-流控三合一)
   - [四次挥手：断开连接](./drafts/lec02.md#四次挥手断开连接)
 - [TCP 的智慧：流量、窗口与拥塞控制](./drafts/lec02.md#tcp-的智慧流量-窗口与拥塞控制)
+  - [TCP 序列号耗尽、PAWS（保护已包装序列）与时间戳选项](./drafts/lec02.md#tcp-序列号耗尽-paws保护已包装序列与时间戳选项)
   - [流量控制：照顾接收方的感受](./drafts/lec02.md#流量控制照顾接收方的感受)
   - [拥塞控制：照顾整个网络的感受](./drafts/lec02.md#拥塞控制照顾整个网络的感受)
   - [总结：流量控制 vs. 拥塞控制](./drafts/lec02.md#总结流量控制-vs-拥塞控制)
@@ -80,6 +83,7 @@ AI 播客
   - [弱端到端原则 (Weak End-to-End Principle)](./drafts/lec02.md#弱端到端原则-weak-end-to-end-principle)
   - [强端到端原则 (Strong End-to-End Principle)](./drafts/lec02.md#强端到端原则-strong-end-to-end-principle)
 - [数据的“指纹”：错误检测机制](./drafts/lec02.md#数据的指纹错误检测机制)
+  - [IPv6 下的伪首部和校验](./drafts/lec02.md#ipv6-下的伪首部和校验)
 - [TCP 的生命周期：深入理解 TCP 状态机](./drafts/lec02.md#tcp-的生命周期深入理解-tcp-状态机)
   - [宏观蓝图：TCP 状态转换图](./drafts/lec02.md#宏观蓝图tcp-状态转换图)
   - [第一幕：连接建立（三次握手）](./drafts/lec02.md#第一幕连接建立三次握手)
@@ -91,6 +95,7 @@ AI 播客
   - [第三幕：连接关闭（四次挥手）](./drafts/lec02.md#第三幕连接关闭四次挥手)
     - [主动关闭方（例如，客户端）的视角](./drafts/lec02.md#主动关闭方例如客户端的视角)
     - [`TIME_WAIT`：优雅退场的艺术](./drafts/lec02.md#time_wait优雅退场的艺术)
+    - [四元组/五元组与 `TIME\_WAIT` 的端口复用](./drafts/lec02.md#四元组五元组与-time_wait-的端口复用)
     - [被动关闭方（例如，服务器）的视角](./drafts/lec02.md#被动关闭方例如服务器的视角)
     - [示例 — 同时关闭 -> `CLOSING`](./drafts/lec02.md#示例--同时关闭---closing)
     - [示例 — RST（abortive close）：如何让连接立刻变为 `CLOSED`（“暴力关闭”）并产生 RST](./drafts/lec02.md#示例--rstabortive-close如何让连接立刻变为-closed暴力关闭并产生-rst)
@@ -100,3 +105,39 @@ AI 播客
     - [`TIME_WAIT` 普遍存在](./drafts/lec02.md#time_wait-普遍存在)
     - [如果 send 后收到 `SIGPIPE`](./drafts/lec02.md#如果-send-后收到-sigpipe)
   - [小结：把 C 代码的行为映射回状态机](./drafts/lec02.md#小结把-c-代码的行为映射回状态机)
+
+#### Packet Switching
+
+- [./handouts/week-3-packet-switching-a.pdf](./handouts/week-3-packet-switching-a.pdf)
+
+AI 播客
+- https://notebooklm.google.com/notebook/76c5b9c7-47a8-4cfd-bd8e-3750fff9c238?artifactId=8bc28f67-1f33-4471-8e54-d7f1ebbfd3ca
+- https://mp.weixin.qq.com/s/cVcBA2ELQnYlRB9h2W7cSg
+
+笔记： [./drafts/lec03.md](./drafts/lec03.md)
+- [奠基石：电路交换 vs. 包交换](./drafts/lec03.md#奠基石电路交换-vs-包交换)
+- [一个数据包的旅程：解构端到端延迟](./drafts/lec03.md#一个数据包的旅程解构端到端延迟)
+  - [播延迟 (Propagation Delay, $t_l$)](./drafts/lec03.md#播延迟-propagation-delay-t_l)
+  - [序列化延迟 (Serialization Delay, $t_p$)](./drafts/lec03.md#序列化延迟-serialization-delay-t_p)
+  - [排队延迟 (Queueing Delay, $Q(t)$)](./drafts/lec03.md#排队延迟-queueing-delay-qt)
+- [深入排队：从确定性模型到随机过程](./drafts/lec03.md#深入排队从确定性模型到随机过程)
+  - [确定性排队模型](./drafts/lec03.md#确定性排队模型)
+  - [统计复用增益与随机过程](./drafts/lec03.md#统计复用增益与随机过程)
+- [服务质量 (QoS)：不只是“尽力而为”](./drafts/lec03.md#服务质量-qos不只是尽力而为)
+  - [FIFO 队列的局限性](./drafts/lec03.md#fifo-队列的局限性)
+  - [严格优先级 (Strict Priorities)](./drafts/lec03.md#严格优先级-strict-priorities)
+  - [加权公平排队 (Weighted Fair Queueing, WFQ)](./drafts/lec03.md#加权公平排队-weighted-fair-queueing-wfq)
+- [保证延迟：梦想与现实](./drafts/lec03.md#保证延迟梦想与现实)
+  - [我们到底想保证什么？](./drafts/lec03.md#我们到底想保证什么)
+  - [实现保证的两个关键“原料”](./drafts/lec03.md#实现保证的两个关键原料)
+  - [驯服入口流量 —— 漏桶调节器 `(σ, ρ)`](./drafts/lec03.md#驯服入口流量--漏桶调节器-σ-ρ)
+  - [提供专属通道 —— 加权公平排队 (WFQ)](./drafts/lec03.md#提供专属通道--加权公平排队-wfq)
+  - [理论上的完美结合](./drafts/lec03.md#理论上的完美结合)
+  - [残酷的现实：为什么在公共互联网上行不通？](./drafts/lec03.md#残酷的现实为什么在公共互联网上行不通)
+  - [务实的替代方案：超额配置](./drafts/lec03.md#务实的替代方案超额配置)
+- [网络的心脏：交换机与路由器如何工作](./drafts/lec03.md#网络的心脏交换机与路由器如何工作)
+  - [以太网交换机 vs. IP 路由器](./drafts/lec03.md#以太网交换机-vs-ip-路由器)
+  - [交换机内部架构](./drafts/lec03.md#交换机内部架构)
+- [软件定义网络 SDN 和网络虚拟化 NV](./drafts/lec03.md#软件定义网络-sdn-和网络虚拟化-nv)
+  - [软件定义网络 (Software-Defined Networking, SDN)](./drafts/lec03.md#软件定义网络-software-defined-networking-sdn)
+  - [网络虚拟化 (Network Virtualization)](./drafts/lec03.md#网络虚拟化-network-virtualization)
