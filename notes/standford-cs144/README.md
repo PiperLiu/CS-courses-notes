@@ -9,6 +9,7 @@
   - [Introduction to Computer Networking CS](#introduction-to-computer-networking-cs)
   - [Transport Layer Protocol, Reliable Communication and End-to-End Principles](#transport-layer-protocol-reliable-communication-and-end-to-end-principles)
   - [Packet Switching](#packet-switching)
+  - [Congestion Control](#congestion-control)
 
 <!-- /code_chunk_output -->
 
@@ -141,3 +142,42 @@ AI 播客
 - [软件定义网络 SDN 和网络虚拟化 NV](./drafts/lec03.md#软件定义网络-sdn-和网络虚拟化-nv)
   - [软件定义网络 (Software-Defined Networking, SDN)](./drafts/lec03.md#软件定义网络-software-defined-networking-sdn)
   - [网络虚拟化 (Network Virtualization)](./drafts/lec03.md#网络虚拟化-network-virtualization)
+
+#### Congestion Control
+
+- [./handouts/week-4-why_congestion_control.pdf](./handouts/week-4-why_congestion_control.pdf)
+- [./handouts/What congestion control.pdf](./handouts/What%20congestion%20control.pdf)
+- [./handouts/How congestion control.pdf](./handouts/How%20congestion%20control.pdf)
+
+AI 播客
+- https://notebooklm.google.com/notebook/b5f3026d-d15d-41a5-97da-f03c661e6201?artifactId=8a54df56-cdf9-4a8c-9363-8eb47602c37a
+- https://mp.weixin.qq.com/s/RIPSK9r7yxjsrMHCNiKwfg
+
+笔记： [./drafts/lec04.md](./drafts/lec04.md)
+- [什么是拥塞控制？](./drafts/lec04.md#什么是拥塞控制)
+- [拥塞的危害：从性能下降到网络崩溃](./drafts/lec04.md#拥塞的危害从性能下降到网络崩溃)
+- [理想模型：带宽时延积 (BDP)](./drafts/lec04.md#理想模型带宽时延积-bdp)
+- [AIMD：TCP 拥塞控制的基石](./drafts/lec04.md#aimdtcp-拥塞控制的基石)
+  - [加性增窗 (Additive Increase, AI)](./drafts/lec04.md#加性增窗-additive-increase-ai)
+  - [乘性减窗 (Multiplicative Decrease, MD)](./drafts/lec04.md#乘性减窗-multiplicative-decrease-md)
+  - [“锯齿”形的 `cwnd` 变化](./drafts/lec04.md#锯齿形的-cwnd-变化)
+- [慢启动：快速启动，指数增长](./drafts/lec04.md#慢启动快速启动指数增长)
+  - [MSS (Maximum Segment Size) 的确定](./drafts/lec04.md#mss-maximum-segment-size-的确定)
+  - [ssthresh (Slow Start Threshold) 的确定](./drafts/lec04.md#ssthresh-slow-start-threshold-的确定)
+- [TCP 拥塞控制实战：一个完整例子的剖析](./drafts/lec04.md#tcp-拥塞控制实战一个完整例子的剖析)
+  - [第 1 阶段：慢启动 (Slow-Start)](./drafts/lec04.md#第-1-阶段慢启动-slow-start)
+  - [第 2 阶段：拥塞避免 (Congestion Avoidance)](./drafts/lec04.md#第-2-阶段拥塞避免-congestion-avoidance)
+  - [第 3 阶段：拥塞事件 - 三次重复确认 (Reno 模式)](./drafts/lec04.md#第-3-阶段拥塞事件---三次重复确认-reno-模式)
+  - [第 4 阶段：新一轮的拥塞避免](./drafts/lec04.md#第-4-阶段新一轮的拥塞避免)
+  - [第 5 阶段：严重拥塞事件 - 超时 (Timeout)](./drafts/lec04.md#第-5-阶段严重拥塞事件---超时-timeout)
+  - [解惑：ACK 时钟：TCP 如何感知“一轮” RTT？](./drafts/lec04.md#解惑ack-时钟tcp-如何感知一轮-rtt)
+    - [核心思想：事件驱动，而非时间驱动](./drafts/lec04.md#核心思想事件驱动而非时间驱动)
+    - [如何实现“每轮 RTT”的规则？](./drafts/lec04.md#如何实现每轮-rtt的规则)
+  - [解惑：详解快速重传与快速恢复](./drafts/lec04.md#解惑详解快速重传与快速恢复)
+    - [快速重传 (Fast Retransmit)：拥塞的“哨声”](./drafts/lec04.md#快速重传-fast-retransmit拥塞的哨声)
+    - [快速恢复 (Fast Recovery)：拥塞后的“手术刀”](./drafts/lec04.md#快速恢复-fast-recovery拥塞后的手术刀)
+- [TCP 拥塞控制的演进史](./drafts/lec04.md#tcp-拥塞控制的演进史)
+  - [TCP Tahoe (1988) - 开创者](./drafts/lec04.md#tcp-tahoe-1988---开创者)
+  - [TCP Reno (1990) - 优化者](./drafts/lec04.md#tcp-reno-1990---优化者)
+  - [TCP NewReno (1996) - 完善者](./drafts/lec04.md#tcp-newreno-1996---完善者)
+- [总结与展望](./drafts/lec04.md#总结与展望)
