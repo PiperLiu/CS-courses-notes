@@ -12,6 +12,7 @@
   - [Congestion Control](#congestion-control)
   - [NAT/NAPT, HTTP, BitTorrent/P2P, DNS, DHCP](#natnapt-http-bittorrentp2p-dns-dhcp)
   - [Routing](#routing)
+  - [Lower Layers](#lower-layers)
 
 <!-- /code_chunk_output -->
 
@@ -266,7 +267,7 @@ AI 播客
 
 AI 播客
 - https://notebooklm.google.com/notebook/b4912ed2-dfdc-4959-9c72-95b78f21c1c3?artifactId=44bf226f-97c7-420c-9e3a-7e2aae40f834
-- 
+- https://mp.weixin.qq.com/s/DZ7uEgIPZ3xlIqLBHt_ojA
 
 笔记： [./drafts/lec06.md](./drafts/lec06.md)
 - [路由的基本构件](./drafts/lec06.md#路由的基本构件)
@@ -316,3 +317,34 @@ AI 播客
     - [覆盖与控制平面分离：EVPN / VxLAN /VPLS / MPLS L2VPN](./drafts/lec06.md#覆盖与控制平面分离evpn--vxlan-vpls--mpls-l2vpn)
     - [ARP 代理 / ARP 抑制](./drafts/lec06.md#arp-代理--arp-抑制)
 - [面向未来的路由技术](./drafts/lec06.md#面向未来的路由技术)
+
+#### Lower Layers
+
+AI 播客
+- https://notebooklm.google.com/notebook/d9da0b09-a382-498b-a604-65406e36b371?artifactId=fec0b75a-d0b1-4b2c-bb47-5af2c2f9c86d
+- https://mp.weixin.qq.com/s/-UcVXBQWfV-wyvaRQFbrtg
+
+笔记： [./drafts/lec07.md](./drafts/lec07.md)
+- [物理层：将比特流转化为模拟信号](./drafts/lec07.md#物理层将比特流转化为模拟信号)
+  - [弹性缓冲区：时钟不同步的优雅解法](./drafts/lec07.md#弹性缓冲区时钟不同步的优雅解法)
+  - [香农极限与调制：信道容量的天花板](./drafts/lec07.md#香农极限与调制信道容量的天花板)
+  - [物理层的基石：编码、复用与传输延迟](./drafts/lec07.md#物理层的基石编码-复用与传输延迟)
+    - [奈氏准则与香农定理：理想与现实](./drafts/lec07.md#奈氏准则与香农定理理想与现实)
+    - [剖析网络延迟：发送延迟与传播延迟](./drafts/lec07.md#剖析网络延迟发送延迟与传播延迟)
+    - [多路复用：在一条路上跑多辆车](./drafts/lec07.md#多路复用在一条路上跑多辆车)
+- [链路层：在共享信道上可靠传输](./drafts/lec07.md#链路层在共享信道上可靠传输)
+  - [比特之战：错误与纠错码](./drafts/lec07.md#比特之战错误与纠错码)
+    - [循环冗余校验 (CRC)：高效的检错利器](./drafts/lec07.md#循环冗余校验-crc高效的检错利器)
+    - [海明码：精巧的纠错码](./drafts/lec07.md#海明码精巧的纠错码)
+  - [时钟恢复：在数据流中寻找节拍](./drafts/lec07.md#时钟恢复在数据流中寻找节拍)
+- [媒体访问控制：谁有权发言？](./drafts/lec07.md#媒体访问控制谁有权发言)
+  - [有线江湖的规矩：以太网与 CSMA/CD](./drafts/lec07.md#有线江湖的规矩以太网与-csmacd)
+  - [现代交换机如何做到全双工](./drafts/lec07.md#现代交换机如何做到全双工)
+  - [深入以太网：帧结构、最小帧长与物理规范](./drafts/lec07.md#深入以太网帧结构-最小帧长与物理规范)
+    - [以太网帧结构](./drafts/lec07.md#以太网帧结构)
+    - [最小帧长之谜](./drafts/lec07.md#最小帧长之谜)
+    - [以太网物理层规范的演进](./drafts/lec07.md#以太网物理层规范的演进)
+  - [无线世界的挑战：CSMA/CA 与隐藏终端](./drafts/lec07.md#无线世界的挑战csmaca-与隐藏终端)
+- [跨越边界：IP 分片](./drafts/lec07.md#跨越边界ip-分片)
+  - [IP 分片实例解析](./drafts/lec07.md#ip-分片实例解析)
+- [结语：坚实的基石](./drafts/lec07.md#结语坚实的基石)
