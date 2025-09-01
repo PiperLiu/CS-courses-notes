@@ -13,6 +13,7 @@
   - [NAT/NAPT, HTTP, BitTorrent/P2P, DNS, DHCP](#natnapt-http-bittorrentp2p-dns-dhcp)
   - [Routing](#routing)
   - [Lower Layers](#lower-layers)
+  - [Security](#security)
 
 <!-- /code_chunk_output -->
 
@@ -348,3 +349,31 @@ AI 播客
 - [跨越边界：IP 分片](./drafts/lec07.md#跨越边界ip-分片)
   - [IP 分片实例解析](./drafts/lec07.md#ip-分片实例解析)
 - [结语：坚实的基石](./drafts/lec07.md#结语坚实的基石)
+
+#### Security
+
+AI 播客
+- https://notebooklm.google.com/notebook/75c0b289-686c-4e09-ad35-06d599db24c1?artifactId=ed0f7086-e238-4a58-b8eb-2d5961ab99b8
+- https://mp.weixin.qq.com/s/WrJV1-HA74xVKwgPvq30oQ
+
+笔记： [./drafts/lec08.md](./drafts/lec08.md)
+- [奠定安全基石：网络安全的四大核心属性](./drafts/lec08.md#奠定安全基石网络安全的四大核心属性)
+- [知己知彼：理解我们面临的威胁](./drafts/lec08.md#知己知彼理解我们面临的威胁)
+  - [意外破坏 (Accidental Corruption)](./drafts/lec08.md#意外破坏-accidental-corruption)
+  - [对抗性攻击 (Adversarial Attacks)](./drafts/lec08.md#对抗性攻击-adversarial-attacks)
+    - [窃听 (Eavesdropping)](./drafts/lec08.md#窃听-eavesdropping)
+    - [篡改 (Modification)](./drafts/lec08.md#篡改-modification)
+    - [重放 (Replay)](./drafts/lec08.md#重放-replay)
+    - [中间人攻击 (Man-in-the-Middle, MITM)](./drafts/lec08.md#中间人攻击-man-in-the-middle-mitm)
+    - [拒绝服务攻击 (Denial of Service, DoS)](./drafts/lec08.md#拒绝服务攻击-denial-of-service-dos)
+    - [劫持 (Hijacking)](./drafts/lec08.md#劫持-hijacking)
+  - [元数据隐私 (Metadata Privacy)](./drafts/lec08.md#元数据隐私-metadata-privacy)
+- [铸造坚盾：密码学的核心工具箱](./drafts/lec08.md#铸造坚盾密码学的核心工具箱)
+  - [安全哈希算法 (Secure Hash Algorithm)](./drafts/lec08.md#安全哈希算法-secure-hash-algorithm)
+  - [消息认证码 (Message Authentication Code, MAC)](./drafts/lec08.md#消息认证码-message-authentication-code-mac)
+  - [对称加密 (Symmetric Encryption)](./drafts/lec08.md#对称加密-symmetric-encryption)
+  - [公钥密码学 (Public-key Cryptography)](./drafts/lec08.md#公钥密码学-public-key-cryptography)
+  - [密钥交换与前向保密](./drafts/lec08.md#密钥交换与前向保密)
+- [信任的根基：证书与公钥基础设施](./drafts/lec08.md#信任的根基证书与公钥基础设施)
+- [实战剖析：TLS/HTTPS 如何保护你的通信](./drafts/lec08.md#实战剖析tlshttps-如何保护你的通信)
+- [安全之道：超越算法的设计哲学](./drafts/lec08.md#安全之道超越算法的设计哲学)
