@@ -6,10 +6,10 @@
 
 🚒 本仓库中 **好好做作业** 的笔记：
 - 🚗 浙江大学数据结构 （[期末考试98分](./notes/data_structure/homeworks/ds.exam.2.md)，[笔记/代码/心得/资源/作业在这里](./notes/data_structure/README.md)）
-- 🚜 MIT 6.S081: Operating System Engineering （[11个lab全部解决](./notes/mit6.s081/lab.md)，[笔记/阅读材料/实验心得在这里](./notes/mit6.s081/README.md)）
-- 🚌 MIT 6.824: Distributed Systems （[笔记在这里，正在完成 lab](./notes/mit6.824/README.md)）
+- 🚜 MIT 6.S081: Operating System Engineering （[11 个 lab 全部解决](./notes/mit6.s081/lab.md)，[笔记/阅读材料/实验心得在这里](./notes/mit6.s081/README.md)）
+- 🚌 MIT 6.824: Distributed Systems （[笔记在这里，四个 lab 已完成](./notes/mit6.824/README.md)）
 - 🚎 CMU 15-445: Database Systems （[笔记在这里， lab 还未排期](./notes/cmu15-445/README.md)）
-- 🚙 Standford CS144: Computer Network （[笔记在这里，正在学习课程]()）
+- 🚙 Standford CS144: Computer Network （[笔记在这里， lab 还未排期](./notes/standford-cs144/README.md)）
 
 📚 本仓库中 **读书** 笔记：
 - [🤴《UNIX传奇：历史与回忆》 . Brian W. Kernighan . 韩磊译 . UNIX: A History and a Memoir](./notes/books/README.md#unix传奇历史与回忆)
