@@ -108,3 +108,140 @@ Lab: networking
   - [简历一个最简单的 socket 连接](./docs/drafts/lec.21hw.md#简历一个最简单的-socket-连接)
   - [万物皆文件](./docs/drafts/lec.21hw.md#万物皆文件)
   - [完成作业：向网卡传输数据，处理网卡中断](./docs/drafts/lec.21hw.md#完成作业向网卡传输数据处理网卡中断)
+
+## 🍎MAC M1 Pro 安装记录（最终选择 docker ）
+
+```zsh
+# 在有了 xcode-select --install 和 homebrew 的基础上
+
+brew tap riscv/riscv
+brew install riscv-tools
+
+# 确认安装
+brew --prefix
+brew --prefix riscv-gnu-toolchain
+ls -la "$(brew --prefix riscv-gnu-toolchain)/bin" | head
+command -v riscv64-unknown-elf-gcc || echo "NOT IN PATH"
+echo "$PATH" | tr ':' '\n' | grep -n "riscv-gnu-toolchain" || true
+
+brew install qemu
+
+# 验证
+(base) ➜  PiperLiu riscv64-unknown-elf-gcc --version
+riscv64-unknown-elf-gcc (g1b306039a) 15.1.0
+Copyright (C) 2025 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+(base) ➜  PiperLiu qemu-system-riscv64 --version
+QEMU emulator version 10.2.0
+Copyright (c) 2003-2025 Fabrice Bellard and the QEMU Project developers
+```
+
+但是如上并不好用，存在两个问题：
+- Mac 上默认的 CPP 工具链能接受的语法与原项目不相容
+- 即便修正语法使之兼容，使用 `make qemu` 后编译出来的产物也无法正常运行（会 block 住）
+
+原因应该是 `qemu-system-misc` 太新： `At this moment in time, it seems that the package qemu-system-misc has received an update that breaks its compatibility with our kernel. If you run make qemu and the script appears to hang after qemu-system-riscv64 -machine virt -bios none -kernel kernel/kernel -m 128M -smp 3 -nographic -drive file=fs.img,if=none,format=raw,id=x0 -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0` 。
+
+语法错误举例：
+
+```bash
+$ make qemu
+riscv64-unknown-elf-gcc -Wall -Werror -O -fno-omit-frame-pointer -ggdb -DSOL_UTIL -MD -mcmodel=medany -ffreestanding -fno-common -nostdlib -mno-relax -I. -fno-stack-protector -fno-pie -no-pie   -c -o user/sh.o user/sh.c
+user/sh.c: In function 'runcmd':
+user/sh.c:58:1: error: infinite recursion detected [-Werror=infinite-recursion]
+   58 | runcmd(struct cmd *cmd)
+      | ^~~~~~
+user/sh.c:89:5: note: recursive call
+   89 |     runcmd(rcmd->cmd);
+      |     ^~~~~~~~~~~~~~~~~
+user/sh.c:109:7: note: recursive call
+  109 |       runcmd(pcmd->left);
+      |       ^~~~~~~~~~~~~~~~~~
+user/sh.c:116:7: note: recursive call
+  116 |       runcmd(pcmd->right);
+      |       ^~~~~~~~~~~~~~~~~~~
+user/sh.c:95:7: note: recursive call
+   95 |       runcmd(lcmd->left);
+      |       ^~~~~~~~~~~~~~~~~~
+user/sh.c:97:5: note: recursive call
+   97 |     runcmd(lcmd->right);
+      |     ^~~~~~~~~~~~~~~~~~~
+user/sh.c:127:7: note: recursive call
+  127 |       runcmd(bcmd->cmd);
+      |       ^~~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
+make: *** [<builtin>: user/sh.o] Error 1
+$ 
+
+# 新版本的 GCC（12+）添加了 -Winfinite-recursion 警告，配合 -Werror 就变成了编译错误
+--- a/user/primes.c
++++ b/user/primes.c
+@@ -11,7 +11,7 @@ const int INT_LEN = sizeof(int);
+  * 其他数是第一个数的倍数，过滤；
+  * 否者传入管道，给子进程
+  */
+-void get_prime(int*);
++void get_prime(int*) __attribute__((noreturn));
+ 
+ int
+ main(int argc, char *argv[])
+diff --git a/user/sh.c b/user/sh.c
+index 83dd513..c9ad341 100644
+--- a/user/sh.c
++++ b/user/sh.c
+@@ -52,6 +52,7 @@ struct backcmd {
+ int fork1(void);  // Fork but panics on failure.
+ void panic(char*);
+ struct cmd *parsecmd(char*);
++void runcmd(struct cmd *cmd) __attribute__((noreturn));
+ 
+ // Execute cmd.  Never returns.
+ void
+```
+
+尝试过一些其他的方法，目前只有以下方法很快捷方便。还是选择较老的环境：
+
+```bash
+docker rm -f xv6-focal xv6-amd64 2>/dev/null || true
+
+# 起一个 arm64 的 focal 容器常驻
+# 如果起一个 amd64 的，会因为 Rosetta for Linux 对某些 syscall（比如 282）不支持
+# qemu 崩溃 rosetta error: Unimplemented syscall number 282
+docker run -d \
+  --platform linux/arm64 \
+  --name xv6-focal-arm64 \
+  --restart unless-stopped \
+  -v "$(pwd)":/work \
+  -w /work \
+  ubuntu:20.04 \
+  sleep infinity
+
+# 进入容器
+docker exec -it xv6-focal-arm64 bash
+
+# 在容器内
+apt-get update
+DEBIAN_FRONTEND=noninteractive apt-get install -y \
+  git build-essential gdb-multiarch \
+  qemu-system-misc gcc-riscv64-linux-gnu binutils-riscv64-linux-gnu \
+  python3
+
+# 让 make grade 里用到的 `python` 命令存在
+ln -sf /usr/bin/python3 /usr/local/bin/python
+
+# 验证关键版本与可执行文件
+root@548928b76f04:/work# qemu-system-riscv64 --version
+QEMU emulator version 4.2.1 (Debian 1:4.2-3ubuntu6.30)
+Copyright (c) 2003-2019 Fabrice Bellard and the QEMU Project developers
+root@548928b76f04:/work# python --version
+Python 3.8.10
+
+root@548928b76f04:/work# apt-cache madison qemu-system-misc | head
+qemu-system-misc | 1:4.2-3ubuntu6.30 | http://ports.ubuntu.com/ubuntu-ports focal-updates/main arm64 Packages
+qemu-system-misc | 1:4.2-3ubuntu6.30 | http://ports.ubuntu.com/ubuntu-ports focal-security/main arm64 Packages
+qemu-system-misc | 1:4.2-3ubuntu6 | http://ports.ubuntu.com/ubuntu-ports focal/main arm64 Packages
+# 挑一个 1:4.2-3ubuntu6.xx 来装
+root@548928b76f04:/work# apt-get install -y qemu-system-misc=1:4.2-3ubuntu6.30
+```
