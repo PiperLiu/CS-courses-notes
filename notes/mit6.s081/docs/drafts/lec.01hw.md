@@ -270,6 +270,76 @@ sys_sleep(void)
 
 看起来像是一个锁，并且 `sleep(&ticks, &tickslock)` 是用来改变 `ticks` 这些信息的。
 
+Q1: xv6 是单核还是多核系统？
+- 多核。param.h 定义 `NCPU=8`，支持最多 8 个 CPU。README 也明确说明是 "RISC-V multiprocessor"。
+
+Q2: sys_sleep 中为什么需要 tickslock 锁？
+- 保护全局变量 ticks 的并发访问：
+  - 多核 CPU 可能同时读写 ticks
+  - 时钟中断处理程序 clockintr() 也会修改 ticks
+  - 锁确保读取和比较 ticks 时的原子性
+
+Q3: 为什么用 while 循环而不是 if 判断？
+- 处理虚假唤醒（spurious wakeup）：
+  - `wakeup(&ticks)` 会唤醒所有等待在 `&ticks` 上的进程，但并非所有进程的条件都满足。例如：
+    - 进程 A 从 ticks=100 开始等 10 个 tick
+    - 进程 B 从 ticks=105 开始等 10 个 tick
+    - ticks=110 时，两者都被唤醒
+    - A 条件满足退出，B 需要重新检查发现条件不满足继续睡眠
+
+Q4: 谁调用 `wakeup(&ticks)`？
+- 时钟中断处理函数 clockintr()（在 trap.c）：
+
+```c
+void clockintr() {
+  acquire(&tickslock);
+  ticks++;
+  wakeup(&ticks);    // 唤醒所有等待时钟的进程
+  release(&tickslock);
+}
+```
+
+Q5: sleep 为什么要传入锁？
+- 解决释放锁与进入睡眠之间的竞态条件：
+
+```c
+// ❌ 如果分开做：
+release(&tickslock);    // 释放锁
+// ⚠️ 此刻时钟中断发生，wakeup() 被调用但我们还没睡！
+sleep(...);             // 错过唤醒，可能永远阻塞
+
+// ✅ sleep() 原子地：释放锁 → 睡眠 → 唤醒后重新获取锁
+```
+
+Q6: Channel 是什么？即 sleep 的第一个入参
+- 任意内存地址，用作等待标识符：
+  - sleep(addr, lock) — 在地址 addr 上睡眠
+  - wakeup(addr) — 唤醒所有 chan == addr 的进程
+  - 优点：自动唯一、语义清晰（`&ticks` 表示等待时钟）、零分配开销。
+
+Q7: 锁被长时间持有会导致 ticks 不准确吗？
+- 理论上会，但实际影响小：
+  - 临界区代码极短（纳秒级）
+  - sleep() 会原子释放锁，不会长时间持有
+  - xv6 是教学系统，追求简洁而非精确计时
+
+Q8: 每次时钟中断都 wakeup，性能损耗大吗？
+- 是的，这是 xv6 的设计取舍：
+  - 每次中断遍历所有进程（NPROC=64）
+  - 教学系统优先简洁，进程数少可接受
+  - 真实 OS 优化：Linux 用红黑树管理定时器，只唤醒到期进程。
+
+Q9: 除了 `&ticks`，还有哪些 channel 使用场景？
+
+| 场景 | sleep | wakeup | 含义 |
+| --- | --- | --- | --- |
+| 管道读 | `sleep(&pi->nread, ...)` | `wakeup(&pi->nread)` | 等待数据可读 |
+| 管道写 | `sleep(&pi->nwrite, ...)` | `wakeup(&pi->nwrite)` | 等待空间可写 |
+| 控制台 | `sleep(&cons.r, ...)` | `wakeup(&cons.r)` | 等待键盘输入 |
+| 磁盘 | `sleep(&disk.free[0], ...)` | `wakeup(&disk.free[0])` | 等待请求槽位 |
+| 日志 | `sleep(&log, ...)` | `wakeup(&log)` | 等待日志系统可用 |
+
+
 ### user/user.h
 
 ```c
